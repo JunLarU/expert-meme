@@ -1,0 +1,406 @@
+// ==========================================================
+// Whis Forms Defaults
+// Global form styles for the framework.
+// Compatible with:
+// - .form
+// - .form--default
+// - [data-whis-form]
+// - [data-form-default]
+// - .form-group
+// - .form-control
+// - .form-label
+// - .form__status
+// - .form-group__error
+// - .button__submit
+// ==========================================================
+
+$whis-form-page-bg: #f2fbff !default;
+$whis-form-surface: #ffffff !default;
+$whis-form-text: #1f2937 !default;
+$whis-form-muted: #777777 !default;
+$whis-form-primary: #0a66c2 !default;
+$whis-form-primary-soft: rgba(10, 102, 194, 0.12) !default;
+$whis-form-field-bg: rgba(185, 234, 255, 0.4) !default;
+$whis-form-danger: #c62828 !default;
+$whis-form-success: #198754 !default;
+$whis-form-radius: 1rem !default;
+$whis-form-field-radius: 0.6rem !default;
+$whis-form-shadow: 0 0 10px rgba(0, 0, 0, 0.25) !default;
+
+.form-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 7rem 1.5rem 1.5rem;
+  background-color: $whis-form-page-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-card,
+.formulario {
+  width: 100%;
+  max-width: 72rem;
+  padding: 1.5rem;
+  border-radius: $whis-form-radius;
+  background-color: $whis-form-surface;
+  box-shadow: $whis-form-shadow;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  h1,
+  h2 {
+    margin: 0;
+    color: $whis-form-text;
+    text-align: center;
+  }
+}
+
+.form,
+.form--default,
+form[data-whis-form],
+form[data-form-default] {
+  width: 100%;
+  max-width: 60rem;
+  margin-top: 1.5rem;
+}
+
+.form__fieldset {
+  width: 100%;
+  margin: 0;
+  padding: 2rem;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+
+  legend {
+    margin-bottom: 0.5rem;
+    color: $whis-form-text;
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+}
+
+.form__status,
+.contact-form__status {
+  width: 100%;
+  display: none;
+  margin-bottom: 0.5rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid transparent;
+  border-radius: $whis-form-radius;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  text-align: left;
+
+  &.is-visible {
+    display: block;
+  }
+
+  &.is-error {
+    background: rgba(220, 53, 69, 0.08);
+    border-color: rgba(220, 53, 69, 0.25);
+    color: #a61d2d;
+  }
+
+  &.is-success {
+    background: rgba(25, 135, 84, 0.08);
+    border-color: rgba(25, 135, 84, 0.25);
+    color: #146c43;
+  }
+
+  &.is-loading {
+    background: rgba(13, 110, 253, 0.08);
+    border-color: rgba(13, 110, 253, 0.2);
+    color: #0a58ca;
+  }
+}
+
+.form-group,
+.mb-3 {
+  position: relative;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+.form-group:first-of-type,
+.mb-3:first-of-type {
+  margin-top: 0;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea,
+.form-control {
+  width: 100%;
+  border: 1.5px solid transparent;
+  border-radius: $whis-form-field-radius;
+  background-color: $whis-form-field-bg;
+  color: $whis-form-text;
+  font-size: 1.7rem;
+  outline: none;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.form-group input,
+.form-group select,
+.form-control {
+  height: 5.8rem;
+  padding: 1.8rem 1rem 0.6rem;
+}
+
+.form-group textarea,
+textarea.form-control {
+  min-height: 14rem;
+  padding: 2.2rem 1rem 1rem;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.form-group select,
+select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 3.5rem;
+  background-image:
+    linear-gradient(45deg, transparent 50%, $whis-form-muted 50%),
+    linear-gradient(135deg, $whis-form-muted 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.8rem) 50%,
+    calc(100% - 1.3rem) 50%;
+  background-size:
+    0.5rem 0.5rem,
+    0.5rem 0.5rem;
+  background-repeat: no-repeat;
+}
+
+.form-group input[type="file"],
+input[type="file"].form-control {
+  height: auto;
+  min-height: 5.8rem;
+  padding: 1.2rem;
+  cursor: pointer;
+}
+
+.form-group input[type="file"]::file-selector-button,
+input[type="file"].form-control::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 9999px;
+  background-color: rgba($whis-form-primary, 0.12);
+  color: $whis-form-primary;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+.form-control:focus {
+  border-color: $whis-form-primary;
+  box-shadow: 0 0 0 3px $whis-form-primary-soft;
+  background-color: transparent;
+}
+
+.form-group label,
+.form-label {
+  color: $whis-form-muted;
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+/*
+  Floating label mode:
+  Use this order:
+  input + label
+  select + label
+  textarea + label
+*/
+.form-group > input + label,
+.form-group > select + label,
+.form-group > textarea + label {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 0.25rem;
+  background: transparent;
+  pointer-events: none;
+  transition:
+    top 0.25s ease,
+    transform 0.25s ease,
+    font-size 0.25s ease,
+    color 0.25s ease;
+}
+
+.form-group--textarea > textarea + label {
+  top: 1.6rem;
+  transform: translateY(0);
+}
+
+.form-group > input:focus + label,
+.form-group > input:not(:placeholder-shown) + label,
+.form-group > select:focus + label,
+.form-group > select:required:valid + label,
+.form-group > textarea:focus + label,
+.form-group > textarea:not(:placeholder-shown) + label {
+  top: 0.8rem;
+  transform: translateY(0);
+  color: $whis-form-primary;
+  font-size: 1.25rem;
+}
+
+.form-group--file {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+
+  > label {
+    position: static;
+    transform: none;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: $whis-form-text;
+    pointer-events: auto;
+  }
+}
+
+.form-group__error,
+.text-danger {
+  display: block;
+  min-height: 1.8rem;
+  margin-top: 0.45rem;
+  padding-left: 0.25rem;
+  color: $whis-form-danger;
+  font-size: 1.25rem;
+  line-height: 1.35;
+  text-align: left;
+}
+
+.form-group.has-error {
+  input,
+  select,
+  textarea,
+  .form-control {
+    border-color: rgba($whis-form-danger, 0.9);
+    box-shadow: 0 0 0 4px rgba($whis-form-danger, 0.12);
+    background-color: transparent;
+  }
+
+  label,
+  .form-label {
+    color: $whis-form-danger !important;
+  }
+}
+
+.form-group.has-success {
+  input,
+  select,
+  textarea,
+  .form-control {
+    border-color: rgba($whis-form-success, 0.7);
+    box-shadow: 0 0 0 4px rgba($whis-form-success, 0.08);
+    background-color: transparent;
+  }
+
+  label,
+  .form-label {
+    color: $whis-form-success !important;
+  }
+}
+
+.form-check,
+.form-check-group {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem;
+  align-items: start;
+  margin-top: 1rem;
+  color: $whis-form-text;
+  font-size: 1.45rem;
+  line-height: 1.45;
+  cursor: pointer;
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-top: 0.2rem;
+    accent-color: $whis-form-primary;
+    cursor: pointer;
+  }
+
+  a {
+    color: $whis-form-primary;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      text-decoration: underline;
+    }
+  }
+
+  .form-group__error {
+    grid-column: 1 / -1;
+    margin-top: 0;
+  }
+
+  &.has-error {
+    color: $whis-form-danger;
+  }
+}
+
+.button__submit,
+.btn.btn-primary {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  margin: 1rem auto 0;
+  padding: 0.9rem 2rem;
+  border: none;
+  border-radius: 9999px;
+  background-color: rgba($whis-form-primary, 0.14);
+  color: $whis-form-text;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    opacity 200ms ease;
+
+  &:hover,
+  &:focus {
+    background-color: $whis-form-primary;
+    color: #ffffff;
+  }
+
+  &:disabled {
+    opacity: 0.8;
+    cursor: not-allowed;
+  }
+
+  &.is-loading {
+    pointer-events: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .form-card,
+  .formulario {
+    padding: 2rem;
+  }
+}

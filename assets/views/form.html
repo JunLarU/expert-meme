@@ -1,0 +1,110 @@
+<section class="form-page" aria-labelledby="test-form-title">
+  <div class="form-card">
+    <h1 id="test-form-title">Test Form</h1>
+
+    <form
+      class="form form--default"
+      id="test_form_2"
+      method="post"
+      action="@url/form"
+      enctype="multipart/form-data"
+      data-ajax-form
+      data-validation="html"
+      data-send-as="formdata"
+      data-csrf="true"
+      data-csrf-field="_token"
+      data-reset-on-success="false"
+      novalidate
+      aria-labelledby="test-form-legend"
+    >
+      @csrf('test-form')
+
+      <fieldset class="form__fieldset">
+        <legend id="test-form-legend">Formulario de prueba</legend>
+
+        <div
+          class="form__status"
+          id="testFormStatus"
+          data-form-status
+          role="status"
+          aria-live="polite"
+        ></div>
+
+        <div class="form-group" data-field="email">
+          <input
+            value="{{old('email')}}"
+            name="email"
+            id="test-email"
+            type="email"
+            class="form-control"
+            placeholder=" "
+            autocomplete="email"
+            inputmode="email"
+            required
+            maxlength="150"
+            aria-describedby="error-test-email"
+          >
+          <label class="form-label" for="test-email">Email</label>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-test-email"
+            data-field-error
+            data-error-for="email"
+            aria-live="polite"
+          >{{error('email')}}</span>
+        </div>
+
+        <div class="form-group" data-field="name">
+          <input
+            value="{{old('name')}}"
+            name="name"
+            id="test-name"
+            type="text"
+            class="form-control"
+            placeholder=" "
+            autocomplete="name"
+            required
+            minlength="3"
+            maxlength="120"
+            aria-describedby="error-test-name"
+          >
+          <label class="form-label" for="test-name">Name</label>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-test-name"
+            data-field-error
+            data-error-for="name"
+            aria-live="polite"
+          >{{error('name')}}</span>
+        </div>
+
+        <div class="form-group form-group--file" data-field="files">
+          <label class="form-label" for="test-files">Files</label>
+
+          <input
+            name="files[]"
+            id="test-files"
+            type="file"
+            class="form-control"
+            multiple
+            aria-describedby="error-test-files"
+          >
+
+          <span
+            class="form-group__error text-danger"
+            id="error-test-files"
+            data-field-error
+            data-error-for="files"
+            aria-live="polite"
+          >{{error('files')}}</span>
+        </div>
+
+        <button type="submit" class="button__submit btn btn-primary">
+          <span class="button__submit__text">Submit</span>
+        </button>
+      </fieldset>
+    </form>
+  </div>
+</section>

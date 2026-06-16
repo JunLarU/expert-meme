@@ -1,0 +1,151 @@
+/** Media Queries **/
+@mixin telefono {
+	@media (min-width: #{$telefono}) {
+		@content;
+	}
+}
+
+@mixin tablet {
+	@media (min-width: #{$tablet}) {
+		@content;
+	}
+}
+
+@mixin desktop {
+	@media (min-width: #{$desktop}) {
+		@content;
+	}
+}
+
+
+
+@function strip-units($number) {
+	@return $number / ($number * 0 + 1);
+}
+
+@mixin clearfix {
+	&::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+}
+
+@mixin hex-grid(
+    $columns,
+    $gutter: 0,
+    $weight: odd
+){
+    float: left;
+
+    // Multicolumn layout
+    @if $columns > 1 {
+        // The gutter count is one less than number of columns
+        $gutter-count: $columns - 1;
+
+        // The width of each hexagon is:
+        //   100 (The total width of the container)
+        // - The gutter width * $gutter-count
+        // ÷ The number of columns
+        // ÷ 100 (for percentage)
+        $width: percentage( (100 - (strip-units($gutter) * $gutter-count)) / $columns / 100);
+        width: $width;
+
+        // The gutter
+        margin-right: $gutter;
+
+        // When constructing the grid, the last column in even rows (n) is significant
+        // That column defines the point at which the grid pattern repeats
+        $n: ($columns * 2) - 1;
+
+        // There are short rows and there are long rows
+        // The first and last column is short rows must be pushed away from the edges
+        $push: ($width+$gutter)/2;
+        
+        // First column in short rows
+        $first-short: 1;
+        @if $weight == odd {
+            $first-short: $columns + 1;
+        }
+        &:nth-child(#{$n}n+#{$first-short}) {
+            margin-left: $push;
+        }
+
+        // Last column in short rows
+        $last-short: $columns - 1;
+        @if $weight == odd {
+            $last-short: $n;
+        }
+        &:nth-child(#{$n}n+#{$last-short}) {
+            margin-right: $push;
+        }
+
+        // The last column in long rows needs no gutter
+        $last-long: $n;
+        @if $weight == odd {
+            $last-long: $columns;
+        }
+        &:nth-child(#{$n}n+#{$last-long}){
+            margin-right: 0;
+        }
+
+        // To remove excess space between rows, the rows must be "pulled" together
+        // This should only occur on even rows, as the first row should define the
+        // initial placement of the grid
+        // sqrt(3)/6 == 0.288675135
+        $pull: ($width * -0.288675135) + $gutter;
+
+        // Every element in even rows
+        $first-even: $columns;
+        @if $weight == odd {
+            $first-even: $columns + 1;
+        }
+        $all-even: join((),(),comma);
+        @for $i from $first-even through $n {
+            $all-even: append($all-even, unquote("&:nth-child(#{$n}n+#{$i})")); 
+        }
+        #{$all-even} {
+          margin-top: $pull;
+          margin-bottom: $pull; 
+        }
+
+    }
+    // Single column layout
+    @else if $columns == 1 {
+
+        // Given the nature of hexagons, 2/3 is the default width
+        $width: percentage(2/3) - ($gutter/2);
+        width: $width;
+
+        // Each column must be pushed into place
+        // The visual weight is placed on the left column
+        $even-push: right;
+        $odd-push: left;
+        @if $weight == odd {
+            $even-push: left;
+            $odd-push: right;
+        }
+        $push: 100% - $width;
+
+        // To remove excess space between rows, the rows must be "pulled" together
+        // This should only occur on even rows, as the first row should define the
+        // initial placement of the grid
+        // sqrt(3)/6 == 0.288675135
+        $pull: ($width * -0.288675135) + $gutter;
+        &:nth-child(even) {
+          margin-#{$even-push}: $push;
+
+          margin-top: $pull;
+          margin-bottom: $pull;
+        }
+        
+        &:nth-child(odd) {
+          margin-#{$odd-push}: $push;
+        }
+    }
+
+    // Ensure the last row maintains it position
+    &:last-child {
+        margin-bottom: 0;
+    }
+}

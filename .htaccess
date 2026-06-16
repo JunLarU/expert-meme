@@ -1,0 +1,47 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # =========================
+    # OCULTAR ARCHIVOS SENSIBLES COMO 404
+    # =========================
+    RewriteRule ^\.env$ - [R=404,L,NC]
+    RewriteRule ^\.git - [R=404,L,NC]
+    RewriteRule ^\.gitignore$ - [R=404,L,NC]
+    RewriteRule ^composer\.(json|lock)$ - [R=404,L,NC]
+    RewriteRule ^package(-lock)?\.json$ - [R=404,L,NC]
+    RewriteRule ^webpack\.config\.js$ - [R=404,L,NC]
+    RewriteRule ^phpunit\.xml$ - [R=404,L,NC]
+    RewriteRule ^.*\.code-workspace$ - [R=404,L,NC]
+    RewriteRule ^.*\.(log|sql|yml|yaml|ini|sh|bat)$ - [R=404,L,NC]
+
+    # =========================
+    # OCULTAR CARPETAS INTERNAS COMO 404
+    # =========================
+    RewriteRule ^(app|config|Database|logs|node_modules|resources|routes|vendor)(/.*)?$ - [R=404,L,NC]
+
+    # =========================
+    # PERMITIR ARCHIVOS SEO
+    # =========================
+    RewriteRule ^(robots\.txt|sitemap\.xml)$ public/$1 [L]
+
+    # =========================
+    # YA ESTÁ EN /public -> NO REESCRIBIR
+    # =========================
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^ - [L]
+
+    # =========================
+    # ENVIAR TODO LO DEMÁS A /public
+    # =========================
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+    SetOutputFilter DEFLATE
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|svg|mp4|woff2?)$ no-gzip dont-vary
+</IfModule>
+
+# Opcional: página 404 genérica
+ErrorDocument 404 http://localhost/error404

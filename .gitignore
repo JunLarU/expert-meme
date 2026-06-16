@@ -1,0 +1,15 @@
+/vendor/
+/vendor
+
+/vendor/*
+!/vendor/junlar11/
+ /vendor/junlar11/*
+!/vendor/junlar11/whis-core/
+!/vendor/junlar11/whis-core/**
+
+
+/node_modules/
+/node_modules
+package-lock.json
+/assets/views/compiled
+.env
