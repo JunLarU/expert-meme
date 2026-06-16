@@ -1,30 +1,91 @@
-<h1>Register</h1>
-<form method="post">
-  <div class="mb-3">
-    <label class="form-label">Email</label>
-    <input value="{{old('email')}}" name="email" type="email" class="form-control">
-    <div class="text-danger">{{error('email')}}</div>
+<section class="form-page" aria-labelledby="register-title">
+  <div class="form-card">
+    <h1 id="register-title">Register</h1>
+
+    <form class="form form--default" id="register_form" method="post" action="@url/register"
+      enctype="multipart/form-data" data-ajax-form data-validation="html" data-send-as="formdata" data-csrf="true"
+      data-csrf-field="_token" data-reset-on-success="false" novalidate aria-labelledby="register-form-legend">
+      @csrf('register')
+
+      <fieldset class="form__fieldset">
+        <legend id="register-form-legend">Crear cuenta</legend>
+
+        <div class="form__status" id="registerFormStatus" data-form-status role="status" aria-live="polite"></div>
+
+        <div class="form-group" data-field="email">
+          <input value="{{old('email')}}" name="email" id="register-email" type="email" class="form-control"
+            placeholder=" " autocomplete="email" inputmode="email" required maxlength="150" data-label="email"
+            aria-describedby="error-register-email">
+          <label class="form-label" for="register-email">Email</label>
+
+          <span class="form-group__error text-danger" id="error-register-email" data-field-error data-error-for="email"
+            aria-live="polite">{{error('email')}}</span>
+        </div>
+
+        <div class="form-group" data-field="name">
+          <input value="{{old('name')}}" name="name" id="register-name" type="text" class="form-control" placeholder=" "
+            autocomplete="name" required minlength="3" maxlength="120" data-label="name"
+            aria-describedby="error-register-name">
+          <label class="form-label" for="register-name">Name</label>
+
+          <span class="form-group__error text-danger" id="error-register-name" data-field-error data-error-for="name"
+            aria-live="polite">{{error('name')}}</span>
+        </div>
+
+        <div class="form-group" data-field="role">
+          <select name="role" id="register-role" class="form-control" required data-label="role"
+            aria-describedby="error-register-role">
+            <option value="" disabled selected hidden></option>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
+          <label class="form-label" for="register-role">Role</label>
+
+          <span class="form-group__error text-danger" id="error-register-role" data-field-error data-error-for="role"
+            aria-live="polite">{{error('role')}}</span>
+        </div>
+
+        <div class="form-group" data-field="password">
+          <input name="password" id="register-password" type="password" class="form-control" placeholder=" "
+            autocomplete="new-password" required minlength="8" data-label="password"
+            aria-describedby="error-register-password">
+          <label class="form-label" for="register-password">Password</label>
+
+          <span class="form-group__error text-danger" id="error-register-password" data-field-error
+            data-error-for="password" aria-live="polite">{{error('password')}}</span>
+        </div>
+
+        <div class="form-group" data-field="confirm_password">
+          <input name="confirm_password" id="register-confirm-password" type="password" class="form-control"
+            placeholder=" " autocomplete="new-password" required minlength="8" data-label="confirm password"
+            data-match="password" data-message-match="Las contraseñas no coinciden."
+            aria-describedby="error-register-confirm-password">
+          <label class="form-label" for="register-confirm-password">Confirm password</label>
+
+          <span class="form-group__error text-danger" id="error-register-confirm-password" data-field-error
+            data-error-for="confirm_password" aria-live="polite">{{error('confirm_password')}}</span>
+        </div>
+        <div class="form-group form-group--file" data-field="files">
+          <label class="form-label" for="test-files">Files</label>
+
+          <input type="file" name="files[]" id="test-files" class="form-control" multiple
+            accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg" data-min-files="0" data-max-files="1"
+            data-max-file-size="1mb" data-max-total-size="1mb"
+            data-file-types=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg"
+            data-message-min-files="Debes subir al menos 1 archivo."
+            data-message-max-files="Solo puedes subir máximo 2 archivos."
+            data-message-file-size="Cada archivo debe pesar máximo 1 MB."
+            data-message-file-total-size="El peso total no debe superar 2 MB."
+            data-message-file-type="Solo se permiten archivos PNG, JPG, JPEG o PDF."
+            aria-describedby="error-test-files">
+
+          <span class="form-group__error text-danger" id="error-test-files" data-field-error data-error-for="files"
+            aria-live="polite">{{error('files')}}</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </fieldset>
+    </form>
   </div>
-
-  <div class="mb-3">
-    <label class="form-label">Name</label>
-    <input value="{{old('name')}}" name="name" type="text" class="form-control">
-    <div class="text-danger">{{error('name')}}</div>
-
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Password</label>
-    <input name="password" type="password" class="form-control">
-    <div class="text-danger">{{error('password')}}</div>
-
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Confirm password</label>
-    <input name="confirm_password" type="password" class="form-control">
-    <div class="text-danger">{{error('confirm_password')}}</div>
-
-  </div>
-  @csrf
-
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+</section>
