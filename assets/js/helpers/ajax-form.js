@@ -394,9 +394,12 @@ async function handleSubmit(event, state) {
 
     const parsedResponse = await parseResponse(response);
 
-    if (response.redirected && !parsedResponse.isJson) {
-      window.location.href = response.url;
-      return;
+    if (!parsedResponse.isJson) {
+      throw new Error(
+        response.redirected
+          ? "El servidor redirigió la petición. Revisa CSRF, validación del archivo o límites de subida de PHP."
+          : getMessage(state, "invalidServerResponse"),
+      );
     }
 
     const data = parsedResponse.data;
@@ -435,7 +438,7 @@ async function handleSubmit(event, state) {
     );
 
     if (state.options.resetOnSuccess) {
-      state.form.reset();
+      resetFormFields(state);
       resetValidationStyles(state);
     }
   } catch (error) {
@@ -611,6 +614,24 @@ function validateField(field, state) {
     }
   }
 
+  if (normalizedValue instanceof FileList) {
+    const fileValidationMessage = validateFileField(
+      normalizedValue,
+      field,
+      state,
+      rules,
+      label,
+    );
+
+    if (fileValidationMessage) {
+      setFieldState(field, state, false, fileValidationMessage);
+      return false;
+    }
+
+    setFieldState(field, state, true);
+    return true;
+  }
+
   if (rules.match) {
     const otherField = state.form.querySelector(
       `[name="${escapeAttribute(rules.match)}"]`,
@@ -654,7 +675,10 @@ function getValidationProfile(state) {
 
 function getFieldRules(field, state) {
   const profile = getValidationProfile(state);
-  const profileRules = profile.fields?.[field.name] || {};
+  const normalizedName = normalizeFieldName(field.name);
+
+  const profileRules =
+    profile.fields?.[field.name] || profile.fields?.[normalizedName] || {};
 
   return {
     ...profileRules,
@@ -698,6 +722,32 @@ function getRulesFromDataset(field) {
     rules.normalize = dataset.normalize;
   }
 
+  if (dataset.maxFileSize) {
+    rules.maxFileSize = Number(dataset.maxFileSize);
+  }
+
+  if (dataset.maxTotalSize) {
+    rules.maxTotalSize = Number(dataset.maxTotalSize);
+  }
+
+  if (dataset.maxFiles) {
+    rules.maxFiles = Number(dataset.maxFiles);
+  }
+
+  if (dataset.fileTypes) {
+    rules.fileTypes = dataset.fileTypes
+      .split(",")
+      .map((type) => type.trim().toLowerCase())
+      .filter(Boolean);
+  }
+
+  if (field.getAttribute("accept")) {
+    rules.accept = field
+      .getAttribute("accept")
+      .split(",")
+      .map((type) => type.trim().toLowerCase())
+      .filter(Boolean);
+  }
   return rules;
 }
 
@@ -1108,9 +1158,10 @@ async function parseResponse(response) {
 
   return {
     isJson: false,
+    text,
     data: {
-      ok: response.ok,
-      message: text,
+      ok: false,
+      error: text || "La respuesta del servidor no fue JSON.",
     },
   };
 }
@@ -1205,7 +1256,7 @@ function resetValidationStyles(state) {
 }
 
 function resetFormState(state) {
-  state.form.reset();
+  resetFormFields(state);
   clearStatus(state);
   resetValidationStyles(state);
   setLoadingState(state, false);
@@ -1223,18 +1274,43 @@ function findFieldGroup(field, form) {
 }
 
 function findErrorBox(field, form, group) {
+  const candidates = getFieldNameCandidates(field.name);
+
+  for (const name of candidates) {
+    const errorBox =
+      group?.querySelector(`[data-error-for="${escapeAttribute(name)}"]`) ||
+      group?.querySelector(`#error-${cssEscape(name)}`) ||
+      form.querySelector(`[data-error-for="${escapeAttribute(name)}"]`) ||
+      form.querySelector(`#error-${cssEscape(name)}`);
+
+    if (errorBox) return errorBox;
+  }
+
   return (
-    group?.querySelector(`[data-error-for="${escapeAttribute(field.name)}"]`) ||
-    group?.querySelector(`#error-${cssEscape(field.name)}`) ||
     group?.querySelector("[data-field-error]") ||
-    group?.querySelector(".form-group__error") ||
-    form.querySelector(`[data-error-for="${escapeAttribute(field.name)}"]`) ||
-    form.querySelector(`#error-${cssEscape(field.name)}`)
+    group?.querySelector(".form-group__error")
   );
 }
 
 function findFieldByName(form, fieldName) {
-  return form.querySelector(`[name="${escapeAttribute(fieldName)}"]`);
+  const candidates = getFieldNameCandidates(fieldName);
+
+  for (const name of candidates) {
+    const field = form.querySelector(`[name="${escapeAttribute(name)}"]`);
+
+    if (field) return field;
+  }
+
+  return null;
+}
+
+function getFieldNameCandidates(fieldName) {
+  const name = String(fieldName || "");
+  const normalized = normalizeFieldName(name);
+
+  return Array.from(new Set([name, normalized, `${normalized}[]`])).filter(
+    Boolean,
+  );
 }
 
 function findStatusBox(form) {
@@ -1420,4 +1496,247 @@ function getMessageContext(label, extra = {}) {
     Label: capitalize(label),
     ...extra,
   };
+}
+
+function resetFormFields(state) {
+  const form = state.form;
+
+  const csrfField = state.options.csrfField || "_token";
+
+  const preservedValues = preserveResetSafeValues(form, [
+    csrfField,
+    "_csrf_key",
+  ]);
+
+  state.fields.forEach((field) => {
+    if (!field.name || field.disabled) return;
+
+    const type = String(field.type || "").toLowerCase();
+
+    if (field.name === csrfField || field.name === "_csrf_key") {
+      return;
+    }
+
+    if (type === "file") {
+      resetFileInput(field);
+      dispatchResetEvents(field);
+      return;
+    }
+
+    if (type === "checkbox" || type === "radio") {
+      field.checked = field.defaultChecked;
+      dispatchResetEvents(field);
+      return;
+    }
+
+    if (field.tagName === "SELECT") {
+      resetSelectField(field);
+      dispatchResetEvents(field);
+      return;
+    }
+
+    field.value = field.defaultValue || "";
+    dispatchResetEvents(field);
+  });
+
+  restorePreservedValues(form, preservedValues);
+}
+
+function resetFileInput(field) {
+  try {
+    field.value = "";
+  } catch (_) {
+    // Fallback raro para navegadores viejos.
+  }
+
+  if (field.files && field.files.length > 0) {
+    const clone = field.cloneNode(true);
+    clone.value = "";
+    field.replaceWith(clone);
+  }
+}
+
+function resetSelectField(field) {
+  if (field.multiple) {
+    Array.from(field.options).forEach((option) => {
+      option.selected = option.defaultSelected;
+    });
+
+    return;
+  }
+
+  const defaultOption = Array.from(field.options).find(
+    (option) => option.defaultSelected,
+  );
+
+  if (defaultOption) {
+    field.value = defaultOption.value;
+    return;
+  }
+
+  field.selectedIndex = field.options.length ? 0 : -1;
+}
+
+function preserveResetSafeValues(form, names = []) {
+  const values = {};
+
+  names.forEach((name) => {
+    const field = form.querySelector(`[name="${escapeAttribute(name)}"]`);
+
+    if (field) {
+      values[name] = field.value;
+    }
+  });
+
+  return values;
+}
+
+function restorePreservedValues(form, values = {}) {
+  Object.entries(values).forEach(([name, value]) => {
+    const field = form.querySelector(`[name="${escapeAttribute(name)}"]`);
+
+    if (field) {
+      field.value = value;
+      field.defaultValue = value;
+    }
+  });
+}
+
+function dispatchResetEvents(field) {
+  field.dispatchEvent(new Event("input", { bubbles: true }));
+  field.dispatchEvent(new Event("change", { bubbles: true }));
+}
+function validateFileField(files, field, state, rules, label) {
+  const fileArray = Array.from(files || []);
+
+  if (!fileArray.length) {
+    return "";
+  }
+
+  if (rules.maxFiles && fileArray.length > Number(rules.maxFiles)) {
+    return (
+      field.dataset.messageMaxFiles ||
+      rules.messageMaxFiles ||
+      getMessage(
+        state,
+        "maxFiles",
+        `${capitalize(label)} permite máximo ${rules.maxFiles} archivo(s).`,
+        getMessageContext(label, {
+          maxFiles: rules.maxFiles,
+        }),
+      )
+    );
+  }
+
+  if (rules.maxFileSize) {
+    const maxFileSize = Number(rules.maxFileSize);
+
+    const oversizedFile = fileArray.find((file) => file.size > maxFileSize);
+
+    if (oversizedFile) {
+      return (
+        field.dataset.messageFileSize ||
+        rules.messageFileSize ||
+        getMessage(
+          state,
+          "fileSize",
+          `${capitalize(label)} excede el tamaño máximo permitido.`,
+          getMessageContext(label, {
+            fileName: oversizedFile.name,
+            fileSize: oversizedFile.size,
+            maxFileSize,
+            fileSizeFormatted: formatBytes(oversizedFile.size),
+            maxFileSizeFormatted: formatBytes(maxFileSize),
+          }),
+        )
+      );
+    }
+  }
+
+  if (rules.maxTotalSize) {
+    const maxTotalSize = Number(rules.maxTotalSize);
+    const totalSize = fileArray.reduce((total, file) => total + file.size, 0);
+
+    if (totalSize > maxTotalSize) {
+      return (
+        field.dataset.messageFileTotalSize ||
+        rules.messageFileTotalSize ||
+        getMessage(
+          state,
+          "fileTotalSize",
+          `El peso total de ${label} excede el máximo permitido.`,
+          getMessageContext(label, {
+            totalSize,
+            maxTotalSize,
+            totalSizeFormatted: formatBytes(totalSize),
+            maxTotalSizeFormatted: formatBytes(maxTotalSize),
+          }),
+        )
+      );
+    }
+  }
+
+  const allowedTypes = rules.fileTypes || rules.accept || [];
+
+  if (allowedTypes.length) {
+    const invalidFile = fileArray.find(
+      (file) => !isAllowedFileType(file, allowedTypes),
+    );
+
+    if (invalidFile) {
+      return (
+        field.dataset.messageFileType ||
+        rules.messageFileType ||
+        getMessage(
+          state,
+          "fileType",
+          `${capitalize(label)} contiene un tipo de archivo no permitido.`,
+          getMessageContext(label, {
+            fileName: invalidFile.name,
+            fileType: invalidFile.type || "",
+          }),
+        )
+      );
+    }
+  }
+
+  return "";
+}
+
+function isAllowedFileType(file, allowedTypes = []) {
+  const fileType = String(file.type || "").toLowerCase();
+  const fileName = String(file.name || "").toLowerCase();
+
+  return allowedTypes.some((allowed) => {
+    const rule = String(allowed || "").toLowerCase();
+
+    if (!rule) return false;
+
+    if (rule.startsWith(".")) {
+      return fileName.endsWith(rule);
+    }
+
+    if (rule.endsWith("/*")) {
+      const group = rule.replace("/*", "");
+      return fileType.startsWith(`${group}/`);
+    }
+
+    return fileType === rule;
+  });
+}
+
+function formatBytes(bytes) {
+  const value = Number(bytes || 0);
+
+  if (value < 1024) return `${value} B`;
+  if (value < 1024 * 1024) return `${(value / 1024).toFixed(2)} KB`;
+  if (value < 1024 * 1024 * 1024) {
+    return `${(value / 1024 / 1024).toFixed(2)} MB`;
+  }
+
+  return `${(value / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
+
+function normalizeFieldName(name) {
+  return String(name || "").replace(/\[\]$/, "");
 }

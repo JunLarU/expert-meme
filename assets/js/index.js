@@ -1,59 +1,93 @@
 import "../sass/app.scss";
-import { bootstrapWhisDefaults } from "./framework-defaults";
+import { bootstrapWhisDefaults } from "./helpers/framework-defaults";
 
 export {
   WHIS_DEFAULT_OPTIONS,
   defineWhisDefaults,
   getWhisDefaults,
+  resetWhisDefaults,
+  createWhisConfig,
   initWhisDefaults,
   bootstrapWhisDefaults,
-} from "./framework-defaults";
+  getWhisInstance,
+  refreshWhisDefaults,
+  destroyWhisDefaults,
+} from "./helpers/framework-defaults";
 
 /**
  * Inicialización default del framework.
  *
  * El usuario puede usar esto tal cual, o borrar esta línea
  * e inicializar manualmente con initWhisDefaults({...}).
- 
-    bootstrapWhisDefaults();
-    import "../sass/app.scss";
-    import { initWhisDefaults } from "./framework-defaults";
+ */
+bootstrapWhisDefaults();
 
-    initWhisDefaults({
-    modules: {
-        stats: false,
-        splideMediaControl: false,
+/**
+Ejemplo sencillo:
+import "../sass/app.scss";
+import { initWhisDefaults } from "./framework-defaults";
+
+initWhisDefaults({
+  ajaxForms: {
+    csrf: true,
+    sendAs: "urlencoded",
+  },
+
+  images: {
+    rootMargin: "200px",
+    maxRetries: 5,
+  },
+
+  videos: {
+    autoplay: false,
+    pauseOnExit: true,
+  },
+});
+Ejempllo avanzado:
+import "../sass/app.scss";
+import {
+  defineWhisDefaults,
+  initWhisDefaults,
+} from "./framework-defaults";
+
+defineWhisDefaults({
+  ajaxForms: {
+    csrf: true,
+    csrfField: "_token",
+    sendAs: "auto",
+  },
+
+  selectors: {
+    lazyImages: ".lazy-image, [data-lazy-image]",
+    lazyBackgrounds: ".lazy-bg, [data-background-src]",
+    lazyVideos: ".lazy-video, [data-lazy-video]",
+  },
+});
+
+const whis = initWhisDefaults({
+  callbacks: {
+    afterInit(api) {
+      console.log("Whis listo:", api);
     },
 
-    ajaxForms: {
-        csrf: true,
-        sendAs: "urlencoded",
+    onImageComplete(total) {
+      console.log(`Imágenes cargadas: ${total}`);
     },
 
-    splide: {
-        options: {
-        type: "loop",
-        autoplay: true,
-        interval: 5000,
-        },
-
-        pageOptions: {
-        eventos: {
-            autoplay: false,
-            arrows: true,
-            pagination: true,
-        },
-        },
+    onVideoComplete(total) {
+      console.log(`Videos cargados: ${total}`);
     },
+  },
+});
 
-    images: {
-        rootMargin: "200px",
-        maxRetries: 5,
-    },
+// Cuando el usuario inyecte HTML dinámico:
+whis.refresh();
 
-    videos: {
-        autoplay: false,
-        pauseOnExit: true,
-    },
-    });
-**/
+// Si necesita reiniciar todo:
+whis.reinit({
+  images: {
+    rootMargin: "300px",
+  },
+});
+
+*/

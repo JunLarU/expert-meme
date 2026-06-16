@@ -267,10 +267,10 @@ module.exports = (env, argv) => {
 
       new CopyWebpackPlugin({
         patterns: [
-          {
-            from: path.resolve(__dirname, "assets/images/ICON.png"),
-            to: path.resolve(__dirname, "resources/assets/images/ICON.png"),
-          },
+          // {
+          //   from: path.resolve(__dirname, "assets/images/ICON.png"),
+          //   to: path.resolve(__dirname, "resources/assets/images/ICON.png"),
+          // },
           {
             from: path.resolve(__dirname, "assets/robots.txt"),
             to: path.resolve(__dirname, "resources/assets/robots.txt"),
