@@ -24,7 +24,7 @@ class StencilEngine implements ViewEngine
         $this->compiledPath = App::$root . "/resources/views";
     }
 
-    public function render($file, array $parameters = [], string $layout = null): string
+    public function render($file, array $parameters = [], ?string $layout = null): string
     {
         $this->compile($file, $layout);
 
@@ -68,7 +68,7 @@ class StencilEngine implements ViewEngine
             throw $e;
         }
     }
-    protected function compile($file, $layout = null)
+    protected function compile($file, ?string $layout = null)
     {
         $directories = [];
         $extra       = "";
@@ -135,7 +135,7 @@ class StencilEngine implements ViewEngine
         return str_replace($this->urlAnnotation, config("app.url"), $code);
         // Fornece: Hll Wrld f PHP;
     }
-    protected function includeFiles($file, bool | string $layout = null)
+    protected function includeFiles($file, bool | string | null $layout = null)
     {
         $code = file_get_contents($file);
 

@@ -44,4 +44,4 @@
 </IfModule>
 
 # Opcional: página 404 genérica
-ErrorDocument 404 http://localhost/error404
+ErrorDocument 404 /error404

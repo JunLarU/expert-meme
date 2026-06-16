@@ -13,9 +13,20 @@ class Storage
      * @param mixed $content
      * @return string URL of the file.
      */
-    public static function put(string $path, mixed $content, bool $returnPath = false, string $alternativeDirectory = null, string $customUrl = null): string
-    {
-        return app(FileStorageDriver::class)->put($path, $content, $returnPath, $alternativeDirectory, $customUrl);
+    public static function put(
+        string $path,
+        mixed $content,
+        bool $returnPath = false,
+        ?string $alternativeDirectory = null,
+        ?string $customUrl = null
+    ): string {
+        return app(FileStorageDriver::class)->put(
+            $path,
+            $content,
+            $returnPath,
+            $alternativeDirectory,
+            $customUrl
+        );
     }
 
     public static function remove(string $path): bool
@@ -23,41 +34,64 @@ class Storage
         return app(FileStorageDriver::class)->remove($path);
     }
 
-    public static function download(string $filename, ?bool $asset = false, string $alternativeName = null, string $folder = "")
-    {
-        $filename = $folder . "/" . $filename;
+    public static function download(
+        string $filename,
+        bool $asset = false,
+        ?string $alternativeDirectory = null,
+        string $folder = ""
+    ) {
+        $filename = trim($folder . "/" . $filename, "/");
 
         if (in_array($folder, config("storage.assets")) || $asset) {
-            return app(FileStorageDriver::class)->downloadFile($filename, true);
-        } else {
-            if ($folder == "storage") {
-                $filename = str_replace("storage/", "", $filename);
-            }
-            return app(FileStorageDriver::class)->downloadFile($filename, false);
+            return app(FileStorageDriver::class)->downloadFile(
+                $filename,
+                true,
+                $alternativeDirectory
+            );
         }
+
+        if ($folder === "storage") {
+            $filename = str_replace("storage/", "", $filename);
+        }
+
+        return app(FileStorageDriver::class)->downloadFile(
+            $filename,
+            false,
+            $alternativeDirectory
+        );
     }
 
-    public static function get(string $filename, ?bool $asset = false, string $alternativeFolder = null, string $folder = "")
-    {
-        $filename = $folder . "/" . $filename;
+    public static function get(
+        string $filename,
+        bool $asset = false,
+        ?string $alternativeDirectory = null,
+        string $folder = ""
+    ) {
+        $filename = trim($folder . "/" . $filename, "/");
 
         if ($asset) {
-            return app(FileStorageDriver::class)->getFile($filename, true, $alternativeFolder);
-        } else {
-            if ($folder == "storage") {
-                $filename = str_replace("storage/", "", $filename);
-            }
-            return app(FileStorageDriver::class)->getFile($filename, false, $alternativeFolder);
+            return app(FileStorageDriver::class)->getFile(
+                $filename,
+                true,
+                $alternativeDirectory
+            );
         }
+
+        if ($folder === "storage") {
+            $filename = str_replace("storage/", "", $filename);
+        }
+
+        return app(FileStorageDriver::class)->getFile(
+            $filename,
+            false,
+            $alternativeDirectory
+        );
     }
 
     public static function Routes()
     {
         /**
          * Rutas SEO directas
-         * Sirven:
-         *   /robots.txt   -> resources/assets/robots.txt
-         *   /sitemap.xml  -> resources/assets/sitemap.xml
          */
         Route::get('/robots.txt', function () {
             return self::get('robots.txt', true);
@@ -67,25 +101,72 @@ class Storage
             return self::get('sitemap.xml', true);
         });
 
-        Route::get('/download/{folder}/{filename:.*}', function (string $folder, string $filename) {
-            if ($folder == null) {
+        /**
+         * Ruta específica para archivos privados/semipúblicos guardados en:
+         *
+         * storage/uploads/...
+         *
+         * Ejemplo:
+         * /storage/uploads/profile_pictures/archivo.png
+         */
+        Route::get('/storage/uploads/{filename:.*}', function (string $filename) {
+            if ($filename === '') {
                 return;
             }
-            if ($filename == null) {
-                return;
-            }
-            $asset = (in_array($folder, config("storage.assets")) ? true : false);
-            self::download($filename, $asset, null, $folder);
+
+            return self::get(
+                $filename,
+                false,
+                "storage/uploads"
+            );
         });
 
-        Route::get('/{folder}/{filename:.*}', function (string $folder, string $filename) {if ($folder == null) {
-            return;
-        }
-            if ($filename == null) {
+        Route::get('/download/storage/uploads/{filename:.*}', function (string $filename) {
+            if ($filename === '') {
                 return;
             }
 
-            $asset = (in_array($folder, config("storage.assets")) ? true : false);
-            self::get($filename, $asset, null, $folder);});
+            return self::download(
+                $filename,
+                false,
+                "storage/uploads"
+            );
+        });
+
+        /**
+         * Ruta genérica de descarga.
+         */
+        Route::get('/download/{folder}/{filename:.*}', function (string $folder, string $filename) {
+            if ($folder === '' || $filename === '') {
+                return;
+            }
+
+            $asset = in_array($folder, config("storage.assets"));
+
+            return self::download(
+                $filename,
+                $asset,
+                null,
+                $folder
+            );
+        });
+
+        /**
+         * Ruta genérica de archivos.
+         */
+        Route::get('/{folder}/{filename:.*}', function (string $folder, string $filename) {
+            if ($folder === '' || $filename === '') {
+                return;
+            }
+
+            $asset = in_array($folder, config("storage.assets"));
+
+            return self::get(
+                $filename,
+                $asset,
+                null,
+                $folder
+            );
+        });
     }
 }

@@ -18,12 +18,14 @@ class CsrfSaverMiddleware implements Middleware
         $key = $this->getCsrfKey($request);
         $token = $this->getCsrfToken($request);
 
-        $valid = Csrf::validate($key, $token, true);
-
         /*
-         * Compatibilidad con la versión vieja:
-         * session()->set('_token', $token)
+         * IMPORTANTE:
+         * No consumas el token aquí.
+         * Si lo consumes antes y luego falla una validación, el frontend queda
+         * con un token muerto y el siguiente submit puede terminar en redirect.
          */
+        $valid = Csrf::validate($key, $token, false);
+
         if (!$valid) {
             $valid = $this->validateLegacyToken($key, $token);
         }
@@ -34,11 +36,7 @@ class CsrfSaverMiddleware implements Middleware
 
         $response = $next($request);
 
-        /*
-         * Para ajax-form, el token se consume y se entrega uno nuevo.
-         * Para formularios normales no hace falta porque normalmente hay redirect/recarga.
-         */
-        if ($this->expectsJson($request)) {
+        if ($request->expectsJson()) {
             $response = $this->attachFreshToken($response, $key);
         }
 
@@ -77,29 +75,28 @@ class CsrfSaverMiddleware implements Middleware
             return false;
         }
 
-        if (!hash_equals($legacyToken, $token)) {
-            return false;
-        }
-
-        session()->remove('_token');
-
-        return true;
+        return hash_equals($legacyToken, $token);
     }
 
     private function invalidCsrfResponse(Request $request, string $key): Response
     {
-        if (!$this->expectsJson($request)) {
-            return Response::redirect('/');
-        }
-
         $freshToken = Csrf::generate($key);
 
-        return Response::json([
-            'ok' => false,
-            'error' => 'La sesión del formulario expiró. Intenta enviarlo nuevamente.',
-            'csrfKey' => $key,
-            'csrfToken' => $freshToken,
-        ])->setStatus(419);
+        if ($request->expectsJson()) {
+            return Response::json([
+                'ok'        => false,
+                'error'     => 'La sesión del formulario expiró. Intenta enviarlo nuevamente.',
+                'message'   => 'La sesión del formulario expiró. Intenta enviarlo nuevamente.',
+                'csrfKey'   => $key,
+                'csrfToken' => $freshToken,
+            ])->setStatus(419);
+        }
+
+        /*
+         * Solo formularios normales deben redirigir.
+         * Las peticiones AJAX jamás deberían caer aquí.
+         */
+        return Response::redirect('/');
     }
 
     private function attachFreshToken(Response $response, string $key): Response
@@ -112,10 +109,7 @@ class CsrfSaverMiddleware implements Middleware
         $contentType = strtolower((string) $response->headers('content-type'));
         $content = $response->content();
 
-        if (
-            $content &&
-            str_contains($contentType, 'application/json')
-        ) {
+        if ($content && str_contains($contentType, 'application/json')) {
             $data = json_decode($content, true);
 
             if (is_array($data)) {
@@ -129,14 +123,5 @@ class CsrfSaverMiddleware implements Middleware
         }
 
         return $response;
-    }
-
-    private function expectsJson(Request $request): bool
-    {
-        $accept = strtolower((string) $request->headers('accept'));
-        $requestedWith = strtolower((string) $request->headers('x-requested-with'));
-
-        return str_contains($accept, 'application/json')
-            || $requestedWith === 'xmlhttprequest';
     }
 }

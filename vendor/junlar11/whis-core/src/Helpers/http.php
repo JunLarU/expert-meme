@@ -10,7 +10,6 @@ use Whis\Storage\Storage;
 
 function json(array $data): Response
 {
-    ($data);
     return Response::json($data);
 }
 
@@ -29,7 +28,7 @@ function back(): Response
     return redirect(session()->get('_previous', '/'));
 }
 
-function view(string $view, array $parameters = [], string $layout = null): Response
+function view(string $view, array $parameters = [], ?string $layout = null): Response
 {
     return Response::view($view, $parameters, $layout);
 }

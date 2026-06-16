@@ -63,7 +63,7 @@ class Cli
         $cli->run();
     }
 
-    public static function log(string $message,string $format=null,array $extraSettings=[]) {
+    public static function log(string $message,?string $format=null,array $extraSettings=[]) {
         if(is_null(self::$output)||!isset(self::$output)){
             self::$output=new ConsoleOutput();
         }

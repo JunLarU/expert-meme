@@ -11,5 +11,5 @@ interface ViewEngine
      * @param array $data
      * @return string
      */
-    public function render(string $view, array $parameters=[], string $layout=null): string;
+    public function render(string $view, array $parameters=[], ?string $layout=null): string;
 }

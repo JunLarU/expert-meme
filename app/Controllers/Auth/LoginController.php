@@ -12,22 +12,17 @@ class LoginController extends Controller
 {
     public function create()
     {
-        if (! isGuest()) {
+        if (!isGuest()) {
             return redirect('/');
         }
 
-        /*
-         * Ya no necesitas generar manualmente el token aquí
-         * si estás usando @csrf o @csrf('login') y tu middleware CSRF.
-         */
         return view('auth/login');
     }
 
     public function store(Request $request, Hasher $hasher)
     {
         /*
-         * Se conserva validate().
-         * El CSRF lo debe validar el middleware antes de llegar aquí.
+         * El CSRF lo valida el middleware antes de llegar aquí.
          */
         $data = $request->validate([
             'email'    => 'required|email',
@@ -36,12 +31,13 @@ class LoginController extends Controller
 
         $user = User::firstWhere('email', $data['email']);
 
-        if (is_null($user) || ! $hasher->verify($data['password'], $user->password)) {
-            if ($this->expectsJson()) {
+        if (is_null($user) || !$hasher->verify($data['password'], $user->password)) {
+            if ($this->expectsJson($request)) {
                 return Response::json([
-                    'ok' => false,
-                    'error' => "Credentials don't match",
-                    'errors' => [
+                    'ok'      => false,
+                    'message' => "Credentials don't match",
+                    'error'   => "Credentials don't match",
+                    'errors'  => [
                         'email' => "Credentials don't match",
                     ],
                 ])->setStatus(422);
@@ -56,10 +52,10 @@ class LoginController extends Controller
 
         $user->login();
 
-        if ($this->expectsJson()) {
+        if ($this->expectsJson($request)) {
             return Response::json([
-                'ok' => true,
-                'message' => 'Sesión iniciada correctamente.',
+                'ok'       => true,
+                'message'  => 'Sesión iniciada correctamente.',
                 'redirect' => '/',
             ]);
         }
@@ -76,14 +72,5 @@ class LoginController extends Controller
         auth()->logout();
 
         return redirect('/');
-    }
-
-    private function expectsJson(): bool
-    {
-        $accept = $_SERVER['HTTP_ACCEPT'] ?? '';
-        $requestedWith = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
-
-        return str_contains($accept, 'application/json')
-            || strtolower($requestedWith) === 'xmlhttprequest';
     }
 }

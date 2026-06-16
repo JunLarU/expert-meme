@@ -184,7 +184,7 @@ class Response
             ->setHeader('Location', $uri);
     }
 
-    public static function view(string $view, array $parameters = [], string $layout = null): self
+    public static function view(string $view, array $parameters = [], ?string $layout = null): self
     {
         $content = app(ViewEngine::class)->render($view, $parameters, $layout);
 

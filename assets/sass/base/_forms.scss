@@ -95,6 +95,7 @@ form[data-form-default] {
   font-size: 1.45rem;
   line-height: 1.5;
   text-align: left;
+  white-space: pre-line;
 
   &.is-visible {
     display: block;
@@ -275,7 +276,7 @@ input[type="file"].form-control::file-selector-button {
 }
 
 .form-group__error,
-.text-danger {
+.form .text-danger {
   display: block;
   min-height: 1.8rem;
   margin-top: 0.45rem;
@@ -284,8 +285,8 @@ input[type="file"].form-control::file-selector-button {
   font-size: 1.25rem;
   line-height: 1.35;
   text-align: left;
+  white-space: pre-line;
 }
-
 .form-group.has-error {
   input,
   select,
@@ -403,4 +404,10 @@ input[type="file"].form-control::file-selector-button {
   .formulario {
     padding: 2rem;
   }
+}
+
+.form__status,
+.contact-form__status,
+.form-group__error {
+  white-space: pre-line;
 }

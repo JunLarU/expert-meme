@@ -136,11 +136,7 @@ class App
 
     protected function expectsJson(Request $request): bool
     {
-        $accept        = strtolower((string) $request->headers('accept'));
-        $requestedWith = strtolower((string) $request->headers('x-requested-with'));
-
-        return str_contains($accept, 'application/json')
-            || $requestedWith === 'xmlhttprequest';
+        return $request->expectsJson();
     }
 
     /**
@@ -154,7 +150,16 @@ class App
             //throw new \Exception('No route matched.', 404);
             $this->abort(Response::view('errors/error', ["code" => 404, "text" => "Page not found"], "error")->setStatus(404));
         } catch (ValidationException $e) {
-            //throw new \Exception('No route matched.', 422);
+            if ($this->expectsJson($this->request)) {
+                $this->abort(
+                    Response::json([
+                        'ok'      => false,
+                        'message' => 'Revisa los campos enviados.',
+                        'errors'  => $e->errors(),
+                    ])->setStatus(422)
+                );
+            }
+
             $this->abort(back()->withErrors($e->errors(), 422));
         } catch (Throwable $e) {
             $error = new ReflectionClass($e);

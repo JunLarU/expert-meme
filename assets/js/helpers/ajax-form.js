@@ -41,6 +41,13 @@ const DEFAULT_OPTIONS = {
     rangeOverflow: "{Label} debe ser menor o igual a {max}.",
     match: "{Label} no coincide.",
     invalid: "{Label} no es válido.",
+    minFiles: "{Label} requiere mínimo {minFiles} archivo(s).",
+    maxFiles: "{Label} permite máximo {maxFiles} archivo(s).",
+    fileSize:
+      "{fileName} excede el tamaño máximo permitido de {maxFileSizeFormatted}.",
+    fileTotalSize:
+      "El peso total de {label} excede el máximo permitido de {maxTotalSizeFormatted}.",
+    fileType: "{fileName} tiene un tipo de archivo no permitido.",
   },
 };
 
@@ -407,10 +414,15 @@ async function handleSubmit(event, state) {
     updateCsrfTokenIfPresent(state, data, response);
 
     if (!response.ok || data?.ok === false) {
-      applyServerErrors(state, data?.errors);
+      const serverMessages = applyServerErrors(state, data?.errors);
 
-      const message =
-        data?.error || data?.message || getMessage(state, "genericError");
+      const hasFieldErrors = serverMessages.length > 0;
+
+      const messageParts = hasFieldErrors
+        ? [getMessage(state, "invalidForm"), ...serverMessages]
+        : [data?.error, data?.message, getMessage(state, "genericError")];
+
+      const message = uniqueMessages(messageParts).join("\n");
 
       throw new Error(message);
     }
@@ -722,16 +734,20 @@ function getRulesFromDataset(field) {
     rules.normalize = dataset.normalize;
   }
 
-  if (dataset.maxFileSize) {
-    rules.maxFileSize = Number(dataset.maxFileSize);
-  }
-
-  if (dataset.maxTotalSize) {
-    rules.maxTotalSize = Number(dataset.maxTotalSize);
+  if (dataset.minFiles) {
+    rules.minFiles = Number(dataset.minFiles);
   }
 
   if (dataset.maxFiles) {
     rules.maxFiles = Number(dataset.maxFiles);
+  }
+
+  if (dataset.maxFileSize) {
+    rules.maxFileSize = parseFileSize(dataset.maxFileSize);
+  }
+
+  if (dataset.maxTotalSize) {
+    rules.maxTotalSize = parseFileSize(dataset.maxTotalSize);
   }
 
   if (dataset.fileTypes) {
@@ -749,6 +765,46 @@ function getRulesFromDataset(field) {
       .filter(Boolean);
   }
   return rules;
+}
+
+function parseFileSize(value) {
+  if (typeof value === "number") return value;
+
+  const text = String(value || "")
+    .trim()
+    .toLowerCase();
+
+  if (!text) return 0;
+
+  const match = text.match(/^(\d+(?:\.\d+)?)(\s*)(b|kb|k|mb|m|gb|g)?$/i);
+
+  if (!match) {
+    const numeric = Number(text);
+    return Number.isFinite(numeric) ? numeric : 0;
+  }
+
+  const number = Number(match[1]);
+  const unit = match[3] || "b";
+
+  if (!Number.isFinite(number)) return 0;
+
+  switch (unit) {
+    case "g":
+    case "gb":
+      return Math.round(number * 1024 * 1024 * 1024);
+
+    case "m":
+    case "mb":
+      return Math.round(number * 1024 * 1024);
+
+    case "k":
+    case "kb":
+      return Math.round(number * 1024);
+
+    case "b":
+    default:
+      return Math.round(number);
+  }
 }
 
 function getNativeValidationMessage(field, label, state) {
@@ -1167,11 +1223,16 @@ async function parseResponse(response) {
 }
 
 function applyServerErrors(state, errors) {
-  if (!errors || typeof errors !== "object") return;
+  if (!errors || typeof errors !== "object") return [];
 
   const normalizedErrors = normalizeServerErrors(errors);
+  const allMessages = [];
 
   Object.entries(normalizedErrors).forEach(([fieldName, message]) => {
+    if (message) {
+      allMessages.push(message);
+    }
+
     const field = findFieldByName(state.form, fieldName);
 
     if (!field) return;
@@ -1180,26 +1241,40 @@ function applyServerErrors(state, errors) {
   });
 
   focusFirstInvalidField(state);
+
+  return allMessages;
 }
 
 function normalizeServerErrors(errors) {
   const normalized = {};
 
-  Object.entries(errors).forEach(([field, value]) => {
-    if (Array.isArray(value)) {
-      normalized[field] = String(value[0] || "");
-      return;
-    }
-
-    if (value && typeof value === "object") {
-      normalized[field] = String(Object.values(value)[0] || "");
-      return;
-    }
-
-    normalized[field] = String(value || "");
+  Object.entries(errors || {}).forEach(([field, value]) => {
+    normalized[field] = flattenErrorMessages(value).join("\n");
   });
 
   return normalized;
+}
+
+function flattenErrorMessages(value) {
+  if (value === null || value === undefined || value === "") {
+    return [];
+  }
+
+  if (typeof value === "string") {
+    return [value];
+  }
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => flattenErrorMessages(item)).filter(Boolean);
+  }
+
+  if (typeof value === "object") {
+    return Object.values(value)
+      .flatMap((item) => flattenErrorMessages(item))
+      .filter(Boolean);
+  }
+
+  return [String(value)];
 }
 
 function setFieldState(field, state, isValid, message = "") {
@@ -1608,49 +1683,67 @@ function dispatchResetEvents(field) {
 }
 function validateFileField(files, field, state, rules, label) {
   const fileArray = Array.from(files || []);
+  const errors = [];
 
-  if (!fileArray.length) {
-    return "";
+  const fileCount = fileArray.length;
+
+  if (rules.minFiles !== undefined && fileCount < Number(rules.minFiles)) {
+    errors.push(
+      field.dataset.messageMinFiles ||
+        rules.messageMinFiles ||
+        getMessage(
+          state,
+          "minFiles",
+          `${capitalize(label)} requiere mínimo ${rules.minFiles} archivo(s).`,
+          getMessageContext(label, {
+            minFiles: rules.minFiles,
+          }),
+        ),
+    );
   }
 
-  if (rules.maxFiles && fileArray.length > Number(rules.maxFiles)) {
-    return (
+  if (rules.maxFiles !== undefined && fileCount > Number(rules.maxFiles)) {
+    errors.push(
       field.dataset.messageMaxFiles ||
-      rules.messageMaxFiles ||
-      getMessage(
-        state,
-        "maxFiles",
-        `${capitalize(label)} permite máximo ${rules.maxFiles} archivo(s).`,
-        getMessageContext(label, {
-          maxFiles: rules.maxFiles,
-        }),
-      )
+        rules.messageMaxFiles ||
+        getMessage(
+          state,
+          "maxFiles",
+          `${capitalize(label)} permite máximo ${rules.maxFiles} archivo(s).`,
+          getMessageContext(label, {
+            maxFiles: rules.maxFiles,
+          }),
+        ),
     );
+  }
+
+  if (!fileArray.length) {
+    return uniqueMessages(errors).join("\n");
   }
 
   if (rules.maxFileSize) {
     const maxFileSize = Number(rules.maxFileSize);
 
-    const oversizedFile = fileArray.find((file) => file.size > maxFileSize);
+    const oversizedFiles = fileArray.filter((file) => file.size > maxFileSize);
 
-    if (oversizedFile) {
-      return (
+    oversizedFiles.forEach((file) => {
+      errors.push(
         field.dataset.messageFileSize ||
-        rules.messageFileSize ||
-        getMessage(
-          state,
-          "fileSize",
-          `${capitalize(label)} excede el tamaño máximo permitido.`,
-          getMessageContext(label, {
-            fileName: oversizedFile.name,
-            fileSize: oversizedFile.size,
-            maxFileSize,
-            fileSizeFormatted: formatBytes(oversizedFile.size),
-            maxFileSizeFormatted: formatBytes(maxFileSize),
-          }),
-        )
+          rules.messageFileSize ||
+          getMessage(
+            state,
+            "fileSize",
+            `${file.name} excede el tamaño máximo permitido de ${formatBytes(maxFileSize)}.`,
+            getMessageContext(label, {
+              fileName: file.name,
+              fileSize: file.size,
+              maxFileSize,
+              fileSizeFormatted: formatBytes(file.size),
+              maxFileSizeFormatted: formatBytes(maxFileSize),
+            }),
+          ),
       );
-    }
+    });
   }
 
   if (rules.maxTotalSize) {
@@ -1658,20 +1751,20 @@ function validateFileField(files, field, state, rules, label) {
     const totalSize = fileArray.reduce((total, file) => total + file.size, 0);
 
     if (totalSize > maxTotalSize) {
-      return (
+      errors.push(
         field.dataset.messageFileTotalSize ||
-        rules.messageFileTotalSize ||
-        getMessage(
-          state,
-          "fileTotalSize",
-          `El peso total de ${label} excede el máximo permitido.`,
-          getMessageContext(label, {
-            totalSize,
-            maxTotalSize,
-            totalSizeFormatted: formatBytes(totalSize),
-            maxTotalSizeFormatted: formatBytes(maxTotalSize),
-          }),
-        )
+          rules.messageFileTotalSize ||
+          getMessage(
+            state,
+            "fileTotalSize",
+            `El peso total de ${label} excede el máximo permitido de ${formatBytes(maxTotalSize)}.`,
+            getMessageContext(label, {
+              totalSize,
+              maxTotalSize,
+              totalSizeFormatted: formatBytes(totalSize),
+              maxTotalSizeFormatted: formatBytes(maxTotalSize),
+            }),
+          ),
       );
     }
   }
@@ -1679,28 +1772,28 @@ function validateFileField(files, field, state, rules, label) {
   const allowedTypes = rules.fileTypes || rules.accept || [];
 
   if (allowedTypes.length) {
-    const invalidFile = fileArray.find(
+    const invalidFiles = fileArray.filter(
       (file) => !isAllowedFileType(file, allowedTypes),
     );
 
-    if (invalidFile) {
-      return (
+    invalidFiles.forEach((file) => {
+      errors.push(
         field.dataset.messageFileType ||
-        rules.messageFileType ||
-        getMessage(
-          state,
-          "fileType",
-          `${capitalize(label)} contiene un tipo de archivo no permitido.`,
-          getMessageContext(label, {
-            fileName: invalidFile.name,
-            fileType: invalidFile.type || "",
-          }),
-        )
+          rules.messageFileType ||
+          getMessage(
+            state,
+            "fileType",
+            `${file.name} tiene un tipo de archivo no permitido.`,
+            getMessageContext(label, {
+              fileName: file.name,
+              fileType: file.type || "",
+            }),
+          ),
       );
-    }
+    });
   }
 
-  return "";
+  return uniqueMessages(errors).join("\n");
 }
 
 function isAllowedFileType(file, allowedTypes = []) {
@@ -1739,4 +1832,12 @@ function formatBytes(bytes) {
 
 function normalizeFieldName(name) {
   return String(name || "").replace(/\[\]$/, "");
+}
+
+function uniqueMessages(messages = []) {
+  return Array.from(
+    new Set(
+      messages.map((message) => String(message || "").trim()).filter(Boolean),
+    ),
+  );
 }
