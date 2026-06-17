@@ -10,11 +10,12 @@ use Whis\Storage\Storage;
 Auth::Routes();
 
 
-GET('', [Home::class,'create']);
-POST('', [Home::class,'store']);
-//  Route::get('/form', function () {
-//      return view('form');
-//  });'
+CONTROLLER(Home::class,'',[
+    'get' => [
+        '/' => 'create',
+    ],
+
+]);
 //  Route::post('/form',[Home::class,'store']);
 //  Route::get('/{id:\d+}', function (int $id) {
 //      return json(['id' => $id]);

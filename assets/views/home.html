@@ -258,6 +258,22 @@
                     data-error-for="email" aria-live="polite">{{error('email')}}</span>
             </div>
 
+            <div class="form-group" data-field="subject">
+                <select name="subject" id="register-subject" class="form-control" required data-label="subject"
+                    aria-describedby="error-register-subject">
+                    <option value="" disabled selected hidden></option>
+                    <option value="proyectos">Proyectos</option>
+                    <option value="construccion">Construcción</option>
+                    <option value="valuacion">Valuación</option>
+
+                </select>
+
+                <label class="form-label" for="register-subject">Asunto</label>
+
+                <span class="form-group__error text-danger" id="error-register-subject" data-field-error
+                    data-error-for="subject" aria-live="polite">{{error('subject')}}</span>
+            </div>
+
             <div class="form-group form-group--textarea" data-field="message">
                 <textarea id="contact-message" name="message" class="form-control" placeholder=" " required
                     minlength="10" maxlength="3000" data-label="mensaje" data-normalize="trim"

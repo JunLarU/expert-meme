@@ -130,42 +130,50 @@ $color-splide--hover: lighten($color-logo-red, 20);
           margin-top: 1.5rem;
           padding: 0.8rem 5.5rem;
           background-color: $color-azure;
-          color: $color-dark;
+          color: darken($color-logo-red, 20);
           font-weight: bold;
           border-radius: 9999px;
           text-decoration: none;
           font-size: 1.6rem;
+          border: 0.15rem solid transparent;
           transition:
             background-color 200ms ease,
             color 200ms ease;
 
           &:hover,
           &:focus {
-            background-color: $color-logo-red;
+            background-color: lighten($color-logo-red, 6);
             color: $color-light;
+            border: 0.15rem solid $color-logo-red;
           }
-          @include tablet{
+          @include tablet {
             width: fit-content;
           }
         }
       }
       .button__more {
         display: inline-block;
+        margin-top: 1.5rem;
         padding: 0.8rem 5.5rem;
         background-color: $color-azure;
-        color: $color-dark;
+        color: darken($color-logo-red, 20);
         font-weight: bold;
         border-radius: 9999px;
         text-decoration: none;
         font-size: 1.6rem;
+        border: 0.15rem solid transparent;
         transition:
           background-color 200ms ease,
           color 200ms ease;
 
         &:hover,
         &:focus {
-          background-color: $color-logo-red;
+          background-color: lighten($color-logo-red, 6);
           color: $color-light;
+          border: 0.15rem solid $color-logo-red;
+        }
+        @include tablet {
+          width: fit-content;
         }
       }
 
@@ -203,7 +211,7 @@ $color-splide--hover: lighten($color-logo-red, 20);
         max-height: none;
       }
       // Clase para media que ocupa todo el ancho
-      &.full-width{
+      &.full-width {
         & > img,
         & > picture > img,
         & > video,
@@ -217,7 +225,7 @@ $color-splide--hover: lighten($color-logo-red, 20);
           object-position: center;
         }
       }
-      &.content-full-width-not-mobile{
+      &.content-full-width-not-mobile {
         & > img,
         & > picture > img,
         & > video,
@@ -230,7 +238,7 @@ $color-splide--hover: lighten($color-logo-red, 20);
           object-fit: cover;
           object-position: center;
         }
-        @include tablet{
+        @include tablet {
           & > img,
           & > picture > img,
           & > video,
@@ -417,26 +425,26 @@ $color-splide--hover: lighten($color-logo-red, 20);
   align-items: center;
 
   &.is-active {
-    background-color: $color-splide;
+    background-color: #800000e0 !important;
     height: auto;
     color: $color-main-gray;
     box-shadow: 0px 0px 5px 5px rgba(0, 0, 0, 0.15);
   }
   &:hover,
   &:focus {
-    background-color: $color-splide--hover;
+    background-color: rgba(darken($color-main-gray, 5), 0.7) !important;
     height: auto;
-    color: $color-main-gray;
+    color: $color-dark;
   }
 }
 .splide__arrow {
   svg {
-    fill: $color-main-gray;
+    fill: #800000e0 !important;
   }
   &:hover,
   &:focus {
     svg {
-      fill: darken($color-main-gray, 10) !important;
+      fill: rgba(darken($color-main-gray, 2), 0.7) !important;
     }
   }
   display: none;
@@ -524,7 +532,8 @@ $color-splide--hover: lighten($color-logo-red, 20);
     //text-align: center;
     width: 100%;
   }
-  h1,h2 {
+  h1,
+  h2 {
     font-size: 2.4rem;
     font-weight: bold;
     text-align: center;

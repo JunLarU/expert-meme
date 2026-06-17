@@ -1,5 +1,4 @@
 <?php
-
 namespace Whis\Routing;
 
 use Closure;
@@ -52,7 +51,7 @@ class Router
     {
         $path = parse_url($url, PHP_URL_PATH);
 
-        if (!is_string($path) || $path === '') {
+        if (! is_string($path) || $path === '') {
             return '/';
         }
 
@@ -88,7 +87,7 @@ class Router
         return $this->runMiddlewares(
             $request,
             $middlewares,
-            fn () => call_user_func($action, ...$parameters)
+            fn() => call_user_func($action, ...$parameters)
         );
     }
 
@@ -110,7 +109,7 @@ class Router
         );
     }
 
-    protected function registerRoute(HttpMethod $method, string $uri, Closure|array $action): Route
+    protected function registerRoute(HttpMethod $method, string $uri, Closure | array $action): Route
     {
         $uri = $this->applyCurrentGroupPrefix($uri);
 
@@ -118,7 +117,7 @@ class Router
 
         $groupMiddlewares = $this->currentGroupMiddlewares();
 
-        if (!empty($groupMiddlewares)) {
+        if (! empty($groupMiddlewares)) {
             $route->addMiddlewares($groupMiddlewares);
         }
 
@@ -141,11 +140,11 @@ class Router
          */
         if ($this->isAssociativeArray($routes)) {
             foreach ($routes as $uri => $action) {
-                if (!is_string($uri)) {
+                if (! is_string($uri)) {
                     continue;
                 }
 
-                if (!$action instanceof Closure && !is_array($action)) {
+                if (! $action instanceof Closure && ! is_array($action)) {
                     continue;
                 }
 
@@ -166,14 +165,14 @@ class Router
          * ]);
          */
         for ($i = 0; $i < count($routes); $i += 2) {
-            $uri = $routes[$i] ?? null;
+            $uri    = $routes[$i] ?? null;
             $action = $routes[$i + 1] ?? null;
 
-            if (!is_string($uri)) {
+            if (! is_string($uri)) {
                 continue;
             }
 
-            if (!$action instanceof Closure && !is_array($action)) {
+            if (! $action instanceof Closure && ! is_array($action)) {
                 continue;
             }
 
@@ -183,7 +182,7 @@ class Router
         return $registered;
     }
 
-    public function get(string|array $uri, Closure|array|null $action = null): Route|array
+    public function get(string | array $uri, Closure | array | null $action = null): Route | array
     {
         if (is_array($uri)) {
             return $this->registerMany(HttpMethod::GET, $uri);
@@ -196,7 +195,7 @@ class Router
         return $this->registerRoute(HttpMethod::GET, $uri, $action);
     }
 
-    public function post(string|array $uri, Closure|array|null $action = null): Route|array
+    public function post(string | array $uri, Closure | array | null $action = null): Route | array
     {
         if (is_array($uri)) {
             return $this->registerMany(HttpMethod::POST, $uri);
@@ -209,7 +208,7 @@ class Router
         return $this->registerRoute(HttpMethod::POST, $uri, $action);
     }
 
-    public function put(string|array $uri, Closure|array|null $action = null): Route|array
+    public function put(string | array $uri, Closure | array | null $action = null): Route | array
     {
         if (is_array($uri)) {
             return $this->registerMany(HttpMethod::PUT, $uri);
@@ -222,7 +221,7 @@ class Router
         return $this->registerRoute(HttpMethod::PUT, $uri, $action);
     }
 
-    public function patch(string|array $uri, Closure|array|null $action = null): Route|array
+    public function patch(string | array $uri, Closure | array | null $action = null): Route | array
     {
         if (is_array($uri)) {
             return $this->registerMany(HttpMethod::PATCH, $uri);
@@ -235,7 +234,7 @@ class Router
         return $this->registerRoute(HttpMethod::PATCH, $uri, $action);
     }
 
-    public function delete(string|array $uri, Closure|array|null $action = null): Route|array
+    public function delete(string | array $uri, Closure | array | null $action = null): Route | array
     {
         if (is_array($uri)) {
             return $this->registerMany(HttpMethod::DELETE, $uri);
@@ -250,22 +249,28 @@ class Router
 
     public function group(
         string $prefix,
-        Closure $callback,
-        array|string $middlewares = []
-    ): void {
+        Closure | array $callbackOrRoutes,
+        array | string $middlewares = []
+    ): ?array {
         $this->groupStack[] = [
-            'prefix' => $this->normalizeUri($prefix),
+            'prefix'      => $this->normalizeUri($prefix),
             'middlewares' => $this->normalizeMiddlewares($middlewares),
         ];
 
         try {
-            $reflection = new ReflectionFunction($callback);
+            if ($callbackOrRoutes instanceof Closure) {
+                $reflection = new ReflectionFunction($callbackOrRoutes);
 
-            if ($reflection->getNumberOfParameters() > 0) {
-                $callback($this);
-            } else {
-                $callback();
+                if ($reflection->getNumberOfParameters() > 0) {
+                    $callbackOrRoutes($this);
+                } else {
+                    $callbackOrRoutes();
+                }
+
+                return null;
             }
+
+            return (new GroupRouteRegistrar($this))->routes($callbackOrRoutes);
         } finally {
             array_pop($this->groupStack);
         }
@@ -299,7 +304,7 @@ class Router
     protected function joinUris(string $prefix, string $uri): string
     {
         $prefix = $this->normalizeUri($prefix);
-        $uri = $this->normalizeUri($uri);
+        $uri    = $this->normalizeUri($uri);
 
         if ($prefix === '') {
             return $uri;
@@ -323,7 +328,7 @@ class Router
         return '/' . trim($uri, '/');
     }
 
-    protected function normalizeMiddlewares(array|string $middlewares): array
+    protected function normalizeMiddlewares(array | string $middlewares): array
     {
         if (is_string($middlewares)) {
             return [$middlewares];
@@ -344,5 +349,105 @@ class Router
     public function getRoutes(): array
     {
         return $this->routes;
+    }
+    public function controller(
+        string $controller,
+        string | Closure | array $prefixOrRoutesOrCallback,
+        Closure | array | string | null $routesOrCallbackOrMiddlewares = null,
+        array | string $middlewares = []
+    ): void {
+        if (! class_exists($controller)) {
+            throw new \InvalidArgumentException(
+                "Controller class [$controller] does not exist."
+            );
+        }
+
+        $prefix   = '';
+        $callback = null;
+        $routes   = null;
+
+        /*
+     * Forma 1:
+     *
+     * Route::controller(Home::class, function () {
+     *     get('', 'create');
+     * });
+     */
+        if ($prefixOrRoutesOrCallback instanceof Closure) {
+            $callback = $prefixOrRoutesOrCallback;
+
+            $middlewares = is_array($routesOrCallbackOrMiddlewares) || is_string($routesOrCallbackOrMiddlewares)
+                ? $routesOrCallbackOrMiddlewares
+                : [];
+        }
+
+        /*
+     * Forma 3 sin prefijo:
+     *
+     * Route::controller(Home::class, [
+     *     'get' => [
+     *         '' => 'create',
+     *     ],
+     * ]);
+     */
+        elseif (is_array($prefixOrRoutesOrCallback)) {
+            $routes = $prefixOrRoutesOrCallback;
+
+            $middlewares = is_array($routesOrCallbackOrMiddlewares) || is_string($routesOrCallbackOrMiddlewares)
+                ? $routesOrCallbackOrMiddlewares
+                : [];
+        }
+
+        /*
+     * Formas con prefijo:
+     *
+     * Route::controller(Home::class, '/dashboard', function () {});
+     *
+     * Route::controller(Home::class, '/dashboard', [
+     *     'get' => [
+     *         '' => 'create',
+     *     ],
+     * ]);
+     */
+        else {
+            $prefix = $prefixOrRoutesOrCallback;
+
+            if ($routesOrCallbackOrMiddlewares instanceof Closure) {
+                $callback = $routesOrCallbackOrMiddlewares;
+            } elseif (is_array($routesOrCallbackOrMiddlewares)) {
+                $routes = $routesOrCallbackOrMiddlewares;
+            } else {
+                throw new \InvalidArgumentException(
+                    'Controller group callback or routes array is required.'
+                );
+            }
+        }
+
+        $controllerGroup = new ControllerRouteGroup($this, $controller);
+
+        $this->group($prefix, function () use ($callback, $routes, $controllerGroup) {
+            ControllerRouteScope::push($controllerGroup);
+
+            try {
+                if ($callback instanceof Closure) {
+                    $reflection = new ReflectionFunction($callback);
+
+                    if ($reflection->getNumberOfParameters() > 0) {
+                        $callback($controllerGroup);
+                        return;
+                    }
+
+                    $callback();
+                    return;
+                }
+
+                if (is_array($routes)) {
+                    $controllerGroup->routes($routes);
+                    return;
+                }
+            } finally {
+                ControllerRouteScope::pop();
+            }
+        }, $middlewares);
     }
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace Whis\Routing;
 
 use Closure;
@@ -23,9 +22,9 @@ class Route
      */
     protected array $middlewares = [];
 
-    public function __construct(string $uri, Closure|array $action)
+    public function __construct(string $uri, Closure | array $action)
     {
-        $this->uri = $this->normalizeUri($uri);
+        $this->uri    = $this->normalizeUri($uri);
         $this->action = $action;
 
         $this->compileRegex();
@@ -89,7 +88,7 @@ class Route
         return $this->uri;
     }
 
-    public function action(): Closure|array
+    public function action(): Closure | array
     {
         return $this->action;
     }
@@ -104,14 +103,14 @@ class Route
         return count($this->middlewares) > 0;
     }
 
-    public function setMiddlewares(array|string $middlewares): self
+    public function setMiddlewares(array | string $middlewares): self
     {
         $this->middlewares = [];
 
         return $this->addMiddlewares($middlewares);
     }
 
-    public function addMiddlewares(array|string $middlewares): self
+    public function addMiddlewares(array | string $middlewares): self
     {
         if (is_string($middlewares)) {
             $middlewares = [$middlewares];
@@ -131,7 +130,7 @@ class Route
         return $this;
     }
 
-    public function middleware(array|string $middlewares): self
+    public function middleware(array | string $middlewares): self
     {
         return $this->addMiddlewares($middlewares);
     }
@@ -169,43 +168,43 @@ class Route
         return $params;
     }
 
-    public static function get(string|array $uri, Closure|array|null $action = null): Route|array
+    public static function get(string | array $uri, Closure | array | null $action = null): Route | array
     {
         return app()->router->get($uri, $action);
     }
 
-    public static function post(string|array $uri, Closure|array|null $action = null): Route|array
+    public static function post(string | array $uri, Closure | array | null $action = null): Route | array
     {
         return app()->router->post($uri, $action);
     }
 
-    public static function put(string|array $uri, Closure|array|null $action = null): Route|array
+    public static function put(string | array $uri, Closure | array | null $action = null): Route | array
     {
         return app()->router->put($uri, $action);
     }
 
-    public static function patch(string|array $uri, Closure|array|null $action = null): Route|array
+    public static function patch(string | array $uri, Closure | array | null $action = null): Route | array
     {
         return app()->router->patch($uri, $action);
     }
 
-    public static function delete(string|array $uri, Closure|array|null $action = null): Route|array
+    public static function delete(string | array $uri, Closure | array | null $action = null): Route | array
     {
         return app()->router->delete($uri, $action);
     }
 
     public static function group(
         string $prefix,
-        Closure $callback,
-        array|string $middlewares = []
-    ): void {
-        app()->router->group($prefix, $callback, $middlewares);
+        Closure | array $callbackOrRoutes,
+        array | string $middlewares = []
+    ): ?array {
+        return app()->router->group($prefix, $callbackOrRoutes, $middlewares);
     }
 
     public static function file(
         string $prefix,
-        Closure|array $action,
-        array|string $extensions = ['png', 'jpg', 'jpeg'],
+        Closure | array $action,
+        array | string $extensions = ['png', 'jpg', 'jpeg'],
         string $parameter = 'filename'
     ): Route {
         $prefix = '/' . trim($prefix, '/');
@@ -220,8 +219,8 @@ class Route
 
     public static function download(
         string $prefix,
-        Closure|array $action,
-        array|string $extensions = ['png', 'jpg', 'jpeg'],
+        Closure | array $action,
+        array | string $extensions = ['png', 'jpg', 'jpeg'],
         string $parameter = 'filename'
     ): Route {
         $prefix = '/' . trim($prefix, '/');
@@ -234,14 +233,14 @@ class Route
         );
     }
 
-    private static function extensionPattern(array|string $extensions): string
+    private static function extensionPattern(array | string $extensions): string
     {
         if (is_string($extensions)) {
             $extensions = explode('|', str_replace(',', '|', $extensions));
         }
 
         $extensions = array_values(array_filter(array_map(
-            fn ($extension) => strtolower(trim((string) $extension, ". \t\n\r\0\x0B")),
+            fn($extension) => strtolower(trim((string) $extension, ". \t\n\r\0\x0B")),
             $extensions
         )));
 
@@ -250,7 +249,7 @@ class Route
         }
 
         $extensions = array_map(
-            fn ($extension) => preg_quote($extension, '/'),
+            fn($extension) => preg_quote($extension, '/'),
             $extensions
         );
 
@@ -262,5 +261,18 @@ class Route
         foreach (glob($routesDirectory . '/*.php') as $routeFile) {
             require_once $routeFile;
         }
+    }
+    public static function controller(
+        string $controller,
+        string | Closure | array $prefixOrRoutesOrCallback,
+        Closure | array | string | null $routesOrCallbackOrMiddlewares = null,
+        array | string $middlewares = []
+    ): void {
+        app()->router->controller(
+            $controller,
+            $prefixOrRoutesOrCallback,
+            $routesOrCallbackOrMiddlewares,
+            $middlewares
+        );
     }
 }

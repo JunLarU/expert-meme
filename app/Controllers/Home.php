@@ -11,11 +11,8 @@ class Home extends Controller
 {
     public function create()
     {
-        if (isGuest()) {
-            return view('home',"Inicio", ['user' => 'Guest']);
-        }
-
-        return view('home',"Inicio", ['user' => auth()->email]);
+        return view('home',"Inicio");
+        //return view('home',"Inicio", ['user' => auth()->email]);
     }
     public function contactSend(Request $request)
     {
@@ -23,6 +20,7 @@ class Home extends Controller
             'name'    => 'required',
             'email'   => 'required|email',
             'message' => 'required',
+            'subject' => 'required',
         ]);
 
         /*

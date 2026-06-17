@@ -1,0 +1,10 @@
+	2026-06-17 09:40:45: ReflectionException by ::1
+Uncaught exception: 'ReflectionException' with message 'Method App\Controllers\Home::form() does not exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Container\DependencyInjection.php(17): ReflectionMethod->__construct(Object(App\Controllers\Home), 'form')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(82): Whis\Container\DependencyInjection::resolveParameters(Array, Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#3 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#4 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Container\DependencyInjection.php' on line 17
+
+

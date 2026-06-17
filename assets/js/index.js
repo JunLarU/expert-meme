@@ -1,6 +1,7 @@
 import "../sass/app.scss";
 import { bootstrapWhisDefaults } from "./helpers/framework-defaults";
 import initNavbar from "./sections/navbar";
+import initSplide from "./sections/splide";
 
 export {
   WHIS_DEFAULT_OPTIONS,
@@ -24,6 +25,23 @@ export {
 bootstrapWhisDefaults();
 document.addEventListener("DOMContentLoaded", () => {
   initNavbar();
+  const splideElement = document.querySelector(".splide");
+
+  let splideOptions = {};
+
+  if (splideElement?.dataset.splidePage === "eventos") {
+    splideOptions = {
+      type: "loop",
+      rewind: true,
+      autoplay: false,
+      interval: 5000,
+      speed: 1000,
+      arrows: true,
+      pagination: true,
+    };
+  }
+
+  const splide = initSplide(splideOptions);
 });
 
 /**

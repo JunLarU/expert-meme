@@ -16,6 +16,7 @@ use Dotenv\Dotenv;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Whis\Cli\Commands\MakeMiddleware;
+use Whis\Cli\Commands\SetAppUrl;
 
 class Cli
 {
@@ -58,7 +59,8 @@ class Cli
             new MakeModel(),
             new MakeController(),
             new Serve(),
-            new MakeMiddleware()
+            new MakeMiddleware(),
+            new SetAppUrl(),
         ]);
         $cli->run();
     }

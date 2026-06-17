@@ -139,7 +139,7 @@ form[data-form-default] {
   width: 100%;
   border: 1.5px solid transparent;
   border-radius: $whis-form-field-radius;
-  background-color: $whis-form-field-bg;
+  background-color: darken($color-main-gray, 1);
   color: $whis-form-text;
   font-size: 1.7rem;
   outline: none;
@@ -197,8 +197,8 @@ input[type="file"].form-control::file-selector-button {
   padding: 0.7rem 1.2rem;
   border: none;
   border-radius: 9999px;
-  background-color: rgba($whis-form-primary, 0.12);
-  color: $whis-form-primary;
+  background-color: rgba($whis-form-primary, 0.9);
+  color: white;
   font-weight: 700;
   cursor: pointer;
 }
@@ -207,8 +207,8 @@ input[type="file"].form-control::file-selector-button {
 .form-group select:focus,
 .form-group textarea:focus,
 .form-control:focus {
-  border-color: $whis-form-primary;
-  box-shadow: 0 0 0 3px $whis-form-primary-soft;
+  border-color: darken($color-main-gray, 20);
+  box-shadow: 0 0 0 3px darken($color-main-gray, 10);
   background-color: transparent;
 }
 
@@ -371,7 +371,7 @@ input[type="file"].form-control::file-selector-button {
   padding: 0.9rem 2rem;
   border: none;
   border-radius: 9999px;
-  background-color: rgba($whis-form-primary, 0.14);
+  background-color: darken($color-main-gray, 15);
   color: $whis-form-text;
   font-size: 1.6rem;
   font-weight: 700;
