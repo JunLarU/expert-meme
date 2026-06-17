@@ -1,6 +1,7 @@
 <?php
 namespace Whis\Storage;
 
+use Whis\Http\Response;
 use Whis\Routing\Route;
 use Whis\Storage\Drivers\FileStorageDriver;
 
@@ -168,5 +169,79 @@ class Storage
                 $folder
             );
         });
+    }
+    public static function response(
+        string $filename,
+        bool $asset = false,
+        ?string $alternativeDirectory = null,
+        bool $download = false,
+        ?string $downloadName = null,
+        bool $cache = false
+    ): Response {
+        $path = self::path($filename, $asset, $alternativeDirectory);
+
+        if ($path === null) {
+            return Response::text('404 Not Found')->setStatus(404);
+        }
+
+        return Response::file(
+            $path,
+            $download,
+            $downloadName,
+            $cache
+        );
+    }
+
+    public static function path(
+        string $filename,
+        bool $asset = false,
+        ?string $alternativeDirectory = null
+    ): ?string {
+        $filename = trim(str_replace('\\', '/', $filename), '/');
+
+        if ($filename === '' || str_contains($filename, '..') || str_contains($filename, "\0")) {
+            return null;
+        }
+
+        if ($alternativeDirectory !== null) {
+            $baseDirectory =
+            rtrim(str_replace('\\', '/', App::$root), '/')
+            . '/'
+            . trim(str_replace('\\', '/', $alternativeDirectory), '/');
+        } elseif ($asset) {
+            $baseDirectory =
+                rtrim(str_replace('\\', '/', App::$root), '/')
+                . '/resources/assets';
+        } else {
+            $baseDirectory =
+                rtrim(str_replace('\\', '/', App::$root), '/')
+                . '/storage';
+        }
+
+        $baseReal = realpath($baseDirectory);
+
+        if ($baseReal === false) {
+            return null;
+        }
+
+        $candidate = rtrim(str_replace('\\', '/', $baseReal), '/') . '/' . $filename;
+        $fileReal  = realpath($candidate);
+
+        if ($fileReal === false) {
+            return null;
+        }
+
+        $baseReal = rtrim(str_replace('\\', '/', $baseReal), '/');
+        $fileReal = str_replace('\\', '/', $fileReal);
+
+        if ($fileReal !== $baseReal && ! str_starts_with($fileReal, $baseReal . '/')) {
+            return null;
+        }
+
+        if (! is_file($fileReal) || ! is_readable($fileReal)) {
+            return null;
+        }
+
+        return $fileReal;
     }
 }

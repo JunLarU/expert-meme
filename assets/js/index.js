@@ -1,5 +1,6 @@
 import "../sass/app.scss";
 import { bootstrapWhisDefaults } from "./helpers/framework-defaults";
+import initNavbar from "./sections/navbar";
 
 export {
   WHIS_DEFAULT_OPTIONS,
@@ -21,6 +22,9 @@ export {
  * e inicializar manualmente con initWhisDefaults({...}).
  */
 bootstrapWhisDefaults();
+document.addEventListener("DOMContentLoaded", () => {
+  initNavbar();
+});
 
 /**
 Ejemplo sencillo:

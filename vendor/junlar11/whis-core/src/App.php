@@ -148,7 +148,7 @@ class App
             $this->terminate($this->router->resolve($this->request));
         } catch (HttpNotFoundException $e) {
             //throw new \Exception('No route matched.', 404);
-            $this->abort(Response::view('errors/error', ["code" => 404, "text" => "Page not found"], "error")->setStatus(404));
+            $this->abort(Response::view('errors/error', ["code" => 404, "text" => "Page not found"], "error","Error 404")->setStatus(404));
         } catch (ValidationException $e) {
             if ($this->expectsJson($this->request)) {
                 $this->abort(
@@ -200,7 +200,7 @@ class App
                         'code' => 500,
                         'text' => 'An error has occurred',
                     ],
-                    'error'
+                    'error',"Error 500"
                 )->setStatus(500);
 
                 $this->abort($response);

@@ -11,12 +11,14 @@ class StencilEngine implements ViewEngine
     protected string $viewsPath;
     protected string $compiledPath;
     protected string $layoutPath;
-    protected string $defaultLayout     = "main";
-    protected string $contentAnnotation = "@content";
-    protected string $urlAnnotation     = "@url";
-    protected string $csrfAnnotation    = "@csrf";
-    protected int $numero               = 0;
-    protected string $extraDirectories  = "";
+    protected string $defaultLayout      = "main";
+    protected string $contentAnnotation  = "@content";
+    protected string $urlAnnotation      = "@url";
+    protected string $csrfAnnotation     = "@csrf";
+    protected string $appNameAnnotation  = "@AppName";
+    protected int $numero                = 0;
+    protected string $extraDirectories   = "";
+    protected string $pageNameAnnotation = "@pageName";
 
     public function __construct(string $viewsPath)
     {
@@ -24,8 +26,18 @@ class StencilEngine implements ViewEngine
         $this->compiledPath = App::$root . "/resources/views";
     }
 
-    public function render($file, array $parameters = [], ?string $layout = null): string
-    {
+    public function render(
+        string $file,
+        array $parameters = [],
+        ?string $layout = null,
+        ?string $pageName = null
+    ): string {
+        /*
+     * @pageName NO se compila como texto fijo.
+     * Se inyecta como variable runtime en el archivo compilado.
+     */
+        $parameters['pageName'] = $pageName ?? ($parameters['pageName'] ?? '');
+
         $this->compile($file, $layout);
 
         return $this->renderView($file, $parameters);
@@ -123,10 +135,16 @@ class StencilEngine implements ViewEngine
      */
         $code = $this->compileCsrf($code);
 
+        /*
+     * Reemplazos simples del framework.
+     */
+        $code = $this->compileUrl($code);
+        $code = $this->compileAppName($code);
+        $code = $this->compilePageName($code);
+
         $code = $this->compileEscapedEchos($code);
         $code = $this->compileEchos($code);
         $code = $this->compilePHP($code);
-        $code = $this->compileUrl($code);
 
         return $code;
     }
@@ -156,6 +174,15 @@ class StencilEngine implements ViewEngine
         $code = preg_replace('/{% ?(extends|include) ?\'?(.*?)\'? ?%}/i', '', $code);
 
         return $code;
+    }
+
+    protected function compilePageName($code)
+    {
+        return str_replace(
+            $this->pageNameAnnotation,
+            '<?php echo htmlspecialchars((string) ($pageName ?? ""), ENT_QUOTES, "UTF-8"); ?>',
+            $code
+        );
     }
 
     protected function compilePHP($code)
@@ -224,6 +251,19 @@ class StencilEngine implements ViewEngine
                 unlink($files[$i]);
             }
         }
+    }
+
+    protected function compileAppName($code)
+    {
+        $appName = (string) config("app.name");
+
+        $appName = htmlspecialchars(
+            $appName,
+            ENT_QUOTES,
+            "UTF-8"
+        );
+
+        return str_replace($this->appNameAnnotation, $appName, $code);
     }
     protected function compileCsrf(string $code): string
     {

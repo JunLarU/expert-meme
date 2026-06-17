@@ -6,4 +6,10 @@
 @import 'base/variables';//Variables used in the project
 @import 'base/mixins';//Mixins used in the project
 @import 'base/globals';//base styles for some elements
-@import 'base/forms'
+@import 'base/forms';
+
+/* Estilos de componentes */
+@import 'includes/navbar';//Navbar styles
+
+/* Estilos de las paginas */
+@import 'pages/home';//Home page styles

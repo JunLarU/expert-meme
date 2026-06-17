@@ -289,11 +289,11 @@ main.container {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: lighten($color-logo-blue, 20);
+  background: lighten($color-logo-red, 20);
   border-radius: 10rem;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: $color-logo-blue;
+  background: $color-logo-red;
 }

@@ -1,0 +1,438 @@
+/* Variables para poder cambiar colores/estilos de manera rápida */
+$bg-navbar: $color-main-gray;
+$color-navbar__links: $color-logo-red;
+$color-navbar__links--hover: lighten($color-logo-red, 20);
+$color-circle-logo: lighten($color-dark, 20);
+$font-navbar__links: $font-montserrat;
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 1rem 2rem;
+  background-color: transparent;
+  color: $color-navbar__links;
+  transition: all 0.7s ease;
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow-y: visible;
+  will-change: transform;
+  transition:
+    transform 220ms ease,
+    background-color 0.7 ease,
+    box-shadow 220ms ease;
+  &.active {
+    background-color: rgba($bg-navbar, 0.85);
+    @include desktop {
+      background-color: transparent;
+    }
+  }
+  @include desktop {
+    flex-direction: row;
+  }
+
+  &__mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    @include desktop {
+      width: 50%;
+    }
+  }
+  &__logo {
+    display: block;
+    width: auto;
+    height: 7rem;
+    transition: all 0.3s ease;
+    transition: transform 0.5s ease;
+    svg {
+      width: auto;
+      height: 100%;
+      transition: all 0.3s ease;
+    }
+    &:hover,
+    &:focus {
+      transform: scale(1.2);
+      svg {
+        transition: all 0.3s ease;
+      }
+    }
+  }
+  &.active.sticky,
+  &.sticky {
+    position: fixed;
+    background-color: $bg-navbar;
+    box-shadow: 0px 5px 8px 0px rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+  }
+
+  &__links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    text-align: center;
+    margin: 0;
+    &.active {
+      margin-top: 2rem;
+      height: calc(
+        100vh - 6rem
+      ); /* Ajusta este valor según la altura de tu navbar */
+      transition: all 0.5s ease;
+      overflow-y: auto;
+      @include desktop {
+        overflow-y: visible;
+        height: auto;
+        margin-top: 0;
+        margin: 0;
+      }
+    }
+    @include desktop {
+      justify-content: center;
+      width: 50%;
+      flex-direction: row;
+      justify-content: center;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      .active {
+        margin-top: 0;
+      }
+    }
+    &__more {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 0 2rem;
+      transition: all 0.3s ease;
+      &__dropdown {
+        width: 100%;
+        @include desktop {
+          padding: 1.5rem;
+          position: absolute;
+          height: auto;
+          top: 100%;
+          right: 0;
+          background-color: transparent;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: auto;
+          transition: all 0.3s ease;
+          overflow: hidden;
+          visibility: hidden;
+          transform-origin: top;
+          transform: scaleY(0) translateY(-100%);
+          opacity: 0;
+          pointer-events: none;
+
+          transition:
+            transform 180ms ease,
+            opacity 180ms ease,
+            visibility 0s linear 180ms;
+        }
+      }
+      &:hover,
+      &:focus,
+      &:active,
+      &:focus-within,
+      &:focus-visible {
+        .navbar__links__more__dropdown {
+          @include desktop {
+            //box-shadow: 0px 5px 5px 3px rgba(0,0,0,0.25);
+            transform: scaleY(1) translateY(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+
+            transition:
+              transform 180ms ease,
+              opacity 180ms ease,
+              visibility 0s;
+          }
+        }
+      }
+    }
+  }
+  & &__link,
+  .navbar__links__more__dropdown__link {
+    display: block;
+    width: 100%;
+    padding: 2rem 0;
+    color: $color-navbar__links;
+    text-decoration: none;
+    font-family: $font-navbar__links;
+    text-transform: capitalize;
+    font-size: 1.75rem;
+    transition: color 0.3s ease;
+    border-bottom: 0.2rem solid transparent;
+    transition: all 0.3s ease;
+    transition: 0.3s border 0.2s ease;
+    text-align: center;
+    margin: 0;
+    &.navbar__link__more {
+      display: none !important ;
+      @include desktop {
+        display: block !important ;
+      }
+      width: 100%;
+      cursor: default;
+      border-bottom: 0.2rem solid transparentn !important;
+      &:hover,
+      &:focus {
+        border-bottom: 0.2rem solid transparent !important;
+      }
+    }
+    &:hover,
+    &:focus {
+      color: $color-navbar__links--hover;
+      border-bottom: 0.2rem solid $color-navbar__links--hover;
+      transition: border 0.2s ease;
+    }
+    &.active {
+      border-bottom: 0.2rem solid $color-navbar__links;
+      &:focus,
+      &:hover {
+        color: $color-navbar__links !important;
+        font-weight: bold !important;
+        transition: border 0.2s ease;
+      }
+    }
+    @include desktop {
+      font-size: 1.5rem;
+      padding: 0.5rem 0;
+      text-align: center;
+      padding: 0 1rem;
+    }
+  }
+  &.sticky &__links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    text-align: center;
+    margin: 0;
+    &.active {
+      margin-top: 2rem;
+      height: calc(
+        100vh - 6rem
+      ); /* Ajusta este valor según la altura de tu navbar */
+      transition: all 0.5s ease;
+      overflow-y: auto;
+      @include desktop {
+        overflow-y: visible;
+        height: auto;
+        margin-top: 0;
+        margin: 0;
+      }
+    }
+    &.navbar__link__more {
+      display: none !important ;
+      @include desktop {
+        display: block !important ;
+      }
+      width: 100%;
+      cursor: default;
+      border-bottom: 0.2rem solid transparent !important;
+      &:hover,
+      &:focus {
+        border-bottom: 0.2rem solid transparent;
+      }
+    }
+    @include desktop {
+      justify-content: center;
+      width: 50%;
+      flex-direction: row;
+      justify-content: center;
+      height: auto;
+      margin: 0;
+      .active {
+        margin-top: 0;
+      }
+      overflow: visible;
+    }
+    &__more {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      padding: 0 2rem;
+      transition: all 0.3s ease;
+      &__dropdown {
+        width: 100%;
+        @include desktop {
+          padding: 1.5rem;
+          position: absolute;
+          height: auto;
+          top: 100%;
+          right: 0;
+          background-color: $bg-navbar;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          width: auto;
+          transition: all 0.3s ease;
+          overflow: hidden;
+          visibility: hidden;
+          transform-origin: top;
+          transform: scaleY(0) translateY(-100%);
+          opacity: 0;
+          pointer-events: none;
+
+          transition:
+            transform 180ms ease,
+            opacity 180ms ease,
+            visibility 0s linear 180ms;
+        }
+      }
+      &:hover,
+      &:focus,
+      &:active,
+      &:focus-within,
+      &:focus-visible {
+        .navbar__links__more__dropdown {
+          @include desktop {
+            // sombra normal hacia abajo
+            
+            // sombra sutil hacia arriba (para que parezca unido al navbar)
+            //filter: drop-shadow(0 -2px 6px rgba(0, 0, 0, 0.12));
+            transform: scaleY(1) translateY(0);
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            border-radius: 0.5rem;
+
+            transition:
+              transform 180ms ease,
+              opacity 180ms ease,
+              visibility 0s;
+          }
+        }
+      }
+    }
+  }
+
+  &.sticky &__link,
+  &.sticky .navbar__links__more__dropdown__link {
+    display: block;
+    width: 100%;
+    padding: 2rem 0;
+    color: $color-navbar__links;
+    text-decoration: none;
+    font-family: $font-navbar__links;
+    text-transform: capitalize;
+    font-size: 1.75rem;
+    transition: color 0.3s ease;
+    border-bottom: 0.2rem solid $bg-navbar;
+    transition: all 0.3s ease;
+    transition: 0.3s border 0.2s ease;
+    text-align: center;
+    &:hover,
+    &:focus {
+      color: $color-navbar__links--hover;
+      border-bottom: 0.2rem solid $color-navbar__links--hover;
+      transition: border 0.2s ease;
+    }
+    &.active {
+      border-bottom: 0.2rem solid $color-navbar__links;
+      &:focus,
+      &:hover {
+        color: $color-navbar__links !important;
+        font-weight: bold !important;
+      }
+    }
+    @include desktop {
+      font-size: 1.5rem;
+      padding: 0.5rem 0;
+      text-align: center;
+      padding: 0 1rem;
+    }
+  }
+  & &__burger {
+    display: block;
+    @include desktop {
+      display: none;
+    }
+    &__btn-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding-left: 0;
+      padding-right: 0;
+      border: none;
+      background-color: transparent;
+      color: inherit;
+      cursor: pointer;
+      transition: 0.3s ease;
+
+      &:focus {
+        outline: none;
+      }
+
+      &__bars {
+        display: block;
+        position: relative;
+        width: 30px;
+        height: 4px;
+        background-color: $color-navbar__links;
+        transition: 0.3s;
+
+        &:before,
+        &:after {
+          content: "";
+          display: block;
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: $color-navbar__links;
+          transition: 0.3s;
+        }
+
+        &:before {
+          transform: translate(0, -12px);
+        }
+
+        &:after {
+          transform: translate(0, 12px);
+        }
+      }
+
+      &.menu-open {
+        .navbar__burger__btn-menu__bars {
+          background-color: transparent;
+
+          &:before {
+            transform: rotate(45deg);
+          }
+
+          &:after {
+            transform: rotate(-45deg);
+          }
+        }
+      }
+    }
+  }
+}

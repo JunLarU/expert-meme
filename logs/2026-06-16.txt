@@ -1,0 +1,332 @@
+	2026-06-16 16:18:13: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:16: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:20: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:24: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:27: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:31: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:35: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:39: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:43: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:47: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:51: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:55: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:18:59: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:03: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:07: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:11: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:15: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:19: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:23: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:27: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:31: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:35: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:38: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+
+	2026-06-16 16:19:42: ParseError by ::1
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ",", expecting ")"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\composer\ClassLoader.php(428): Composer\Autoload\includeFile('E:\\F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(66): Composer\Autoload\ClassLoader->loadClass('App\\Controllers...')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#3 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#4 {main}
+Thrown in 'E:\F22_LMASE-V2\app\Controllers\Home.php' on line 18
+
+
+	2026-06-16 16:19:46: ParseError by ::1
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ",", expecting ")"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\composer\ClassLoader.php(428): Composer\Autoload\includeFile('E:\\F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(66): Composer\Autoload\ClassLoader->loadClass('App\\Controllers...')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#3 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#4 {main}
+Thrown in 'E:\F22_LMASE-V2\app\Controllers\Home.php' on line 18
+
+
+	2026-06-16 16:19:50: TypeError by ::1
+Uncaught exception: 'TypeError' with message 'view(): Argument #2 ($pageName) must be of type ?string, array given, called in E:\F22_LMASE-V2\app\Controllers\Home.php on line 15'
+Stack trace: #0 E:\F22_LMASE-V2\app\Controllers\Home.php(15): view('home', Array)
+#1 [internal function]: App\Controllers\Home->create()
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): call_user_func(Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(88): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():73}()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(73): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#6 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#7 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php' on line 33
+
+

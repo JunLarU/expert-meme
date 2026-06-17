@@ -11,24 +11,17 @@ class FileResponder
 
     public function __construct(string $storageDirectory)
     {
-        $this->storageDirectory = rtrim($storageDirectory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $this->storageDirectory =
+            rtrim(str_replace('\\', '/', $storageDirectory), '/')
+            . '/';
 
         $this->assetsDirectory =
-            rtrim(App::$root, DIRECTORY_SEPARATOR)
-            . DIRECTORY_SEPARATOR
-            . 'resources'
-            . DIRECTORY_SEPARATOR
-            . 'assets'
-            . DIRECTORY_SEPARATOR;
+            rtrim(str_replace('\\', '/', App::$root), '/')
+            . '/resources/assets/';
     }
 
     public function getFile(?string $filename = null, bool $asset = false, ?string $alternativeDirectory = null): void
     {
-        if (! is_null($alternativeDirectory)) {
-            $directories = explode('/', (string) $filename);
-            $filename = array_pop($directories);
-        }
-
         if ($asset) {
             $this->assets($filename, $alternativeDirectory);
             return;
@@ -39,11 +32,6 @@ class FileResponder
 
     public function downloadFile(?string $filename = null, bool $asset = false, ?string $alternativeDirectory = null): void
     {
-        if (! is_null($alternativeDirectory)) {
-            $directories = explode('/', (string) $filename);
-            $filename = array_pop($directories);
-        }
-
         if ($asset) {
             $this->download($filename, $alternativeDirectory);
             return;
@@ -56,7 +44,7 @@ class FileResponder
     {
         $filePath = $this->buildPath($filename, true, $alternativeDirectory);
 
-        if (! $this->isValidFile($filePath)) {
+        if (!$this->isValidFile($filePath)) {
             $this->notFound();
         }
 
@@ -67,7 +55,7 @@ class FileResponder
     {
         $filePath = $this->buildPath($filename, false, $alternativeDirectory);
 
-        if (! $this->isValidFile($filePath)) {
+        if (!$this->isValidFile($filePath)) {
             $this->notFound();
         }
 
@@ -78,7 +66,7 @@ class FileResponder
     {
         $filePath = $this->buildPath($filename, true, $alternativeDirectory);
 
-        if (! $this->isValidFile($filePath)) {
+        if (!$this->isValidFile($filePath)) {
             $this->notFound();
         }
 
@@ -89,7 +77,7 @@ class FileResponder
     {
         $filePath = $this->buildPath($filename, false, $alternativeDirectory);
 
-        if (! $this->isValidFile($filePath)) {
+        if (!$this->isValidFile($filePath)) {
             $this->notFound();
         }
 
@@ -98,19 +86,21 @@ class FileResponder
 
     private function buildPath(?string $filename, bool $asset = false, ?string $alternativeDirectory = null): ?string
     {
-        if (! $this->isSafeFilename($filename)) {
+        if (!$this->isSafeFilename($filename)) {
             return null;
         }
+
+        $filename = trim(str_replace('\\', '/', (string) $filename), '/');
 
         $baseDirectory = $asset
             ? $this->assetsDirectory
             : $this->storageDirectory;
 
-        if (! is_null($alternativeDirectory)) {
+        if ($alternativeDirectory !== null) {
             $baseDirectory =
-                rtrim(App::$root, DIRECTORY_SEPARATOR)
-                . DIRECTORY_SEPARATOR
-                . trim($alternativeDirectory, '/\\');
+                rtrim(str_replace('\\', '/', App::$root), '/')
+                . '/'
+                . trim(str_replace('\\', '/', $alternativeDirectory), '/');
         }
 
         $baseDirectory = realpath($baseDirectory);
@@ -119,17 +109,21 @@ class FileResponder
             return null;
         }
 
-        $filePath = realpath(
-            rtrim($baseDirectory, DIRECTORY_SEPARATOR)
-            . DIRECTORY_SEPARATOR
-            . ltrim((string) $filename, '/\\')
-        );
+        $candidatePath =
+            rtrim(str_replace('\\', '/', $baseDirectory), '/')
+            . '/'
+            . $filename;
+
+        $filePath = realpath($candidatePath);
 
         if ($filePath === false) {
             return null;
         }
 
-        if (! str_starts_with($filePath, $baseDirectory . DIRECTORY_SEPARATOR)) {
+        $baseDirectory = rtrim(str_replace('\\', '/', $baseDirectory), '/');
+        $filePath = str_replace('\\', '/', $filePath);
+
+        if ($filePath !== $baseDirectory && !str_starts_with($filePath, $baseDirectory . '/')) {
             return null;
         }
 
@@ -138,13 +132,13 @@ class FileResponder
 
     private function isSafeFilename(?string $filename): bool
     {
-        if (is_null($filename)) {
+        if ($filename === null) {
             return false;
         }
 
-        $filename = trim($filename);
+        $filename = trim(str_replace('\\', '/', $filename), '/');
 
-        if ($filename === '' || $filename === '/' || $filename === '\\') {
+        if ($filename === '') {
             return false;
         }
 
@@ -161,7 +155,7 @@ class FileResponder
 
     private function isValidFile(?string $filePath): bool
     {
-        return ! is_null($filePath)
+        return $filePath !== null
             && file_exists($filePath)
             && is_file($filePath)
             && is_readable($filePath);
@@ -278,7 +272,7 @@ class FileResponder
         if (isset($_SERVER['HTTP_RANGE'])) {
             $rangeHeader = trim($_SERVER['HTTP_RANGE']);
 
-            if (! preg_match('/^bytes=(\d*)-(\d*)$/', $rangeHeader, $matches)) {
+            if (!preg_match('/^bytes=(\d*)-(\d*)$/', $rangeHeader, $matches)) {
                 $this->rangeNotSatisfiable($fileSize);
             }
 
@@ -322,7 +316,7 @@ class FileResponder
         $buffer = 1024 * 8;
         $bytesLeft = $length;
 
-        while (! feof($fp) && $bytesLeft > 0) {
+        while (!feof($fp) && $bytesLeft > 0) {
             $readLength = min($buffer, $bytesLeft);
             $data = fread($fp, $readLength);
 

@@ -105,7 +105,7 @@ class RegisterController extends Controller
             }
 
             $profilePicture = $file->store(
-                "profile_pictures",
+                "private",
                 false,
                 "storage/uploads",
                 false,

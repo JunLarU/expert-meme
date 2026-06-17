@@ -1,4 +1,5 @@
 <?php
+
 namespace Whis\Storage\Drivers;
 
 use Whis\App;
@@ -7,20 +8,18 @@ use Whis\Storage\FileResponder;
 class DiskFileStorage implements FileStorageDriver
 {
     protected string $storageDirectory;
-
     protected string $storageUri;
-
     protected string $appUrl;
-
     protected FileResponder $fileResponder;
 
     public function __construct(string $storageDirectory, string $storageUri, string $appUrl)
     {
-        $this->storageDirectory = $storageDirectory;
-        $this->storageUri       = $storageUri;
-        $this->appUrl           = $appUrl;
+        $this->storageDirectory = rtrim(str_replace('\\', '/', $storageDirectory), '/');
+        $this->storageUri       = trim(str_replace('\\', '/', $storageUri), '/');
+        $this->appUrl           = rtrim($appUrl, '/');
         $this->fileResponder    = new FileResponder($storageDirectory);
     }
+
     public function put(
         string $path,
         mixed $content,
@@ -30,16 +29,14 @@ class DiskFileStorage implements FileStorageDriver
     ): string {
         $path = trim(str_replace('\\', '/', $path), '/');
 
-        if ($alternativeDirectory !== null) {
-            $baseDir = App::$root . "/" . trim(str_replace('\\', '/', $alternativeDirectory), '/');
-        } else {
-            $baseDir = rtrim(str_replace('\\', '/', $this->storageDirectory), '/');
-        }
+        $baseDir = $alternativeDirectory !== null
+            ? App::$root . "/" . trim(str_replace('\\', '/', $alternativeDirectory), '/')
+            : $this->storageDirectory;
 
-        $fullPath  = $baseDir . "/" . $path;
+        $fullPath = rtrim($baseDir, '/') . "/" . $path;
         $directory = dirname($fullPath);
 
-        if (! is_dir($directory)) {
+        if (!is_dir($directory)) {
             mkdir($directory, 0775, true);
         }
 
@@ -49,14 +46,25 @@ class DiskFileStorage implements FileStorageDriver
             return $fullPath;
         }
 
+        /*
+         * CLAVE:
+         * Usa $path, no basename($path).
+         *
+         * Correcto:
+         * /storage/uploads/profile_pictures/archivo.jpeg
+         *
+         * Incorrecto:
+         * /storage/uploads/archivo.jpeg
+         */
         if ($customUrl !== null) {
-            $urlBase = trim($customUrl, '/');
-            return $this->appUrl . "/" . $urlBase . "/" . basename($path);
+            $urlBase = trim(str_replace('\\', '/', $customUrl), '/');
+
+            return $this->appUrl . "/" . $urlBase . "/" . $path;
         }
 
         $urlBase = $alternativeDirectory !== null
-            ? trim($alternativeDirectory, '/')
-            : trim($this->storageUri, '/');
+            ? trim(str_replace('\\', '/', $alternativeDirectory), '/')
+            : $this->storageUri;
 
         return $this->appUrl . "/" . $urlBase . "/" . $path;
     }
@@ -65,18 +73,19 @@ class DiskFileStorage implements FileStorageDriver
     {
         $this->fileResponder->getFile($filename, $asset, $alternativeDirectory);
     }
+
     public function downloadFile(?string $filename = null, bool $asset = false, ?string $alternativeDirectory = null)
     {
         $this->fileResponder->downloadFile($filename, $asset, $alternativeDirectory);
-
     }
+
     public function remove(string $path): bool
     {
         if (file_exists($path)) {
             unlink($path);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
