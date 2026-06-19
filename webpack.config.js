@@ -9,6 +9,127 @@ const ImageminPlugin = require("imagemin-webpack-plugin").default;
 const pngquant = require("imagemin-pngquant");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
+// ======================================================
+// .env
+// ======================================================
+
+const parseDotEnv = (filePath) => {
+  if (!fs.existsSync(filePath)) return {};
+
+  const env = {};
+  const content = fs.readFileSync(filePath, "utf8");
+
+  content.split(/\r?\n/).forEach((line) => {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith("#")) return;
+
+    const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/);
+    if (!match) return;
+
+    const key = match[1];
+    let value = match[2].trim();
+
+    value = value.replace(/^['"]|['"]$/g, "");
+
+    env[key] = value;
+  });
+
+  return env;
+};
+
+const projectEnv = parseDotEnv(path.resolve(__dirname, ".env"));
+
+const normalizePublicUrl = (url) => {
+  const value = String(url || "").trim();
+
+  if (!value) return "/";
+
+  return value.endsWith("/") ? value : `${value}/`;
+};
+
+// Esta URL SÍ se usará dentro de CSS/SCSS/JS final.
+// Ejemplo:
+// http://192.168.68.62/images/foto.hash.jpg
+const APP_PUBLIC_PATH = normalizePublicUrl(
+  process.env.APP_URL || projectEnv.APP_URL || "/"
+);
+
+// Esta URL se usará solo dentro de HTML compilado por Webpack.
+// Luego StencilEngine cambia @url por config('app.url').
+// Ejemplo:
+// @url/images/foto.hash.jpg
+const HTML_PUBLIC_PATH = "@url/";
+
+const toPosix = (value) => value.replace(/\\/g, "/");
+
+const shouldProcessUrl = (url) => {
+  if (!url) return false;
+
+  // No procesar URLs externas, data URIs, anchors, mail, tel,
+  // ni rutas que ya vengan con @url.
+  return !/^(?:https?:|data:|mailto:|tel:|#|@url)/i.test(url);
+};
+
+const makePreservedAssetName = (rootDir, outputFolder) => {
+  return (pathData) => {
+    const absoluteFile = pathData.filename;
+    let relativeFile = toPosix(path.relative(rootDir, absoluteFile));
+
+    if (relativeFile.startsWith("..")) {
+      relativeFile = path.basename(absoluteFile);
+    }
+
+    const parsed = path.parse(relativeFile);
+    const dir = toPosix(parsed.dir);
+    const fileName = `${parsed.name}.[contenthash:8]${parsed.ext}`;
+
+    return `${outputFolder}/${dir && dir !== "." ? `${dir}/` : ""}${fileName}`;
+  };
+};
+
+const makeAssetRule = (test, rootDir, outputFolder) => {
+  return {
+    test,
+    oneOf: [
+      // Assets usados desde HTML:
+      // <img src="/images/foto.jpg">
+      // => @url/images/foto.hash.jpg
+      {
+        issuer: /\.html$/i,
+        type: "asset/resource",
+        generator: {
+          filename: makePreservedAssetName(rootDir, outputFolder),
+          publicPath: HTML_PUBLIC_PATH,
+        },
+      },
+
+      // Assets usados desde SCSS/CSS:
+      // background-image: url("/images/foto.jpg");
+      // => http://192.168.68.62/images/foto.hash.jpg
+      {
+        issuer: /\.(sa|sc|c)ss$/i,
+        type: "asset/resource",
+        generator: {
+          filename: makePreservedAssetName(rootDir, outputFolder),
+          publicPath: APP_PUBLIC_PATH,
+        },
+      },
+
+      // Assets importados desde JS u otros archivos:
+      // import img from "/images/foto.jpg";
+      // => http://192.168.68.62/images/foto.hash.jpg
+      {
+        type: "asset/resource",
+        generator: {
+          filename: makePreservedAssetName(rootDir, outputFolder),
+          publicPath: APP_PUBLIC_PATH,
+        },
+      },
+    ],
+  };
+};
+
 class CreateDirectoryPlugin {
   constructor(directoryPath) {
     this.directoryPath = directoryPath;
@@ -27,6 +148,13 @@ module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
   const isDevelopment = !isProduction;
 
+  const assetsRoot = path.resolve(__dirname, "assets");
+  const imagesRoot = path.resolve(__dirname, "assets/images");
+  const videosRoot = path.resolve(__dirname, "assets/videos");
+  const fontsRoot = path.resolve(__dirname, "assets/fonts");
+  const audioRoot = path.resolve(__dirname, "assets/audio");
+  const filesRoot = path.resolve(__dirname, "assets/files");
+
   return {
     mode: isProduction ? "production" : "development",
 
@@ -36,8 +164,15 @@ module.exports = (env, argv) => {
 
     output: {
       path: path.resolve(__dirname, "resources/assets"),
-      filename: isProduction ? "js/[contenthash].js" : "js/[name].js",
-      assetModuleFilename: "assets/[hash][ext][query]",
+
+      // Importante:
+      // Este publicPath queda dentro de JS runtime y CSS final.
+      // Por eso NO debe ser @url.
+      publicPath: APP_PUBLIC_PATH,
+
+      filename: isProduction ? "js/[contenthash:8].js" : "js/[name].js",
+      chunkFilename: isProduction ? "js/[contenthash:8].js" : "js/[name].js",
+      assetModuleFilename: "assets/[contenthash:8][ext][query]",
       clean: true,
     },
 
@@ -45,6 +180,23 @@ module.exports = (env, argv) => {
 
     resolve: {
       extensions: [".mjs", ".js"],
+
+      // Permite usar rutas absolutas desde /assets:
+      //
+      // /images/foto.jpg
+      // /images/subfolder/foto.jpg
+      // /videos/demo.mp4
+      // /fonts/font.woff2
+      roots: [assetsRoot],
+
+      alias: {
+        "@assets": assetsRoot,
+        "@images": imagesRoot,
+        "@videos": videosRoot,
+        "@fonts": fontsRoot,
+        "@audio": audioRoot,
+        "@files": filesRoot,
+      },
     },
 
     module: {
@@ -60,16 +212,25 @@ module.exports = (env, argv) => {
             },
           },
         },
+
         {
           test: /\.(sa|sc|c)ss$/,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
+              options: {
+                // Importante:
+                // El CSS no pasa por StencilEngine, entonces aquí usamos APP_URL real.
+                publicPath: APP_PUBLIC_PATH,
+              },
             },
             {
               loader: "css-loader",
               options: {
                 sourceMap: isDevelopment,
+                url: {
+                  filter: shouldProcessUrl,
+                },
               },
             },
             {
@@ -87,33 +248,45 @@ module.exports = (env, argv) => {
             },
           ],
         },
-        {
-          test: /\.(flv|vob|mp4|wmv|webm|ogv|avi|mov|m4v)$/,
-          type: "asset/resource",
-          generator: {
-            filename: "videos/[contenthash][ext]",
-          },
-        },
-        {
-          test: /\.(png|jpe?g|gif|svg|webp|avif|ico)$/i,
-          type: "asset/resource",
-          generator: {
-            filename: "images/[contenthash][ext]",
-          },
-        },
-        {
-          test: /\.(woff|woff2|ttf|otf|eot)$/,
-          type: "asset/resource",
-          generator: {
-            filename: "fonts/[contenthash][ext]",
-          },
-        },
+
+        makeAssetRule(
+          /\.(png|jpe?g|gif|svg|webp|avif|ico)$/i,
+          imagesRoot,
+          "images"
+        ),
+
+        makeAssetRule(
+          /\.(flv|vob|mp4|wmv|webm|ogv|avi|mov|m4v)$/i,
+          videosRoot,
+          "videos"
+        ),
+
+        makeAssetRule(
+          /\.(mp3|wav|ogg|m4a|aac|flac)$/i,
+          audioRoot,
+          "audio"
+        ),
+
+        makeAssetRule(
+          /\.(woff|woff2|ttf|otf|eot)$/i,
+          fontsRoot,
+          "fonts"
+        ),
+
+        makeAssetRule(
+          /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)$/i,
+          filesRoot,
+          "files"
+        ),
+
         {
           test: /\.html$/i,
           loader: "html-loader",
           options: {
             minimize: isProduction,
             sources: {
+              urlFilter: (attribute, value) => shouldProcessUrl(value),
+
               list: [
                 {
                   tag: "img",
@@ -135,6 +308,34 @@ module.exports = (env, argv) => {
                   attribute: "data-srcset",
                   type: "srcset",
                 },
+
+                {
+                  tag: "picture",
+                  attribute: "data-src",
+                  type: "src",
+                },
+
+                {
+                  tag: "source",
+                  attribute: "src",
+                  type: "src",
+                },
+                {
+                  tag: "source",
+                  attribute: "data-src",
+                  type: "src",
+                },
+                {
+                  tag: "source",
+                  attribute: "srcset",
+                  type: "srcset",
+                },
+                {
+                  tag: "source",
+                  attribute: "data-srcset",
+                  type: "srcset",
+                },
+
                 {
                   tag: "div",
                   attribute: "data-background-src",
@@ -142,6 +343,26 @@ module.exports = (env, argv) => {
                 },
                 {
                   tag: "section",
+                  attribute: "data-background-src",
+                  type: "src",
+                },
+                {
+                  tag: "article",
+                  attribute: "data-background-src",
+                  type: "src",
+                },
+                {
+                  tag: "header",
+                  attribute: "data-background-src",
+                  type: "src",
+                },
+                {
+                  tag: "footer",
+                  attribute: "data-background-src",
+                  type: "src",
+                },
+                {
+                  tag: "main",
                   attribute: "data-background-src",
                   type: "src",
                 },
@@ -155,6 +376,12 @@ module.exports = (env, argv) => {
                   attribute: "data-background-src",
                   type: "src",
                 },
+                {
+                  tag: "a",
+                  attribute: "data-background-src",
+                  type: "src",
+                },
+
                 {
                   tag: "video",
                   attribute: "src",
@@ -175,26 +402,13 @@ module.exports = (env, argv) => {
                   attribute: "data-poster",
                   type: "src",
                 },
-                {
-                  tag: "source",
-                  attribute: "src",
-                  type: "src",
-                },
-                {
-                  tag: "source",
-                  attribute: "data-src",
-                  type: "src",
-                },
-                {
-                  tag: "source",
-                  attribute: "srcset",
-                  type: "srcset",
-                },
+
                 {
                   tag: "track",
                   attribute: "src",
                   type: "src",
                 },
+
                 {
                   tag: "audio",
                   attribute: "src",
@@ -205,6 +419,7 @@ module.exports = (env, argv) => {
                   attribute: "data-src",
                   type: "src",
                 },
+
                 {
                   tag: "link",
                   attribute: "href",
@@ -216,8 +431,12 @@ module.exports = (env, argv) => {
                     return (
                       rel === "icon" ||
                       rel === "shortcut icon" ||
+                      rel === "apple-touch-icon" ||
                       ((rel === "preload" || rel === "prefetch") &&
-                        (as === "image" || as === "video" || as === "audio"))
+                        (as === "image" ||
+                          as === "video" ||
+                          as === "audio" ||
+                          as === "font"))
                     );
                   },
                 },
@@ -242,7 +461,8 @@ module.exports = (env, argv) => {
 
     plugins: [
       new MiniCssExtractPlugin({
-        filename: isProduction ? "css/[contenthash].css" : "css/[name].css",
+        filename: isProduction ? "css/[contenthash:8].css" : "css/[name].css",
+        chunkFilename: isProduction ? "css/[contenthash:8].css" : "css/[name].css",
       }),
 
       ...(isProduction
@@ -270,6 +490,7 @@ module.exports = (env, argv) => {
           {
             from: path.resolve(__dirname, "assets/images/ICON.png"),
             to: path.resolve(__dirname, "resources/assets/images/ICON.png"),
+            noErrorOnMissing: true,
           },
           {
             from: path.resolve(__dirname, "assets/robots.txt"),
@@ -285,28 +506,39 @@ module.exports = (env, argv) => {
       }),
 
       ...glob.sync("./assets/views/**/*.html").map((htmlFile) => {
-        if (!htmlFile.includes("compiled")) {
-          return new HtmlWebpackPlugin({
-            inject: htmlFile.includes("layouts") ? true : false,
-            template: htmlFile,
-            filename:
-              "../../" +
-              htmlFile.replace("assets\\views\\", "assets/views/compiled/"),
-            publicPath: "@url",
-            minify: isProduction
-              ? {
-                  collapseWhitespace: true,
-                  removeComments: true,
-                  removeRedundantAttributes: true,
-                  removeScriptTypeAttributes: true,
-                  removeStyleLinkTypeAttributes: true,
-                  useShortDoctype: true,
-                }
-              : false,
-          });
-        } else {
+        const normalizedHtmlFile = toPosix(htmlFile);
+
+        if (normalizedHtmlFile.includes("/compiled/")) {
           return new Noop();
         }
+
+        const compiledFilename =
+          "../../" +
+          normalizedHtmlFile.replace(
+            /^\.?\/?assets\/views\//,
+            "assets/views/compiled/"
+          );
+
+        return new HtmlWebpackPlugin({
+          inject: normalizedHtmlFile.includes("/layouts/"),
+          template: htmlFile,
+          filename: compiledFilename,
+
+          // Importante:
+          // Solo el HTML usa @url porque luego pasa por StencilEngine.
+          publicPath: HTML_PUBLIC_PATH,
+
+          minify: isProduction
+            ? {
+                collapseWhitespace: true,
+                removeComments: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true,
+              }
+            : false,
+        });
       }),
     ],
   };

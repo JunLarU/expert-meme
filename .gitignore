@@ -7,4 +7,6 @@
 /node_modules
 package-lock.json
 /assets/views/compiled
+/resources
+/resources/
 .env

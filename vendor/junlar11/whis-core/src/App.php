@@ -147,8 +147,42 @@ class App
         try {
             $this->terminate($this->router->resolve($this->request));
         } catch (HttpNotFoundException $e) {
-            //throw new \Exception('No route matched.', 404);
-            $this->abort(Response::view('errors/error', ["code" => 404, "text" => "Page not found"], "error","Error 404")->setStatus(404));
+            /*
+     * Si HttpNotFoundException trae mensaje, probablemente NO es un 404 real de ruta,
+     * sino un error interno del motor de vistas:
+     *
+     * - Template not found
+     * - Layout not found
+     * - Template file not readable
+     * - Template path outside views directory
+     *
+     * En desarrollo no debemos esconderlo detrás de la vista 404.
+     */
+            $isDev = str_contains(strtolower((string) config('app.env')), 'dev')
+            || str_contains(strtolower((string) config('app.env')), 'local');
+
+            if ($isDev && trim($e->getMessage()) !== '') {
+                $this->abort(
+                    Response::text(
+                        "Stencil/View error:\n\n" .
+                        $e->getMessage() . "\n\n" .
+                        "File: " . $e->getFile() . "\n" .
+                        "Line: " . $e->getLine()
+                    )->setStatus(500)
+                );
+            }
+
+            $this->abort(
+                Response::view(
+                    'errors/error',
+                    [
+                        "code" => 404,
+                        "text" => "Page not found",
+                    ],
+                    "error",
+                    "Error 404"
+                )->setStatus(404)
+            );
         } catch (ValidationException $e) {
             if ($this->expectsJson($this->request)) {
                 $this->abort(
@@ -200,7 +234,7 @@ class App
                         'code' => 500,
                         'text' => 'An error has occurred',
                     ],
-                    'error',"Error 500"
+                    'error', "Error 500"
                 )->setStatus(500);
 
                 $this->abort($response);

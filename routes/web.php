@@ -12,7 +12,7 @@ Auth::Routes();
 
 CONTROLLER(Home::class,'',[
     'get' => [
-        '/' => 'create',
+        '' => 'create',
     ],
 
 ]);

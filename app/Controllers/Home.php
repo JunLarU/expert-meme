@@ -1,18 +1,21 @@
 <?php
-
 namespace App\Controllers;
 
 use Whis\Http\Controller;
 use Whis\Http\Request;
 use Whis\Http\Response;
-use Whis\Storage\File;
 
 class Home extends Controller
 {
     public function create()
     {
-        return view('home',"Inicio");
-        //return view('home',"Inicio", ['user' => auth()->email]);
+        file_put_contents(
+            \Whis\App::$root . '/logs/home-create-test.txt',
+            date('Y-m-d H:i:s') . " Home::create ejecutado\n",
+            FILE_APPEND
+        );
+
+        return view('pages/main/home', "Inicio");
     }
     public function contactSend(Request $request)
     {

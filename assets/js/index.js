@@ -1,7 +1,9 @@
 import "../sass/app.scss";
 import { bootstrapWhisDefaults } from "./helpers/framework-defaults";
+import initClientsHexGrid from "./sections/clients-hex-grid";
 import initNavbar from "./sections/navbar";
 import initSplide from "./sections/splide";
+import initStats from "./sections/stats";
 
 export {
   WHIS_DEFAULT_OPTIONS,
@@ -42,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const splide = initSplide(splideOptions);
+  initStats();
+  initClientsHexGrid();
 });
 
 /**

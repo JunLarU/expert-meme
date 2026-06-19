@@ -7,6 +7,38 @@ const FIELD_SELECTOR = `
 `;
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+const CONTAINS_EMAIL_REGEX =
+  /[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+/i;
+
+/**
+ * Detecta:
+ * - https://dominio.com
+ * - http://dominio.com
+ * - ftp://dominio.com
+ * - www.dominio.com
+ * - dominio.com
+ * - wa.me
+ * - t.me
+ * - dominio.construction
+ *
+ * Nota: detecta dominios con TLD de 2 a 63 caracteres.
+ */
+const LINK_REGEX =
+  /\b(?:https?|ftp):\/\/[^\s<>"']+|\bwww\.[^\s<>"']+|\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}(?:\/[^\s<>"']*)?/gi;
+
+/**
+ * Detecta teléfonos internacionales razonables:
+ * - 4421234567
+ * - 442 123 4567
+ * - +52 442 123 4567
+ * - 52 442 123 4567
+ * - +1 (555) 123-4567
+ * - +34 612 345 678
+ * - 0044 7700 900123
+ *
+ * Usa rango internacional: 8 a 15 dígitos.
+ */
+const PHONE_CANDIDATE_REGEX = /(?:\+|00)?(?:\s*\(?\d{1,4}\)?[\s().-]*){2,}\d/gu;
 const DEFAULT_OPTIONS = {
   selector: DEFAULT_SELECTOR,
   validation: "html",
@@ -48,6 +80,9 @@ const DEFAULT_OPTIONS = {
     fileTotalSize:
       "El peso total de {label} excede el máximo permitido de {maxTotalSizeFormatted}.",
     fileType: "{fileName} tiene un tipo de archivo no permitido.",
+    noLinks: "{Label} no debe contener enlaces.",
+    noPhones: "{Label} no debe contener números de teléfono.",
+    noEmails: "{Label} no debe contener correos electrónicos.",
   },
 };
 
@@ -85,6 +120,9 @@ const DEFAULT_VALIDATION_PROFILES = {
       rangeOverflow: "{Label} debe ser menor o igual a {max}.",
       match: "{Label} no coincide.",
       invalid: "{Label} no es válido.",
+      noLinks: "{Label} no debe contener enlaces.",
+      noPhones: "{Label} no debe contener números de teléfono.",
+      noEmails: "{Label} no debe contener correos electrónicos.",
     },
 
     fields: {
@@ -94,6 +132,10 @@ const DEFAULT_VALIDATION_PROFILES = {
         maxLength: 120,
         label: "nombre o empresa",
         normalize: "spaces",
+
+        noLinks: true,
+        noPhones: true,
+        noEmails: true,
       },
       email: {
         required: true,
@@ -108,6 +150,10 @@ const DEFAULT_VALIDATION_PROFILES = {
         maxLength: 3000,
         label: "mensaje",
         normalize: "trim",
+
+        noLinks: true,
+        noPhones: true,
+        noEmails: true,
       },
     },
   },
@@ -548,6 +594,18 @@ function validateField(field, state) {
 
     return false;
   }
+  const forbiddenTextMessage = validateForbiddenTextContent(
+    normalizedValue,
+    field,
+    state,
+    rules,
+    label,
+  );
+
+  if (forbiddenTextMessage) {
+    setFieldState(field, state, false, forbiddenTextMessage);
+    return false;
+  }
 
   if (
     typeof normalizedValue === "string" &&
@@ -732,6 +790,17 @@ function getRulesFromDataset(field) {
 
   if (dataset.normalize) {
     rules.normalize = dataset.normalize;
+  }
+  if (dataset.noLinks !== undefined) {
+    rules.noLinks = readBoolean(dataset.noLinks, false);
+  }
+
+  if (dataset.noPhones !== undefined) {
+    rules.noPhones = readBoolean(dataset.noPhones, false);
+  }
+
+  if (dataset.noEmails !== undefined) {
+    rules.noEmails = readBoolean(dataset.noEmails, false);
   }
 
   if (dataset.minFiles) {
@@ -1828,6 +1897,159 @@ function formatBytes(bytes) {
   }
 
   return `${(value / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
+
+function validateForbiddenTextContent(value, field, state, rules, label) {
+  if (!shouldValidateForbiddenTextContent(value, field, rules)) {
+    return "";
+  }
+
+  const text = String(value || "");
+
+  if (rules.noLinks && containsLink(text)) {
+    return (
+      field.dataset.messageNoLinks ||
+      rules.messageNoLinks ||
+      getMessage(
+        state,
+        "noLinks",
+        `${capitalize(label)} no debe contener enlaces.`,
+        getMessageContext(label),
+      )
+    );
+  }
+
+  if (rules.noPhones && containsPhoneNumber(text)) {
+    return (
+      field.dataset.messageNoPhones ||
+      rules.messageNoPhones ||
+      getMessage(
+        state,
+        "noPhones",
+        `${capitalize(label)} no debe contener números de teléfono.`,
+        getMessageContext(label),
+      )
+    );
+  }
+
+  if (rules.noEmails && containsEmail(text)) {
+    return (
+      field.dataset.messageNoEmails ||
+      rules.messageNoEmails ||
+      getMessage(
+        state,
+        "noEmails",
+        `${capitalize(label)} no debe contener correos electrónicos.`,
+        getMessageContext(label),
+      )
+    );
+  }
+
+  return "";
+}
+
+function shouldValidateForbiddenTextContent(value, field, rules = {}) {
+  if (typeof value !== "string") return false;
+  if (isEmptyValue(value)) return false;
+
+  if (!rules.noLinks && !rules.noPhones && !rules.noEmails) {
+    return false;
+  }
+
+  return isTextInputOrTextarea(field);
+}
+
+function isTextInputOrTextarea(field) {
+  if (field.tagName === "TEXTAREA") return true;
+  if (field.tagName !== "INPUT") return false;
+
+  const type = String(field.type || "text").toLowerCase();
+
+  return ["text", "search", "password"].includes(type);
+}
+
+function containsEmail(value) {
+  return CONTAINS_EMAIL_REGEX.test(String(value || ""));
+}
+
+function containsLink(value) {
+  const text = String(value || "");
+
+  LINK_REGEX.lastIndex = 0;
+
+  let match;
+
+  while ((match = LINK_REGEX.exec(text)) !== null) {
+    const detected = match[0] || "";
+    const start = match.index;
+    const before = text[start - 1] || "";
+    const after = text[start + detected.length] || "";
+
+    /**
+     * Evita que "correo@dominio.com" sea detectado como link
+     * cuando solo se quiere validar enlaces.
+     */
+    if (before === "@" || after === "@") {
+      continue;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+function containsPhoneNumber(value) {
+  const text = String(value || "");
+
+  PHONE_CANDIDATE_REGEX.lastIndex = 0;
+
+  let match;
+
+  while ((match = PHONE_CANDIDATE_REGEX.exec(text)) !== null) {
+    const candidate = match[0] || "";
+
+    if (isProbablyPhoneNumber(candidate)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isProbablyPhoneNumber(candidate) {
+  const text = String(candidate || "").trim();
+  const digits = text.replace(/\D/g, "");
+
+  /**
+   * Teléfonos internacionales: normalmente 8 a 15 dígitos.
+   * E.164 permite hasta 15 dígitos, pero aquí permitimos también
+   * formatos locales razonables de 8+ dígitos.
+   */
+  if (digits.length < 8 || digits.length > 15) {
+    return false;
+  }
+
+  /**
+   * Evita detectar fechas simples como:
+   * 2026-06-17
+   * 17-06-2026
+   * 17.06.2026
+   */
+  if (/^\d{1,4}[-.]\d{1,2}[-.]\d{1,4}$/.test(text)) {
+    return false;
+  }
+
+  /**
+   * Evita falsos positivos muy obvios como:
+   * 00000000
+   * 1111111111
+   */
+  if (/^(\d)\1+$/.test(digits)) {
+    return false;
+  }
+
+  return true;
 }
 
 function normalizeFieldName(name) {

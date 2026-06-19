@@ -49,6 +49,9 @@ $font-navbar__links: $font-montserrat;
     display: block;
     width: auto;
     height: 7rem;
+    @include tablet {
+      height: 8rem;
+    }
     transition: all 0.3s ease;
     transition: transform 0.5s ease;
     svg {
@@ -213,7 +216,7 @@ $font-navbar__links: $font-montserrat;
       }
     }
     @include desktop {
-      font-size: 1.5rem;
+      font-size: 2rem;
       padding: 0.5rem 0;
       text-align: center;
       padding: 0 1rem;
@@ -363,7 +366,7 @@ $font-navbar__links: $font-montserrat;
       }
     }
     @include desktop {
-      font-size: 1.5rem;
+      font-size: 2rem;
       padding: 0.5rem 0;
       text-align: center;
       padding: 0 1rem;
