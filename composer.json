@@ -9,7 +9,8 @@
     },
     "files": [
       "vendor/junlar11/whis-core/src/Helpers/csrf.php",
-      "vendor/junlar11/whis-core/src/Helpers/routes.php"
+      "vendor/junlar11/whis-core/src/Helpers/routes.php",
+      "vendor/junlar11/whis-core/src/Helpers/api_auth.php"
     ]
   },
   "authors": [

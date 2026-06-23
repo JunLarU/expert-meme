@@ -1,73 +1,198 @@
 export default function initNavbar() {
-  const navbar = document.querySelector('.navbar');
-  const btn = document.querySelector('.navbar__burger__btn-menu');
-  const links = document.querySelector('.navbar__links');
+  const navbar = document.querySelector(".navbar");
+  const btn = document.querySelector(".navbar__burger__btn-menu");
+  const links = document.querySelector(".navbar__links");
+  const footer = document.querySelector(".site-footer, footer");
   const body = document.body;
-  const mqTablet = window.matchMedia('(min-width: 1024px)');
+  const html = document.documentElement;
+  const mqTablet = window.matchMedia("(min-width: 1024px)");
 
   if (!navbar) return;
 
   let ticking = false;
-  let savedScrollY = 0;
-  let locked = false;
+  let isSticky = false;
+  let dropTimer = null;
+  let returnTimer = null;
+
+  const isMobileMenuOpen = () => {
+    return !mqTablet.matches && links?.classList.contains("active");
+  };
 
   const lockScroll = () => {
-    if (locked) return;
-    savedScrollY = window.scrollY;
-    body.style.top = `-${savedScrollY}px`;   // 👈 CLAVE para que no “suba”
-    body.classList.add('scroll-lock');
-    locked = true;
+    html.classList.add("scroll-lock");
+    body.classList.add("scroll-lock");
   };
 
   const unlockScroll = () => {
-    if (!locked) return;
-    body.classList.remove('scroll-lock');
-    body.style.top = '';
-    window.scrollTo(0, savedScrollY);        // 👈 vuelve al punto exacto
-    locked = false;
+    html.classList.remove("scroll-lock");
+    body.classList.remove("scroll-lock");
   };
 
-  // 1) Burger toggle (solo si clickeas el botón)
-  document.addEventListener('click', (e) => {
-    const clickedBtn = e.target.closest('.navbar__burger__btn-menu');
-    if (!clickedBtn) return;
+  const openMenu = () => {
+    btn?.classList.add("menu-open");
+    links?.classList.add("active");
+    navbar.classList.add("active");
+    navbar.classList.remove("is-hidden-for-footer");
 
-    btn?.classList.toggle('menu-open');
-    links?.classList.toggle('active');
-    navbar.classList.toggle('active');
+    btn?.setAttribute("aria-expanded", "true");
 
-    const menuOpen = links?.classList.contains('active');
+    if (!mqTablet.matches) {
+      links.scrollTop = 0;
+      lockScroll();
+    }
+  };
 
-    // Solo lock en mobile
-    if (!mqTablet.matches && menuOpen) lockScroll();
-    else unlockScroll();
-  });
+  const closeMenu = () => {
+    btn?.classList.remove("menu-open");
+    links?.classList.remove("active");
+    navbar.classList.remove("active");
 
-  // 2) Sticky simple por breakpoint (tablet+ 50vh, mobile 100vh)
+    btn?.setAttribute("aria-expanded", "false");
+
+    unlockScroll();
+    requestNavbarUpdate();
+  };
+
+  const toggleMenu = () => {
+    if (links?.classList.contains("active")) closeMenu();
+    else openMenu();
+  };
+
   const thresholdPx = () => window.innerHeight * 0.25;
 
-  const updateSticky = () => {
+  const getVisibleHeight = (element) => {
+    if (!element) return 0;
+
+    const rect = element.getBoundingClientRect();
+    const viewportHeight =
+      window.innerHeight || document.documentElement.clientHeight;
+
+    const visibleTop = Math.max(rect.top, 0);
+    const visibleBottom = Math.min(rect.bottom, viewportHeight);
+
+    return Math.max(0, visibleBottom - visibleTop);
+  };
+
+  const getLargestVisibleContentHeight = () => {
+    const candidates = new Set([
+      ...document.querySelectorAll("main > section"),
+      ...document.querySelectorAll("main > div"),
+      ...document.querySelectorAll(".home__jumbotron"),
+      ...document.querySelectorAll("section"),
+    ]);
+
+    candidates.delete(footer);
+    candidates.delete(navbar);
+
+    let maxVisible = 0;
+
+    candidates.forEach((element) => {
+      const visibleHeight = getVisibleHeight(element);
+      if (visibleHeight > maxVisible) maxVisible = visibleHeight;
+    });
+
+    return maxVisible;
+  };
+
+const updateSticky = () => {
+  if (isMobileMenuOpen()) return;
+
+  const nextSticky = window.scrollY > thresholdPx();
+
+  if (nextSticky === isSticky) return;
+
+  isSticky = nextSticky;
+
+  window.clearTimeout(dropTimer);
+  window.clearTimeout(returnTimer);
+
+  if (isSticky) {
+    navbar.classList.remove("navbar--return-top");
+    navbar.classList.add("sticky", "navbar--drop-in");
+
+    dropTimer = window.setTimeout(() => {
+      navbar.classList.remove("navbar--drop-in");
+    }, 560);
+
+    return;
+  }
+
+  navbar.classList.remove("sticky", "navbar--drop-in");
+  navbar.classList.add("navbar--return-top");
+
+  returnTimer = window.setTimeout(() => {
+    navbar.classList.remove("navbar--return-top");
+  }, 520);
+};
+  const updateFooterVisibility = () => {
+    if (!footer) {
+      navbar.classList.remove("is-hidden-for-footer");
+      return;
+    }
+
+    if (isMobileMenuOpen()) {
+      navbar.classList.remove("is-hidden-for-footer");
+      return;
+    }
+
+    const footerVisibleHeight = getVisibleHeight(footer);
+    const largestContentVisibleHeight = getLargestVisibleContentHeight();
+    const minFooterVisibleToHide = Math.min(window.innerHeight * 0.28, 240);
+
+    const footerIsDominant =
+      footerVisibleHeight > minFooterVisibleToHide &&
+      footerVisibleHeight >= largestContentVisibleHeight;
+
+    navbar.classList.toggle("is-hidden-for-footer", footerIsDominant);
+  };
+
+  const updateNavbar = () => {
     ticking = false;
-
-    // Si el menú está abierto en mobile, NO recalcules sticky (evita brincos)
-    if (!mqTablet.matches && links?.classList.contains('active')) return;
-
-    navbar.classList.toggle('sticky', window.scrollY > thresholdPx());
+    updateSticky();
+    updateFooterVisibility();
   };
 
-  const onScroll = () => {
+  function requestNavbarUpdate() {
     if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(updateSticky);
-  };
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => requestAnimationFrame(updateSticky), { passive: true });
-  mqTablet.addEventListener?.('change', () => {
-    // si cambias a tablet, asegúrate de desbloquear
-    if (mqTablet.matches) unlockScroll();
-    requestAnimationFrame(updateSticky);
+    ticking = true;
+    requestAnimationFrame(updateNavbar);
+  }
+
+  document.addEventListener("click", (e) => {
+    const clickedBtn = e.target.closest(".navbar__burger__btn-menu");
+    if (!clickedBtn) return;
+
+    e.preventDefault();
+    toggleMenu();
   });
 
-  updateSticky();
+  links?.addEventListener("click", (e) => {
+    const clickedLink = e.target.closest("a");
+    if (!clickedLink || !isMobileMenuOpen()) return;
+
+    closeMenu();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape" || !isMobileMenuOpen()) return;
+
+    closeMenu();
+  });
+
+  window.addEventListener("scroll", requestNavbarUpdate, { passive: true });
+  window.addEventListener("resize", requestNavbarUpdate, { passive: true });
+  window.addEventListener("orientationchange", requestNavbarUpdate, {
+    passive: true,
+  });
+
+  mqTablet.addEventListener?.("change", () => {
+    if (mqTablet.matches) {
+      closeMenu();
+    }
+
+    requestNavbarUpdate();
+  });
+
+  updateNavbar();
 }

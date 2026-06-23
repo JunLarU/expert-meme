@@ -13,6 +13,18 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 // .env
 // ======================================================
 
+const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|svg|webp|avif|ico)$/i;
+
+const VIDEO_EXTENSIONS = /\.(mp4|webm|ogv|avi|mov|m4v|mkv|flv|vob|wmv)$/i;
+
+const AUDIO_EXTENSIONS = /\.(mp3|wav|ogg|m4a|aac|flac)$/i;
+
+const FONT_EXTENSIONS = /\.(woff|woff2|ttf|otf|eot)$/i;
+
+const TEXT_TRACK_EXTENSIONS = /\.(vtt|srt)$/i;
+
+const FILE_EXTENSIONS = /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)$/i;
+
 const parseDotEnv = (filePath) => {
   if (!fs.existsSync(filePath)) return {};
 
@@ -52,7 +64,7 @@ const normalizePublicUrl = (url) => {
 // Ejemplo:
 // http://192.168.68.62/images/foto.hash.jpg
 const APP_PUBLIC_PATH = normalizePublicUrl(
-  process.env.APP_URL || projectEnv.APP_URL || "/"
+  process.env.APP_URL || projectEnv.APP_URL || "/",
 );
 
 // Esta URL se usará solo dentro de HTML compilado por Webpack.
@@ -60,6 +72,32 @@ const APP_PUBLIC_PATH = normalizePublicUrl(
 // Ejemplo:
 // @url/images/foto.hash.jpg
 const HTML_PUBLIC_PATH = "@url/";
+// APP_URL sin slash final.
+// Ejemplo:
+// http://192.168.68.62
+const APP_URL = APP_PUBLIC_PATH.replace(/\/+$/, "");
+
+/**
+ * Reemplaza @url en archivos que NO pasan por StencilEngine:
+ *
+ * JS:
+ *   "@url/contact/send"
+ *   => "http://192.168.68.62/contact/send"
+ *
+ * SCSS/CSS:
+ *   url("@url/images/fondo.jpg")
+ *   => url("http://192.168.68.62/images/fondo.jpg")
+ *
+ * Importante:
+ * No se aplica al HTML porque el HTML sí pasa por StencilEngine.
+ */
+const replaceAtUrlLoader = {
+  loader: "string-replace-loader",
+  options: {
+    search: /@url(?=\/|["'`)\s]|$)/g,
+    replace: APP_URL,
+  },
+};
 
 const toPosix = (value) => value.replace(/\\/g, "/");
 
@@ -74,10 +112,22 @@ const shouldProcessUrl = (url) => {
 const makePreservedAssetName = (rootDir, outputFolder) => {
   return (pathData) => {
     const absoluteFile = pathData.filename;
+
     let relativeFile = toPosix(path.relative(rootDir, absoluteFile));
 
+    // Si el archivo no está dentro del root esperado, conservar ruta desde /assets
+    // en vez de colapsarlo a basename. Esto evita colisiones.
     if (relativeFile.startsWith("..")) {
-      relativeFile = path.basename(absoluteFile);
+      relativeFile = toPosix(
+        path.relative(path.resolve(__dirname, "assets"), absoluteFile),
+      );
+    }
+
+    // Evita duplicar carpeta:
+    // assets/videos/demo.mp4 => videos/demo.hash.mp4
+    // no videos/videos/demo.hash.mp4
+    if (relativeFile.startsWith(`${outputFolder}/`)) {
+      relativeFile = relativeFile.slice(outputFolder.length + 1);
     }
 
     const parsed = path.parse(relativeFile);
@@ -204,13 +254,16 @@ module.exports = (env, argv) => {
         {
           test: /\.m?js$/,
           exclude: /(node_modules|bower_components)/,
-          use: {
-            loader: "babel-loader",
-            options: {
-              cacheDirectory: true,
-              presets: ["@babel/preset-env"],
+          use: [
+            {
+              loader: "babel-loader",
+              options: {
+                cacheDirectory: true,
+                presets: ["@babel/preset-env"],
+              },
             },
-          },
+            replaceAtUrlLoader,
+          ],
         },
 
         {
@@ -219,8 +272,6 @@ module.exports = (env, argv) => {
             {
               loader: MiniCssExtractPlugin.loader,
               options: {
-                // Importante:
-                // El CSS no pasa por StencilEngine, entonces aquí usamos APP_URL real.
                 publicPath: APP_PUBLIC_PATH,
               },
             },
@@ -239,6 +290,11 @@ module.exports = (env, argv) => {
                 sourceMap: isDevelopment,
               },
             },
+
+            // Reemplaza @url después de compilar SASS,
+            // pero antes de que css-loader empaquete el CSS.
+            replaceAtUrlLoader,
+
             {
               loader: "sass-loader",
               options: {
@@ -248,37 +304,17 @@ module.exports = (env, argv) => {
             },
           ],
         },
+        makeAssetRule(IMAGE_EXTENSIONS, imagesRoot, "images"),
 
-        makeAssetRule(
-          /\.(png|jpe?g|gif|svg|webp|avif|ico)$/i,
-          imagesRoot,
-          "images"
-        ),
+        makeAssetRule(VIDEO_EXTENSIONS, videosRoot, "videos"),
 
-        makeAssetRule(
-          /\.(flv|vob|mp4|wmv|webm|ogv|avi|mov|m4v)$/i,
-          videosRoot,
-          "videos"
-        ),
+        makeAssetRule(AUDIO_EXTENSIONS, audioRoot, "audio"),
 
-        makeAssetRule(
-          /\.(mp3|wav|ogg|m4a|aac|flac)$/i,
-          audioRoot,
-          "audio"
-        ),
+        makeAssetRule(FONT_EXTENSIONS, fontsRoot, "fonts"),
 
-        makeAssetRule(
-          /\.(woff|woff2|ttf|otf|eot)$/i,
-          fontsRoot,
-          "fonts"
-        ),
+        makeAssetRule(TEXT_TRACK_EXTENSIONS, assetsRoot, "tracks"),
 
-        makeAssetRule(
-          /\.(pdf|doc|docx|xls|xlsx|ppt|pptx|zip|rar|7z)$/i,
-          filesRoot,
-          "files"
-        ),
-
+        makeAssetRule(FILE_EXTENSIONS, filesRoot, "files"),
         {
           test: /\.html$/i,
           loader: "html-loader",
@@ -288,59 +324,58 @@ module.exports = (env, argv) => {
               urlFilter: (attribute, value) => shouldProcessUrl(value),
 
               list: [
-                {
-                  tag: "img",
-                  attribute: "src",
-                  type: "src",
-                },
-                {
-                  tag: "img",
-                  attribute: "data-src",
-                  type: "src",
-                },
-                {
-                  tag: "img",
-                  attribute: "srcset",
-                  type: "srcset",
-                },
-                {
-                  tag: "img",
-                  attribute: "data-srcset",
-                  type: "srcset",
-                },
+                // =========================
+                // Imágenes normales/lazy
+                // =========================
+                { tag: "img", attribute: "src", type: "src" },
+                { tag: "img", attribute: "data-src", type: "src" },
+                { tag: "img", attribute: "srcset", type: "srcset" },
+                { tag: "img", attribute: "data-srcset", type: "srcset" },
 
-                {
-                  tag: "picture",
-                  attribute: "data-src",
-                  type: "src",
-                },
+                { tag: "picture", attribute: "data-src", type: "src" },
 
-                {
-                  tag: "source",
-                  attribute: "src",
-                  type: "src",
-                },
-                {
-                  tag: "source",
-                  attribute: "data-src",
-                  type: "src",
-                },
-                {
-                  tag: "source",
-                  attribute: "srcset",
-                  type: "srcset",
-                },
-                {
-                  tag: "source",
-                  attribute: "data-srcset",
-                  type: "srcset",
-                },
+                // =========================
+                // Source: sirve para picture, video y audio
+                // =========================
+                { tag: "source", attribute: "src", type: "src" },
+                { tag: "source", attribute: "data-src", type: "src" },
+                { tag: "source", attribute: "srcset", type: "srcset" },
+                { tag: "source", attribute: "data-srcset", type: "srcset" },
 
-                {
-                  tag: "div",
-                  attribute: "data-background-src",
-                  type: "src",
-                },
+                // =========================
+                // Videos
+                // =========================
+                { tag: "video", attribute: "src", type: "src" },
+                { tag: "video", attribute: "data-src", type: "src" },
+
+                { tag: "video", attribute: "poster", type: "src" },
+                { tag: "video", attribute: "data-poster", type: "src" },
+
+                // Variantes responsive/custom para tu lazyloader
+                { tag: "video", attribute: "data-mobile-src", type: "src" },
+                { tag: "video", attribute: "data-tablet-src", type: "src" },
+                { tag: "video", attribute: "data-desktop-src", type: "src" },
+
+                { tag: "video", attribute: "data-src-mobile", type: "src" },
+                { tag: "video", attribute: "data-src-tablet", type: "src" },
+                { tag: "video", attribute: "data-src-desktop", type: "src" },
+
+                // =========================
+                // Subtítulos/captions
+                // =========================
+                { tag: "track", attribute: "src", type: "src" },
+                { tag: "track", attribute: "data-src", type: "src" },
+
+                // =========================
+                // Audio
+                // =========================
+                { tag: "audio", attribute: "src", type: "src" },
+                { tag: "audio", attribute: "data-src", type: "src" },
+
+                // =========================
+                // Backgrounds genéricos
+                // =========================
+                { tag: "div", attribute: "data-background-src", type: "src" },
                 {
                   tag: "section",
                   attribute: "data-background-src",
@@ -361,65 +396,55 @@ module.exports = (env, argv) => {
                   attribute: "data-background-src",
                   type: "src",
                 },
+                { tag: "main", attribute: "data-background-src", type: "src" },
+                { tag: "li", attribute: "data-background-src", type: "src" },
+                { tag: "span", attribute: "data-background-src", type: "src" },
+                { tag: "a", attribute: "data-background-src", type: "src" },
+
+                // =========================
+                // Background videos
+                // =========================
+                { tag: "div", attribute: "data-video-src", type: "src" },
+                { tag: "section", attribute: "data-video-src", type: "src" },
+                { tag: "article", attribute: "data-video-src", type: "src" },
+                { tag: "header", attribute: "data-video-src", type: "src" },
+                { tag: "footer", attribute: "data-video-src", type: "src" },
+
                 {
-                  tag: "main",
-                  attribute: "data-background-src",
+                  tag: "div",
+                  attribute: "data-background-video-src",
                   type: "src",
                 },
                 {
-                  tag: "li",
-                  attribute: "data-background-src",
+                  tag: "section",
+                  attribute: "data-background-video-src",
                   type: "src",
                 },
                 {
-                  tag: "span",
-                  attribute: "data-background-src",
+                  tag: "article",
+                  attribute: "data-background-video-src",
                   type: "src",
                 },
                 {
-                  tag: "a",
-                  attribute: "data-background-src",
+                  tag: "header",
+                  attribute: "data-background-video-src",
+                  type: "src",
+                },
+                {
+                  tag: "footer",
+                  attribute: "data-background-video-src",
                   type: "src",
                 },
 
-                {
-                  tag: "video",
-                  attribute: "src",
-                  type: "src",
-                },
-                {
-                  tag: "video",
-                  attribute: "data-src",
-                  type: "src",
-                },
-                {
-                  tag: "video",
-                  attribute: "poster",
-                  type: "src",
-                },
-                {
-                  tag: "video",
-                  attribute: "data-poster",
-                  type: "src",
-                },
+                { tag: "div", attribute: "data-video-poster", type: "src" },
+                { tag: "section", attribute: "data-video-poster", type: "src" },
+                { tag: "article", attribute: "data-video-poster", type: "src" },
+                { tag: "header", attribute: "data-video-poster", type: "src" },
+                { tag: "footer", attribute: "data-video-poster", type: "src" },
 
-                {
-                  tag: "track",
-                  attribute: "src",
-                  type: "src",
-                },
-
-                {
-                  tag: "audio",
-                  attribute: "src",
-                  type: "src",
-                },
-                {
-                  tag: "audio",
-                  attribute: "data-src",
-                  type: "src",
-                },
-
+                // =========================
+                // Preload / prefetch
+                // =========================
                 {
                   tag: "link",
                   attribute: "href",
@@ -436,7 +461,30 @@ module.exports = (env, argv) => {
                         (as === "image" ||
                           as === "video" ||
                           as === "audio" ||
-                          as === "font"))
+                          as === "font" ||
+                          as === "track"))
+                    );
+                  },
+                },
+
+                // =========================
+                // Open Graph / Twitter cards
+                // =========================
+                {
+                  tag: "meta",
+                  attribute: "content",
+                  type: "src",
+                  filter: (tag, attribute, attributes) => {
+                    const property = attributes.property || "";
+                    const name = attributes.name || "";
+
+                    return (
+                      property === "og:image" ||
+                      property === "og:video" ||
+                      property === "og:video:url" ||
+                      property === "og:video:secure_url" ||
+                      name === "twitter:image" ||
+                      name === "twitter:player"
                     );
                   },
                 },
@@ -462,7 +510,9 @@ module.exports = (env, argv) => {
     plugins: [
       new MiniCssExtractPlugin({
         filename: isProduction ? "css/[contenthash:8].css" : "css/[name].css",
-        chunkFilename: isProduction ? "css/[contenthash:8].css" : "css/[name].css",
+        chunkFilename: isProduction
+          ? "css/[contenthash:8].css"
+          : "css/[name].css",
       }),
 
       ...(isProduction
@@ -516,7 +566,7 @@ module.exports = (env, argv) => {
           "../../" +
           normalizedHtmlFile.replace(
             /^\.?\/?assets\/views\//,
-            "assets/views/compiled/"
+            "assets/views/compiled/",
           );
 
         return new HtmlWebpackPlugin({

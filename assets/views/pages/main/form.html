@@ -2,65 +2,143 @@
   <div class="form-card">
     <h1 id="test-form-title">Test Form</h1>
 
-    <form class="form form--default" id="test_form_2" method="post" action="@url/form" enctype="multipart/form-data"
-      data-ajax-form data-validation="html" data-send-as="formdata" data-csrf="true" data-csrf-field="_token"
-      data-reset-on-success="true" novalidate aria-labelledby="test-form-legend">
+    <form
+      class="form form--default"
+      id="test_form_2"
+      method="post"
+      action="@url/form"
+      enctype="multipart/form-data"
+      data-ajax-form
+      data-validation="html"
+      data-send-as="formdata"
+      data-csrf="true"
+      data-csrf-field="_token"
+      data-reset-on-success="true"
+      data-character-counter="true"
+      novalidate
+      aria-labelledby="test-form-legend"
+    >
       @csrf('test-form')
 
       <fieldset class="form__fieldset">
         <legend id="test-form-legend">Formulario de prueba</legend>
 
-        <div class="form__status" id="testFormStatus" data-form-status role="status" aria-live="polite"></div>
+        <div
+          class="form__status"
+          id="testFormStatus"
+          data-form-status
+          role="status"
+          aria-live="polite"
+        ></div>
 
-        <div class="form-group" data-field="email">
-          <input value="{{old('email')}}" name="email" id="test-email" type="email" class="form-control" placeholder=" "
-            autocomplete="email" inputmode="email" required maxlength="150" aria-describedby="error-test-email">
+        <div class="form-group has-character-counter" data-field="email">
+          <input
+            value="{{old('email')}}"
+            name="email"
+            id="test-email"
+            type="email"
+            class="form-control"
+            placeholder=" "
+            autocomplete="email"
+            inputmode="email"
+            required
+            maxlength="150"
+            data-label="correo electrónico"
+            data-normalize="trim"
+            data-character-counter="true"
+            aria-describedby="error-test-email test-email-counter"
+          >
+
           <label class="form-label" for="test-email">Email</label>
 
-          <span class="form-group__error text-danger" id="error-test-email" data-field-error data-error-for="email"
-            aria-live="polite">{{error('email')}}</span>
+          <span
+            class="form-group__error text-danger"
+            id="error-test-email"
+            data-field-error
+            data-error-for="email"
+            aria-live="polite"
+          >{{error('email')}}</span>
+
+          <span
+            class="form-group__counter"
+            id="test-email-counter"
+            data-character-counter="true"
+            data-character-counter-for="email"
+            aria-live="polite"
+          ></span>
         </div>
 
-        <div class="form-group" data-field="name">
-          <input value="{{old('name')}}" name="name" id="test-name" type="text" class="form-control" placeholder=" "
-            autocomplete="name" required minlength="3" maxlength="120" aria-describedby="error-test-name">
+        <div class="form-group has-character-counter" data-field="name">
+          <input
+            value="{{old('name')}}"
+            name="name"
+            id="test-name"
+            type="text"
+            class="form-control"
+            placeholder=" "
+            autocomplete="name"
+            required
+            minlength="3"
+            maxlength="120"
+            data-label="nombre"
+            data-normalize="spaces"
+            data-no-links="true"
+            data-no-phones="true"
+            data-no-emails="true"
+            data-character-counter="true"
+            aria-describedby="error-test-name test-name-counter"
+          >
+
           <label class="form-label" for="test-name">Name</label>
 
-          <span class="form-group__error text-danger" id="error-test-name" data-field-error data-error-for="name"
-            aria-live="polite">{{error('name')}}</span>
+          <span
+            class="form-group__error text-danger"
+            id="error-test-name"
+            data-field-error
+            data-error-for="name"
+            aria-live="polite"
+          >{{error('name')}}</span>
+
+          <span
+            class="form-group__counter"
+            id="test-name-counter"
+            data-character-counter="true"
+            data-character-counter-for="name"
+            aria-live="polite"
+          ></span>
         </div>
 
         <div class="form-group form-group--file" data-field="files">
-  <label class="form-label" for="test-files">Files</label>
+          <label class="form-label" for="test-files">Files</label>
 
-  <input
-    type="file"
-    name="files[]"
-    id="test-files"
-    class="form-control"
-    multiple
-    accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg"
-    data-min-files="0"
-    data-max-files="1"
-    data-max-file-size="1mb"
-    data-max-total-size="1mb"
-    data-file-types=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg"
-    data-message-min-files="Debes subir al menos 1 archivo."
-    data-message-max-files="Solo puedes subir máximo 2 archivos."
-    data-message-file-size="Cada archivo debe pesar máximo 1 MB."
-    data-message-file-total-size="El peso total no debe superar 2 MB."
-    data-message-file-type="Solo se permiten archivos PNG, JPG, JPEG o PDF."
-    aria-describedby="error-test-files"
-  >
+          <input
+            type="file"
+            name="files[]"
+            id="test-files"
+            class="form-control"
+            multiple
+            accept=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg"
+            data-min-files="0"
+            data-max-files="1"
+            data-max-file-size="1mb"
+            data-max-total-size="1mb"
+            data-file-types=".png,.jpg,.jpeg,.pdf,image/png,image/jpeg"
+            data-message-min-files="Debes subir al menos 1 archivo."
+            data-message-max-files="Solo puedes subir máximo 2 archivos."
+            data-message-file-size="Cada archivo debe pesar máximo 1 MB."
+            data-message-file-total-size="El peso total no debe superar 2 MB."
+            data-message-file-type="Solo se permiten archivos PNG, JPG, JPEG o PDF."
+            aria-describedby="error-test-files"
+          >
 
-  <span
-    class="form-group__error text-danger"
-    id="error-test-files"
-    data-field-error
-    data-error-for="files"
-    aria-live="polite"
-  >{{error('files')}}</span>
-</div>
+          <span
+            class="form-group__error text-danger"
+            id="error-test-files"
+            data-field-error
+            data-error-for="files"
+            aria-live="polite"
+          >{{error('files')}}</span>
+        </div>
 
         <button type="submit" class="button__submit btn btn-primary">
           <span class="button__submit__text">Submit</span>

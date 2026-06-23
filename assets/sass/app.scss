@@ -11,6 +11,13 @@
 
 /* Estilos de componentes */
 @import 'includes/navbar';//Navbar styles
+@import 'includes/footer';//Footer styles
 
 /* Estilos de las paginas */
 @import 'pages/home';//Home page styles
+@import 'pages/nosotros';//Home page styles
+@import 'pages/projects-entry';//Home page styles
+@import 'pages/servicios';//Home page styles
+@import 'pages/contacto';
+@import 'pages/login';
+@import 'pages/register';

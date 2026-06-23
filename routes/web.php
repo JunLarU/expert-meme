@@ -1,5 +1,6 @@
 <?php
 use App\Controllers\Home;
+use App\Controllers\Proyectos;
 use App\Models\User;
 use Whis\Auth\Auth;
 use Whis\Http\Response;
@@ -12,11 +13,23 @@ Auth::Routes();
 
 CONTROLLER(Home::class,'',[
     'get' => [
-        '' => 'create',
+        '' => 'home',
+        'nosotros' => 'nosotros',
+        'proyectos' => 'proyectos',
+        'servicios' => 'servicios',
+        'contacto' => 'contacto',
+    ],
+    'post' => [
+        'contact/send' => 'contactSend',
     ],
 
 ]);
-//  Route::post('/form',[Home::class,'store']);
+CONTROLLER(Proyectos::class, 'proyecto', [
+    'get' => [
+        '{id:.+}' => 'entry',
+    ],
+]);
+Route::get('/form',[Home::class,'store']);
 //  Route::get('/{id:\d+}', function (int $id) {
 //      return json(['id' => $id]);
 //  });

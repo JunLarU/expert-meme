@@ -3,6 +3,7 @@ html {
   box-sizing: border-box;
   overflow-x: hidden;
   font-family: $font-roboto;
+  scroll-behavior: smooth;
 }
 *,
 *:before,
@@ -64,13 +65,15 @@ h4 {
   user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
 }
-
+.scroll-lock,
 .scroll-lock {
   overflow: hidden;
-  position: fixed;
+  overscroll-behavior: none;
+}
+.scroll-lock {
+  position: relative;
   width: 100%;
-  left: 0;
-  right: 0;
+  touch-action: none;
 }
 
 .on-mobile-only {

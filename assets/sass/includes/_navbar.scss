@@ -27,11 +27,24 @@ $font-navbar__links: $font-montserrat;
     background-color 0.7 ease,
     box-shadow 220ms ease;
   &.active {
+    background: transparent;
+    background-image: none;
     background-color: rgba($bg-navbar, 0.85);
     @include desktop {
-      background-color: transparent;
+      background: #1f1f1f;
+      background: linear-gradient(
+        180deg,
+        rgba(31, 31, 31, 0.72) 41%,
+        rgba(143, 143, 143, 0) 96%
+      );
     }
   }
+  background: #1f1f1f;
+  background: linear-gradient(
+    180deg,
+    rgba(31, 31, 31, 0.72) 41%,
+    rgba(143, 143, 143, 0) 96%
+  );
   @include desktop {
     flex-direction: row;
   }
@@ -41,8 +54,15 @@ $font-navbar__links: $font-montserrat;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+
     @include desktop {
       width: 50%;
+      background: transparent;
+      background-image: none;
+
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
     }
   }
   &__logo {
@@ -66,6 +86,11 @@ $font-navbar__links: $font-montserrat;
         transition: all 0.3s ease;
       }
     }
+  }
+  &.sticky,
+  &.active.sticky {
+    background: transparent;
+    background-image: none;
   }
   &.active.sticky,
   &.sticky {
@@ -100,9 +125,10 @@ $font-navbar__links: $font-montserrat;
         margin: 0;
       }
     }
+
     @include desktop {
       justify-content: center;
-      width: 50%;
+      width: 90%;
       flex-direction: row;
       justify-content: center;
       height: auto;
@@ -176,7 +202,7 @@ $font-navbar__links: $font-montserrat;
     display: block;
     width: 100%;
     padding: 2rem 0;
-    color: $color-navbar__links;
+    color: $color-navbar__links--hover;
     text-decoration: none;
     font-family: $font-navbar__links;
     text-transform: capitalize;
@@ -222,6 +248,25 @@ $font-navbar__links: $font-montserrat;
       padding: 0 1rem;
     }
   }
+  &.active &__link,
+  &.active .navbar__links__more__dropdown__link {
+    color: $color-navbar__links;
+    @include desktop {
+      color: $color-navbar__links--hover;
+    }
+  }
+  &.active &__link:hover,
+  &.active &__links__more__dropdown__link:hover {
+    color: $color-navbar__links--hover;
+    border-bottom: 0.2rem solid $color-navbar__links--hover;
+  }
+
+  &.active.sticky &__link,
+  &.active.sticky .navbar__links__more__dropdown__link,
+  &.sticky &__link,
+  &.sticky .navbar__links__more__dropdown__link {
+    color: $color-navbar__links;
+  }
   &.sticky &__links {
     width: 100%;
     display: flex;
@@ -262,7 +307,7 @@ $font-navbar__links: $font-montserrat;
     }
     @include desktop {
       justify-content: center;
-      width: 50%;
+      width: 90%;
       flex-direction: row;
       justify-content: center;
       height: auto;
@@ -317,7 +362,7 @@ $font-navbar__links: $font-montserrat;
         .navbar__links__more__dropdown {
           @include desktop {
             // sombra normal hacia abajo
-            
+
             // sombra sutil hacia arriba (para que parezca unido al navbar)
             //filter: drop-shadow(0 -2px 6px rgba(0, 0, 0, 0.12));
             transform: scaleY(1) translateY(0);
@@ -437,5 +482,119 @@ $font-navbar__links: $font-montserrat;
         }
       }
     }
+  }
+}
+.navbar {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  transform-origin: top center;
+
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 260ms ease,
+    background-color 360ms ease,
+    box-shadow 260ms ease,
+    padding 260ms ease;
+
+  &.sticky {
+    animation: none;
+  }
+
+  &.navbar--drop-in {
+    animation: navbarDropIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  &.is-hidden-for-footer {
+    transform: translate3d(0, calc(-100% - 2rem), 0);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &.sticky,
+  &.active.sticky {
+    background-color: rgba($bg-navbar, 0.96);
+    backdrop-filter: blur(1rem);
+    -webkit-backdrop-filter: blur(1rem);
+    box-shadow: 0 1.2rem 2.4rem rgba($color-black, 0.18);
+  }
+}
+
+@keyframes navbarDropIn {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -115%, 0);
+    filter: blur(0.35rem);
+  }
+
+  62% {
+    opacity: 1;
+    transform: translate3d(0, 0.45rem, 0);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}
+.navbar {
+  &__links {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-1rem);
+    pointer-events: none;
+
+    transition:
+      max-height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 220ms ease,
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      margin-top 320ms ease;
+
+    &.active {
+      max-height: calc(100dvh - 8rem);
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    @include desktop {
+      max-height: none;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+    }
+  }
+}
+.navbar {
+  &.navbar--return-top {
+    animation: navbarReturnTop 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes navbarReturnTop {
+  0% {
+    opacity: 1;
+    transform: translate3d(0, 1.4rem, 0);
+    filter: blur(0.18rem);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translate3d(0, -0.25rem, 0);
+    filter: blur(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: none;
   }
 }

@@ -4,7 +4,7 @@
             <ul class="splide__list">
                 <!-- <li class="splide__slide fill">
                     <img
-                        data-src="/images/JUMBOTRON.jpeg"
+                        data-src="/images/JTRON.jpg"
                         alt="Sección estudiantil ISA UAQ en actividades de automatización, instrumentación y control"
                         class="lazy-image critical-image"
                     >
@@ -34,25 +34,32 @@
                         controls
                         preload="none"
                         playsinline
-                        poster="/images/JUMBOTRON.jpeg"
+                        poster="/images/JTRON.jpg"
                         aria-label="Video de presentación de ISA UAQ"
                     ></video>
                 </li>  -->
 
 
-                <li class="splide__slide">
-                    <div class="content">
-                        <h1>Bienvenido al sitio web de ISA UAQ</h1>
+                <li class="splide__slide splide__slide--site-hero lazy-bg" data-background-src="/images/JTRON.jpg">
+                    <div class="content content--site-hero">
+                        <p class="overhead">Sobre nosotros</p>
+
+                        <h1>Ingeniería que convierte ideas en estructura</h1>
+
                         <p>
-                            Conoce la Sección Estudiantil ISA de la Universidad Autónoma de Querétaro y descubre
-                            actividades, recursos y oportunidades de formación en automatización, instrumentación y
-                            control.
+                            Conoce a L+E Ingeniería y descubre cómo integramos diseño estructural,
+                            construcción en acero, supervisión técnica y valuación inmobiliaria.
                         </p>
-                        <a href="/nosotros" class="button__more" title="Conocer más sobre ISA UAQ">Saber más</a>
+
+                        <a href="#nosotros" data-smooth-scroll class="button__primary button__primary--light"
+                            title="Conocer más sobre L+E Ingeniería">
+                            Saber más
+                        </a>
                     </div>
                 </li>
                 <li class="splide__slide">
                     <div class="content">
+                        <p class="overhead">Sobre nosotros</p>
                         <h1>Bienvenido al sitio web de ISA UAQ</h1>
                         <p>
                             Conoce la Sección Estudiantil ISA de la Universidad Autónoma de Querétaro y descubre
@@ -173,18 +180,33 @@
     </div>
 
     <div class="text">
-        <h2 id="nosotros-title">¿Quiénes somos?</h2>
-        <p>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae, quasi sit ipsum tenetur libero est!
-            Natus beatae voluptates nostrum! Voluptas cum, earum praesentium error autem molestiae voluptatem aperiam
-            explicabo ex numquam corrupti beatae velit veritatis fuga ipsum quia voluptatum qui aliquid excepturi
-            molestias nobis illum! Suscipit debitis rerum incidunt corporis!
-        </p>
+        <div class="nosotros__content">
+            <div class="section-heading section-heading--center nosotros__heading">
+                <p>Sobre nosotros</p>
+                <h2>Ingeniería que convierte ideas en estructura</h2>
+            </div>
+
+            <p class="nosotros__copy">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae, quasi sit ipsum tenetur libero
+                est!
+                Natus beatae voluptates nostrum! Voluptas cum, earum praesentium error autem molestiae voluptatem
+                aperiam
+                explicabo ex numquam corrupti beatae velit veritatis fuga ipsum quia voluptatum qui aliquid excepturi
+                molestias nobis illum! Suscipit debitis rerum incidunt corporis!
+            </p>
+
+            <div class="nosotros__actions">
+                <a href="/nosotros" class="section-more-button" aria-label="Ver más información sobre nosotros">
+                    Ver más
+                    <span aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
     </div>
 </section>
 
 <section class="clients-hex" id="clientes" aria-labelledby="clientes-title">
-    <div class="clients-hex__heading">
+    <div class="clients-hex__heading section-heading">
         <p>Nuestros clientes</p>
         <h2 id="clientes-title">Empresas que confían en nosotros</h2>
     </div>
@@ -239,7 +261,10 @@
 </section>
 
 <section class="stats lazy-bg" data-background-src="/images/STATS.jpg" aria-labelledby="stats-title">
-    <h2 id="stats-title">Experiencia</h2>
+    <div class="section-heading section-heading--light stats__heading">
+        <p>Experiencia comprobada</p>
+        <h2>Resultados que respaldan nuestro trabajo</h2>
+    </div>
     <div class="stats__content"></div>
 </section>
 
@@ -263,153 +288,320 @@
         </div>
     </div>
 </section>
+<section class="latest" id="novedades" aria-labelledby="latest-title">
+    <div class="latest__inner">
+        <div class="latest__header">
+            <div class="section-heading latest__heading">
+                <p>Proyectos recientes</p>
+                <h2 id="latest-title">Obras, avances y noticias de la empresa</h2>
+            </div>
 
-<section class="contacto" id="contacto" aria-labelledby="contacto-title">
-    <h2 id="contacto-title">Contáctanos</h2>
+            <a href="/novedades" class="latest__view-all section-more-button" aria-label="Ver todas las novedades">
+                Ver más
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
 
-    <div class="contacto__links">
-        <a href="mailto:construye@leingenieria.com" class="button__mail"
-            title="Solicitar información sobre PRINTISA UAQ por WhatsApp"
-            aria-label="Solicitar información sobre PRINTISA UAQ por WhatsApp">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2000"
-                zoomAndPan="magnify" viewBox="0 0 1500 1499.999933" height="2000" preserveAspectRatio="xMidYMid meet"
-                version="1.0">
-                <defs>
-                    <clipPath id="f49273175d">
-                        <path
-                            d="M 24.410156 24.410156 L 1475.660156 24.410156 L 1475.660156 1475.660156 L 24.410156 1475.660156 Z M 24.410156 24.410156 "
-                            clip-rule="nonzero" />
-                    </clipPath>
-                </defs>
-                <g clip-path="url(#f49273175d)">
-                    <path fill="#7f0000"
-                        d="M 749.820312 24.296875 C 349.765625 24.296875 24.296875 349.765625 24.296875 749.820312 C 24.296875 1149.875 349.765625 1475.347656 749.820312 1475.347656 C 1149.875 1475.347656 1475.347656 1149.875 1475.347656 749.820312 C 1475.347656 349.765625 1149.875 24.296875 749.820312 24.296875 Z M 749.820312 205.675781 C 1070.503906 205.675781 1293.964844 474.339844 1293.964844 715.503906 C 1293.964844 1002.230469 1098.871094 1024.578125 1039.015625 1024.578125 C 982.207031 1024.578125 930.839844 1004.335938 890.789062 971.976562 C 854.585938 1000.488281 803.945312 1024.578125 738.140625 1024.578125 C 599.203125 1024.578125 502.199219 912.339844 502.199219 751.707031 C 502.199219 586.214844 597.023438 475.0625 738.140625 475.0625 C 769.917969 475.0625 801.984375 483.117188 831.734375 496.613281 C 844.863281 483.335938 863.074219 475.0625 883.246094 475.0625 C 923.367188 475.0625 955.796875 507.496094 955.796875 547.617188 L 955.796875 810.476562 C 955.796875 848.492188 993.164062 879.472656 1038.941406 879.472656 C 1071.808594 879.472656 1148.789062 879.472656 1148.789062 715.503906 C 1148.789062 563.144531 996.933594 350.78125 749.75 350.78125 C 529.769531 350.78125 350.710938 529.839844 350.710938 749.820312 C 350.710938 969.800781 529.769531 1148.859375 749.75 1148.859375 C 793.0625 1148.859375 835.652344 1141.96875 876.28125 1128.472656 C 914.515625 1115.632812 955.433594 1136.308594 968.058594 1174.328125 C 980.757812 1212.34375 960.222656 1253.480469 922.207031 1266.105469 C 866.703125 1284.605469 808.734375 1293.964844 749.820312 1293.964844 C 449.742188 1293.964844 205.675781 1049.898438 205.675781 749.820312 C 205.675781 449.742188 449.742188 205.675781 749.820312 205.675781 Z M 738.210938 879.472656 C 780.367188 879.472656 804.308594 857.925781 814.539062 845.734375 C 812.507812 834.199219 810.765625 822.589844 810.765625 810.476562 L 810.765625 674.222656 C 810.765625 638.742188 763.535156 620.167969 738.210938 620.167969 C 663.121094 620.167969 647.375 691.707031 647.375 751.707031 C 647.375 790.160156 656.226562 879.472656 738.210938 879.472656 Z M 738.210938 879.472656 "
-                        fill-opacity="1" fill-rule="nonzero" />
-                </g>
-            </svg>
-            <span class="button__mail__text">
-                <span class="button__mail__text-default">Envíanos un correo</span>
-                <span class="button__mail__text-hover">construye@leingenieria.com</span>
-            </span>
-        </a>
-        <a href="tel:4423259619" class="button__mail" title="Solicitar información sobre PRINTISA UAQ por WhatsApp"
-            aria-label="Solicitar información sobre PRINTISA UAQ por WhatsApp">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2000"
-                zoomAndPan="magnify" viewBox="24.4 24.4 7.6 7.6" height="2000" preserveAspectRatio="xMidYMid meet"
-                version="1.0">
-                <defs>
-                    <clipPath id="76c4ace4af">
-                        <path
-                            d="M 24.410156 24.410156 L 31.910156 24.410156 L 31.910156 31.910156 L 24.410156 31.910156 Z M 24.410156 24.410156 "
-                            clip-rule="nonzero" />
-                    </clipPath>
-                </defs>
-                <g clip-path="url(#76c4ace4af)">
-                    <path fill="#7f0000"
-                        d="M 28.261719 24.492188 C 27.773438 24.492188 27.304688 24.585938 26.855469 24.773438 C 26.40625 24.957031 26.011719 25.222656 25.667969 25.566406 C 25.324219 25.910156 25.058594 26.308594 24.871094 26.757812 C 24.683594 27.207031 24.59375 27.675781 24.59375 28.160156 C 24.59375 28.648438 24.683594 29.117188 24.871094 29.566406 C 25.058594 30.015625 25.324219 30.410156 25.667969 30.753906 C 26.011719 31.097656 26.40625 31.363281 26.855469 31.550781 C 27.304688 31.734375 27.773438 31.828125 28.261719 31.828125 C 28.746094 31.828125 29.214844 31.734375 29.664062 31.550781 C 30.113281 31.363281 30.507812 31.097656 30.851562 30.753906 C 31.199219 30.410156 31.460938 30.015625 31.648438 29.566406 C 31.835938 29.117188 31.925781 28.648438 31.925781 28.160156 C 31.925781 27.675781 31.835938 27.207031 31.648438 26.757812 C 31.460938 26.308594 31.199219 25.910156 30.851562 25.566406 C 30.507812 25.222656 30.113281 24.957031 29.664062 24.773438 C 29.214844 24.585938 28.746094 24.492188 28.261719 24.492188 Z M 30.527344 29.914062 C 30.425781 30.234375 29.988281 30.707031 29.585938 30.707031 L 29.558594 30.707031 C 28.945312 30.675781 28.121094 30.101562 27.347656 29.167969 L 27.0625 28.824219 C 26.289062 27.890625 25.886719 26.980469 25.980469 26.386719 C 26.046875 25.96875 26.671875 25.613281 27.027344 25.613281 C 27.199219 25.613281 27.265625 25.699219 27.285156 25.753906 C 27.488281 26.109375 27.738281 26.734375 27.738281 26.957031 L 27.738281 26.972656 L 27.734375 26.988281 C 27.6875 27.105469 27.589844 27.160156 27.5 27.210938 C 27.386719 27.273438 27.320312 27.316406 27.3125 27.441406 C 27.308594 27.480469 27.34375 27.648438 27.851562 28.277344 L 28.070312 28.539062 C 28.578125 29.144531 28.742188 29.207031 28.777344 29.210938 C 28.902344 29.230469 28.960938 29.175781 29.046875 29.078125 C 29.117188 29.003906 29.191406 28.921875 29.316406 28.902344 L 29.335938 28.898438 L 29.351562 28.902344 C 29.570312 28.949219 30.140625 29.316406 30.464844 29.589844 C 30.511719 29.621094 30.59375 29.714844 30.527344 29.914062 Z M 30.527344 29.914062 "
-                        fill-opacity="1" fill-rule="nonzero" />
-                </g>
-            </svg>
-            <span class="button__mail__text">
-                <span class="button__mail__text-default">Llámanos por teléfono</span>
-                <span class="button__mail__text-hover">442 325 9619</span>
-            </span>
-        </a>
+        <div class="latest__projects">
+            <!-- MÁS NUEVO / DESTACADO -->
+            <a class="latest__projects__item latest__projects__item--featured" href="/novedades/proyecto-1">
+                <div class="latest__projects__item__image">
+                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Proyecto destacado" loading="lazy"
+                        decoding="async">
+                    <span class="entry__category entry__category--featured">Más reciente</span>
+                </div>
+
+                <div class="latest__projects__item__text">
+                    <div class="entry__top">
+                        <ul class="entry__tags" aria-label="Etiquetas">
+                            <li class="entry__tag--featured">Destacado</li>
+                            <li>Proyecto integral</li>
+                            <li>Fabricación</li>
+                            <li>Montaje</li>
+                        </ul>
+
+                        <span class="entry__number">01</span>
+                    </div>
+
+                    <h4>Proyecto integral de ingeniería, fabricación y montaje</h4>
+
+                    <div class="entry__data">
+                        <p class="date">11-02-2026</p>
+                        <p class="author">por L+E Ingeniería</p>
+                    </div>
+
+                    <p class="entry__brief">
+                        Participación integral en un proyecto de estructura de acero, desde la etapa técnica hasta la
+                        ejecución en campo. El alcance incluye coordinación con el cliente, fabricación, logística,
+                        montaje y control de calidad durante cada fase del proceso.
+                    </p>
+
+                    <span class="entry__read-more"> Leer más </span>
+                </div>
+            </a>
+
+            <a class="latest__projects__item" href="/novedades/proyecto-2">
+                <div class="latest__projects__item__image">
+                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Proyecto industrial" loading="lazy"
+                        decoding="async">
+                    <span class="entry__category">Proyecto</span>
+                </div>
+
+                <div class="latest__projects__item__text">
+                    <div class="entry__top">
+                        <ul class="entry__tags" aria-label="Etiquetas">
+                            <li>Estructura metálica</li>
+                            <li>Construcción</li>
+                        </ul>
+
+                        <span class="entry__number">02</span>
+                    </div>
+
+                    <h4>Proyecto industrial en estructura de acero</h4>
+
+                    <div class="entry__data">
+                        <p class="date">08-02-2026</p>
+                        <p class="author">por Juan Larios</p>
+                    </div>
+
+                    <p class="entry__brief">
+                        Desarrollo y montaje de estructura metálica para nave industrial, integrando planeación,
+                        fabricación y supervisión de obra. El proyecto destaca por su coordinación técnica, control de
+                        calidad y cumplimiento de tiempos de ejecución.
+                    </p>
+
+                    <span class="entry__read-more"> Leer más </span>
+                </div>
+            </a>
+
+            <a class="latest__projects__item" href="/novedades/proyecto-3">
+                <div class="latest__projects__item__image">
+                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Avance de obra" loading="lazy"
+                        decoding="async">
+                    <span class="entry__category">Avance</span>
+                </div>
+
+                <div class="latest__projects__item__text">
+                    <div class="entry__top">
+                        <ul class="entry__tags" aria-label="Etiquetas">
+                            <li>Obra civil</li>
+                            <li>Supervisión</li>
+                        </ul>
+
+                        <span class="entry__number">03</span>
+                    </div>
+
+                    <h4>Avance de obra en proyecto comercial</h4>
+
+                    <div class="entry__data">
+                        <p class="date">04-02-2026</p>
+                        <p class="author">por L+E Ingeniería</p>
+                    </div>
+
+                    <p class="entry__brief">
+                        Seguimiento de actividades en sitio, revisión de procesos constructivos y coordinación entre
+                        áreas técnicas para asegurar una ejecución ordenada, segura y alineada con los requerimientos
+                        del cliente.
+                    </p>
+
+                    <span class="entry__read-more"> Leer más </span>
+                </div>
+            </a>
+
+            <a class="latest__projects__item" href="/novedades/proyecto-4">
+                <div class="latest__projects__item__image">
+                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Diseño estructural" loading="lazy"
+                        decoding="async">
+                    <span class="entry__category">Diseño</span>
+                </div>
+
+                <div class="latest__projects__item__text">
+                    <div class="entry__top">
+                        <ul class="entry__tags" aria-label="Etiquetas">
+                            <li>Diseño estructural</li>
+                            <li>Acero</li>
+                        </ul>
+
+                        <span class="entry__number">04</span>
+                    </div>
+
+                    <h4>Diseño estructural para ampliación industrial</h4>
+
+                    <div class="entry__data">
+                        <p class="date">31-01-2026</p>
+                        <p class="author">por L+E Ingeniería</p>
+                    </div>
+
+                    <p class="entry__brief">
+                        Diseño y revisión estructural para una ampliación industrial, considerando criterios de
+                        eficiencia, seguridad, constructibilidad y compatibilidad con la infraestructura existente del
+                        cliente.
+                    </p>
+
+                    <span class="entry__read-more"> Leer más </span>
+                </div>
+            </a>
+        </div>
     </div>
+</section>
+<section class="contacto services-quote services-quote--home lazy-bg" id="contacto"
+    data-background-src="/images/JTRON.jpg" aria-labelledby="contacto-title">
+    <div class="services-quote__overlay">
+        <div class="services-quote__inner">
+            <div class="services-quote__content">
+                <div class="section-heading section-heading--light services-quote__heading">
+                    <p>Hablemos de tu proyecto</p>
+                    <h2 id="contacto-title">Estamos listos para construir contigo</h2>
+                </div>
 
-    <p>o por medio de nuestras redes</p>
+                <p>
+                    Cuéntanos qué necesitas resolver. Revisaremos el alcance de tu proyecto
+                    y te responderemos con una ruta técnica adecuada.
+                </p>
 
-    <div class="container__social" aria-label="Redes sociales de ISA">
-        <a href="https://www.instagram.com/isa.uaq.oficial" class="button__social" target="_blank"
-            rel="noopener noreferrer" aria-label="Instagram de ISA UAQ">
-            <span class="bg lazy-bg" data-background-src="/images/bg2.png"></span>
-            <img class="lazy-image" data-src="/images/SocialMedia6.png" alt="instagram de ISA UAQ">
-        </a>
+                <div class="services-quote__contact contacto__links" aria-label="Medios de contacto directo">
+                    <a href="mailto:construye@leingenieria.com" class="button__mail services-quote__contact-button"
+                        title="Enviar correo a L+E Ingeniería" aria-label="Enviar correo a L+E Ingeniería">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                d="M4 5h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2Zm0 3.2v8.8h16V8.2l-7.35 5.15a1.1 1.1 0 0 1-1.3 0L4 8.2Zm1.2-1.2L12 11.75 18.8 7H5.2Z" />
+                        </svg>
 
-        <a href="https://www.facebook.com/profile.php?id=61590268461366" class="button__social" target="_blank"
-            rel="noopener noreferrer" aria-label="Facebook de ISA UAQ">
-            <span class="bg lazy-bg" data-background-src="/images/bg1.png"></span>
-            <img class="lazy-image" data-src="/images/SocialMedia7.png" alt="facebook de ISA UAQ">
-        </a>
+                        <span class="button__mail__text">
+                            <span class="button__mail__text-default">Correo Electrónico</span>
+                            <span class="button__mail__text-hover">construye@leingenieria.com</span>
+                        </span>
+                    </a>
 
-        <a href="https://wa.me/5214422014627?text=Hola.%20H%C3%A1blame%20un%20poco%20m%C3%A1s%20sobre%20ISA"
-            class="button__social" target="_blank" rel="noopener noreferrer" aria-label="whatsapp de ISA UAQ">
-            <span class="bg lazy-bg" data-background-src="/images/bg4.png"></span>
-            <img class="lazy-image" data-src="/images/SocialMedia5.png" alt="whatsapp de ISA UAQ">
-        </a>
+                    <a href="tel:+524422014627" class="button__mail services-quote__contact-button"
+                        title="Llamar a L+E Ingeniería" aria-label="Llamar a L+E Ingeniería">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.69-.36 1.05-.24 1.16.38 2.4.59 3.67.59.57 0 1.02.45 1.02 1.02V20c0 .57-.45 1.02-1.02 1.02C10.67 21.02 2.98 13.33 2.98 3.87c0-.57.45-1.02 1.02-1.02h3.47c.57 0 1.02.45 1.02 1.02 0 1.27.2 2.51.59 3.67.11.36.03.76-.25 1.05l-2.21 2.2Z" />
+                        </svg>
 
-        <a href="https://www.linkedin.com/in/isa-cap%C3%ADtulo-estudiantil-uaq-3912943b6/" class="button__social"
-            target="_blank" rel="noopener noreferrer" aria-label="perfil de LinkedIn de ISA UAQ">
-            <span class="bg lazy-bg" data-background-src="/images/bg6.png"></span>
-            <img class="lazy-image" data-src="/images/SocialMedia9.png" alt="perfil de LinkedIn de ISA UAQ">
-        </a>
+                        <span class="button__mail__text">
+                            <span class="button__mail__text-default">Teléfono</span>
+                            <span class="button__mail__text-hover">+52 442 201 4627</span>
+                        </span>
+                    </a>
+                </div>
+                <div class="services-quote__social-wrap" aria-labelledby="contact-social-title">
+                    <p id="contact-social-title">También puedes seguirnos en redes</p>
+
+                    <div class="services-quote__socials" aria-label="Redes sociales de L+E Ingeniería">
+                        <a class="services-quote__social services-quote__social--facebook" href="#" target="_blank"
+                            rel="noopener noreferrer" aria-label="Facebook de L+E Ingeniería">
+                            Facebook
+                        </a>
+
+                        <a class="services-quote__social services-quote__social--instagram" href="#" target="_blank"
+                            rel="noopener noreferrer" aria-label="Instagram de L+E Ingeniería">
+                            Instagram
+                        </a>
+
+                        <a class="services-quote__social services-quote__social--linkedin" href="#" target="_blank"
+                            rel="noopener noreferrer" aria-label="LinkedIn de L+E Ingeniería">
+                            LinkedIn
+                        </a>
+
+                        <a class="services-quote__social services-quote__social--whatsapp"
+                            href="https://wa.me/5214422014627" target="_blank" rel="noopener noreferrer"
+                            aria-label="WhatsApp de L+E Ingeniería">
+                            WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <form class="services-quote__form form form--default contact__form" id="contactForm" action="/contact/send"
+                method="post" data-ajax-form data-validation="contact" data-send-as="urlencoded" data-csrf="true"
+                data-csrf-field="_token" data-reset-on-success="true" data-character-counter="true" novalidate
+                aria-labelledby="contact-form-title">
+                @csrf('contact-send')
+
+                <fieldset class="form__fieldset services-quote__fieldset contact__form__fieldset">
+                    <legend id="contact-form-title">Formulario de contacto</legend>
+
+                    <div class="form__status contact-form__status services-quote__status" id="contactFormStatus"
+                        data-form-status role="status" aria-live="polite"></div>
+
+                    <div class="form-group services-quote__field" data-field="name">
+                        <input value="{{old('name')}}" type="text" id="contact-name" name="name" class="form-control"
+                            placeholder=" " autocomplete="name" required minlength="3" maxlength="120"
+                            data-label="nombre o empresa" data-normalize="spaces" data-no-links="true"
+                            data-no-phones="true" data-no-emails="true" data-character-counter="true"
+                            aria-describedby="error-contact-name">
+
+                        <label class="form-label" for="contact-name">Nombre o empresa</label>
+
+                        <span class="form-group__error text-danger" id="error-contact-name" data-field-error
+                            data-error-for="name" aria-live="polite">{{error('name')}}</span>
+                    </div>
+
+                    <div class="form-group services-quote__field" data-field="email">
+                        <input value="{{old('email')}}" type="email" id="contact-email" name="email"
+                            class="form-control" placeholder=" " autocomplete="email" inputmode="email" required
+                            maxlength="150" data-label="correo electrónico" data-normalize="trim"
+                            data-character-counter="true" aria-describedby="error-contact-email">
+
+                        <label class="form-label" for="contact-email">Correo electrónico</label>
+
+                        <span class="form-group__error text-danger" id="error-contact-email" data-field-error
+                            data-error-for="email" aria-live="polite">{{error('email')}}</span>
+                    </div>
+
+                    <div class="form-group services-quote__field" data-field="phone">
+                        <input value="{{old('phone')}}" type="tel" id="contact-phone" name="phone" class="form-control"
+                            placeholder=" " autocomplete="tel" inputmode="tel" minlength="8" maxlength="20"
+                            data-label="teléfono" data-normalize="spaces" data-character-counter="true"
+                            aria-describedby="error-contact-phone">
+
+                        <label class="form-label" for="contact-phone">Teléfono</label>
+
+                        <span class="form-group__error text-danger" id="error-contact-phone" data-field-error
+                            data-error-for="phone" aria-live="polite">{{error('phone')}}</span>
+                    </div>
+
+                    <div class="form-group form-group--select services-quote__field" data-field="asunto">
+                        <select name="asunto" id="contact-asunto" class="form-control" required data-label="asunto"
+                            aria-describedby="error-contact-asunto">
+                            <option value="" disabled selected hidden></option>
+                            <option value="proyectos">Proyectos</option>
+                            <option value="construccion">Construcción</option>
+                            <option value="valuacion">Valuación</option>
+                            <option value="diseno-estructural">Diseño estructural</option>
+                            <option value="supervision-tecnica">Supervisión técnica</option>
+                        </select>
+
+                        <label class="form-label" for="contact-asunto">Asunto</label>
+
+                        <span class="form-group__error text-danger" id="error-contact-asunto" data-field-error
+                            data-error-for="asunto" aria-live="polite">{{error('asunto')}}</span>
+                    </div>
+
+                    <div class="form-group form-group--textarea services-quote__field services-quote__field--full"
+                        data-field="message">
+                        <textarea id="contact-message" name="message" class="form-control" placeholder=" " required
+                            minlength="10" maxlength="3000" data-label="mensaje" data-normalize="trim"
+                            data-no-links="true" data-no-phones="true" data-no-emails="true"
+                            data-character-counter="true"
+                            aria-describedby="error-contact-message">{{old('message')}}</textarea>
+
+                        <label class="form-label" for="contact-message">Mensaje</label>
+
+                        <span class="form-group__error text-danger" id="error-contact-message" data-field-error
+                            data-error-for="message" aria-live="polite">{{error('message')}}</span>
+                    </div>
+
+                    <div class="services-quote__submit">
+                        <button type="submit" class="button__submit btn btn-primary">
+                            <span class="button__submit__text">Enviar</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
     </div>
-
-    <form class="form form--default contact__form" id="contactForm" action="@url/contact/send" method="post"
-        data-ajax-form data-validation="contact" data-send-as="json" data-csrf="true" data-csrf-field="_token"
-        data-reset-on-success="true" novalidate aria-labelledby="contact-form-title">
-        @csrf('contact-send')
-
-        <fieldset class="form__fieldset contact__form__fieldset">
-            <legend id="contact-form-title">Formulario de contacto</legend>
-
-            <div class="form__status contact-form__status" id="contactFormStatus" data-form-status role="status"
-                aria-live="polite"></div>
-
-            <div class="form-group" data-field="name">
-                <input value="{{old('name')}}" type="text" id="contact-name" name="name" class="form-control"
-                    placeholder=" " autocomplete="name" required minlength="3" maxlength="120"
-                    data-label="nombre o empresa" data-normalize="spaces" data-no-links="true" data-no-phones="true"
-                    data-no-emails="true" aria-describedby="error-contact-name">
-
-                <label class="form-label" for="contact-name">Nombre/Empresa</label>
-
-                <span class="form-group__error text-danger" id="error-contact-name" data-field-error
-                    data-error-for="name" aria-live="polite">{{error('name')}}</span>
-            </div>
-
-            <div class="form-group" data-field="email">
-                <input value="{{old('email')}}" type="email" id="contact-email" name="email" class="form-control"
-                    placeholder=" " autocomplete="email" inputmode="email" required maxlength="150"
-                    data-label="correo electrónico" data-normalize="trim" aria-describedby="error-contact-email">
-
-                <label class="form-label" for="contact-email">Correo electrónico</label>
-
-                <span class="form-group__error text-danger" id="error-contact-email" data-field-error
-                    data-error-for="email" aria-live="polite">{{error('email')}}</span>
-            </div>
-
-            <div class="form-group" data-field="asunto">
-                <select name="asunto" id="register-asunto" class="form-control" required data-label="asunto"
-                    aria-describedby="error-register-asunto">
-                    <option value="" disabled selected hidden></option>
-                    <option value="proyectos">Proyectos</option>
-                    <option value="construccion">Construcción</option>
-                    <option value="valuacion">Valuación</option>
-
-                </select>
-
-                <label class="form-label" for="register-asunto">Asunto</label>
-
-                <span class="form-group__error text-danger" id="error-register-asunto" data-field-error
-                    data-error-for="asunto" aria-live="polite">{{error('asunto')}}</span>
-            </div>
-
-            <div class="form-group form-group--textarea" data-field="message">
-                <textarea id="contact-message" name="message" class="form-control" placeholder=" " required
-                    minlength="10" maxlength="3000" data-label="mensaje" data-normalize="trim" data-no-links="true"
-                    data-no-phones="true" data-no-emails="true"
-                    aria-describedby="error-contact-message">{{old('message')}}</textarea>
-
-                <label class="form-label" for="contact-message">Mensaje</label>
-
-                <span class="form-group__error text-danger" id="error-contact-message" data-field-error
-                    data-error-for="message" aria-live="polite">{{error('message')}}</span>
-            </div>
-
-            <button type="submit" class="button__submit btn btn-primary">
-                <span class="button__submit__text">Enviar</span>
-            </button>
-        </fieldset>
-    </form>
 </section>

@@ -1,0 +1,1568 @@
+// ==========================================================
+// Página Servicios - L+E Ingeniería
+// Combina estructura del sitio con cards industriales,
+// separadores inclinados, proceso y CTA de cotización.
+// ==========================================================
+
+.services-hero {
+  &::before {
+    background-color: rgba($color-logo-red, 0.58);
+  }
+
+  &__content {
+    width: min(100%, 96rem);
+  }
+
+  &__actions {
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+
+    .about-hero__button {
+      margin-top: 0;
+    }
+  }
+
+  &__secondary {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.8rem;
+    padding: 0.95rem 2.35rem;
+
+    border: 0.15rem solid rgba($color-light, 0.42);
+    border-radius: 9999px;
+    background-color: rgba($color-dark, 0.18);
+    color: $color-light;
+
+    font-family: $font-montserrat;
+    font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+
+    backdrop-filter: blur(0.9rem);
+    transition:
+      background-color 220ms ease,
+      border-color 220ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba($color-logo-red, 0.74);
+      border-color: rgba($color-light, 0.72);
+      color: $color-light;
+      transform: translateY(-0.2rem);
+      box-shadow: 0 1.2rem 2.8rem rgba($color-black, 0.24);
+    }
+  }
+
+  &__meta {
+    width: min(100%, 82rem);
+    margin: clamp(2rem, 4vw, 3.2rem) auto 0;
+    padding: 0;
+    list-style: none;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.85rem;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      min-height: 3.4rem;
+      padding: 0.65rem 1.35rem;
+
+      border: 0.1rem solid rgba($color-light, 0.28);
+      border-radius: 9999px;
+      background-color: rgba($color-dark, 0.24);
+      color: rgba($color-light, 0.94);
+
+      font-size: clamp(1.2rem, 2vw, 1.42rem);
+      font-weight: 750;
+      line-height: 1.2;
+      backdrop-filter: blur(0.8rem);
+    }
+  }
+}
+
+.services-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 8% 8%,
+      rgba($color-serenity, 0.34),
+      transparent 32rem
+    ),
+    radial-gradient(
+      circle at 92% 22%,
+      rgba($color-logo-red, 0.12),
+      transparent 38rem
+    ),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  &__gradient-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba($color-logo-red, 0.06), transparent 34%),
+      radial-gradient(
+        circle at 50% 30%,
+        rgba($color-logo-red, 0.08),
+        transparent 36rem
+      );
+  }
+
+  &__inner {
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+  }
+
+  &__header {
+    width: min(100%, 92rem);
+    margin: 0 auto clamp(3.5rem, 6vw, 6rem);
+  }
+
+  &__lead {
+    width: min(100%, 78rem);
+    margin: clamp(1.5rem, 3vw, 2.4rem) auto 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.5rem, 2vw, 1.82rem);
+    line-height: 1.75;
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  &__summary {
+    display: grid;
+    gap: 1.4rem;
+    margin-bottom: clamp(3rem, 6vw, 5.5rem);
+
+    @include tablet {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__summary-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 15rem;
+    padding: clamp(1.8rem, 3vw, 2.4rem);
+
+    border: 0.1rem solid rgba($color-logo-red, 0.12);
+    border-radius: 1.4rem;
+    background-color: rgba($color-white, 0.84);
+    box-shadow: 0 1.2rem 3rem rgba($color-black, 0.07);
+
+    span {
+      display: inline-flex;
+      width: 3.8rem;
+      height: 3.8rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+
+      border-radius: 50%;
+      background-color: rgba($color-logo-red, 0.1);
+      color: darken($color-logo-red, 7);
+
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 0.65rem;
+      color: $color-dark;
+      font-family: $font-montserrat;
+      font-size: clamp(1.65rem, 2.1vw, 2rem);
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    p {
+      margin: 0;
+      color: rgba($color-dark, 0.68);
+      font-size: clamp(1.35rem, 1.7vw, 1.52rem);
+      line-height: 1.58;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    gap: clamp(1.6rem, 3vw, 2.4rem);
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include desktop {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+.services-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 43rem;
+  padding: clamp(2.2rem, 3.5vw, 3.4rem);
+
+  border: 0.1rem solid rgba($color-dark, 0.1);
+  border-radius: 0.35rem;
+  background-color: rgba($color-white, 0.92);
+  box-shadow:
+    0 1rem 2.8rem rgba($color-black, 0.07),
+    inset 0 0 0 0.1rem rgba($color-white, 0.5);
+
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    z-index: -1;
+    height: 0;
+    background: linear-gradient(
+      135deg,
+      lighten($color-logo-red, 4),
+      darken($color-logo-red, 9)
+    );
+    transition: height 320ms ease;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 2.2rem;
+    width: 1.4rem;
+    height: 7rem;
+    background-color: rgba($color-logo-red, 0.18);
+    transform: skewX(-18deg);
+    transition:
+      background-color 260ms ease,
+      height 260ms ease;
+  }
+
+  &--featured {
+    border-color: rgba($color-logo-red, 0.24);
+    box-shadow:
+      0 1.4rem 3.8rem rgba($color-logo-red, 0.13),
+      inset 0 0 0 0.1rem rgba($color-white, 0.58);
+  }
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-0.6rem);
+    border-color: rgba($color-logo-red, 0.34);
+    box-shadow: 0 1.6rem 4rem rgba($color-black, 0.14);
+
+    &::before {
+      height: 100%;
+    }
+
+    &::after {
+      height: 9.5rem;
+      background-color: rgba($color-light, 0.2);
+    }
+
+    .services-card__number,
+    .services-card__eyebrow,
+    h3,
+    p,
+    li,
+    .services-card__link {
+      color: $color-light;
+    }
+
+    .services-card__icon {
+      border-color: rgba($color-light, 0.56);
+      background-color: rgba($color-light, 0.14);
+      color: $color-light;
+    }
+
+    .services-card__list li::before {
+      background-color: $color-light;
+      box-shadow: 0 0 0 0.35rem rgba($color-light, 0.16);
+    }
+
+    .services-card__link span {
+      transform: translateX(0.25rem);
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__number {
+    position: absolute;
+    top: clamp(1.6rem, 3vw, 2.4rem);
+    right: clamp(1.6rem, 3vw, 2.6rem);
+    z-index: 1;
+    color: rgba($color-dark, 0.16);
+    font-family: $font-montserrat;
+    font-size: clamp(3.4rem, 6vw, 5.6rem);
+    font-weight: 900;
+    line-height: 1;
+    transition: color 260ms ease;
+  }
+
+  &__icon {
+    width: 6.6rem;
+    height: 6.6rem;
+    margin-bottom: clamp(1.8rem, 3vw, 2.5rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0.2rem solid rgba($color-logo-red, 0.26);
+    border-radius: 50%;
+    background-color: rgba($color-logo-red, 0.06);
+    color: darken($color-logo-red, 8);
+
+    font-family: $font-montserrat;
+    font-size: 1.45rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    line-height: 1;
+
+    transition:
+      background-color 260ms ease,
+      border-color 260ms ease,
+      color 260ms ease;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.6rem;
+    color: darken($color-logo-red, 5);
+    font-family: $font-montserrat;
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0.13rem;
+    text-transform: uppercase;
+    transition: color 260ms ease;
+  }
+
+  h3 {
+    margin: 0;
+    padding-right: 5rem;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(2.05rem, 3vw, 2.65rem);
+    font-weight: 850;
+    line-height: 1.12;
+    text-align: left;
+    text-wrap: balance;
+    transition: color 260ms ease;
+  }
+
+  p {
+    margin: 1.35rem 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.38rem, 1.7vw, 1.55rem);
+    line-height: 1.62;
+    transition: color 260ms ease;
+  }
+
+  &__list {
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.8rem;
+
+    li {
+      position: relative;
+      padding-left: 1.8rem;
+      color: rgba($color-dark, 0.72);
+      font-size: clamp(1.3rem, 1.6vw, 1.45rem);
+      font-weight: 650;
+      line-height: 1.38;
+      transition: color 260ms ease;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.85rem;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        background-color: $color-logo-red;
+        box-shadow: 0 0 0 0.35rem rgba($color-logo-red, 0.12);
+        transition:
+          background-color 260ms ease,
+          box-shadow 260ms ease;
+      }
+    }
+  }
+
+  &__link {
+    margin-top: auto;
+    padding-top: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+
+    color: darken($color-logo-red, 7);
+    font-family: $font-montserrat;
+    font-size: 1.32rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    transition:
+      color 260ms ease,
+      gap 260ms ease;
+
+    span {
+      transition: transform 260ms ease;
+    }
+  }
+}
+
+.services-process {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    $color-dark 0%,
+    darken($color-logo-red, 22) 100%
+  );
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -30% auto auto -12%;
+    width: clamp(32rem, 42vw, 58rem);
+    height: clamp(32rem, 42vw, 58rem);
+    border-radius: 50%;
+    background: rgba($color-logo-red, 0.28);
+    filter: blur(0.2rem);
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+    display: grid;
+    gap: clamp(3rem, 6vw, 6rem);
+
+    @include desktop {
+      grid-template-columns: minmax(28rem, 0.82fr) minmax(0, 1.18fr);
+      align-items: center;
+    }
+  }
+
+  &__heading {
+    margin-inline: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+
+    p {
+      color: rgba($color-light, 0.78);
+    }
+
+    h2 {
+      color: $color-light;
+    }
+  }
+
+  &__intro > p {
+    margin: clamp(1.5rem, 3vw, 2.4rem) 0 0;
+    color: rgba($color-light, 0.78);
+    font-size: clamp(1.45rem, 1.9vw, 1.7rem);
+    line-height: 1.75;
+  }
+
+  &__button {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  &__steps {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1.4rem;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 2.4rem;
+      top: 1.5rem;
+      bottom: 1.5rem;
+      width: 0.1rem;
+      background-color: rgba($color-light, 0.2);
+
+      @include tablet {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    li {
+      position: relative;
+      min-height: 17rem;
+      padding: clamp(2rem, 3vw, 2.8rem);
+      padding-left: 7.2rem;
+
+      border: 0.1rem solid rgba($color-light, 0.13);
+      border-radius: 1.1rem;
+      background-color: rgba($color-white, 0.08);
+      box-shadow: 0 1rem 2.8rem rgba($color-black, 0.16);
+      backdrop-filter: blur(0.8rem);
+
+      @include tablet {
+        padding-left: clamp(2rem, 3vw, 2.8rem);
+      }
+    }
+
+    span {
+      position: absolute;
+      left: 2rem;
+      top: 2rem;
+      width: 4.4rem;
+      height: 4.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+      background-color: $color-logo-red;
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 0 0 0.6rem rgba($color-logo-red, 0.18);
+
+      @include tablet {
+        position: static;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    h3 {
+      margin: 0;
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: clamp(1.85rem, 2.5vw, 2.4rem);
+      font-weight: 850;
+      line-height: 1.14;
+      text-align: left;
+    }
+
+    p {
+      margin: 0.9rem 0 0;
+      color: rgba($color-light, 0.76);
+      font-size: clamp(1.35rem, 1.6vw, 1.52rem);
+      line-height: 1.58;
+    }
+  }
+}
+
+.services-scope {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 86% 16%,
+      rgba($color-logo-red, 0.12),
+      transparent 34rem
+    ),
+    linear-gradient(180deg, $color-light 0%, rgb(242, 246, 248) 100%);
+
+  &__inner {
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+    display: grid;
+    gap: clamp(2.8rem, 6vw, 6rem);
+    align-items: center;
+
+    @include desktop {
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    }
+  }
+
+  &__media {
+    position: relative;
+    overflow: hidden;
+    min-height: clamp(32rem, 50vw, 52rem);
+    border-radius: 1.4rem;
+    background-color: rgba($color-dark, 0.08);
+    box-shadow: 0 1.6rem 4rem rgba($color-black, 0.14);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 2rem -8% auto auto;
+      width: 44%;
+      height: 0.9rem;
+      z-index: 2;
+      background-color: rgba($color-logo-red, 0.8);
+      transform: skewX(-22deg);
+      pointer-events: none;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  &__heading {
+    margin-inline: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+  }
+
+  &__content > p {
+    margin: clamp(1.4rem, 3vw, 2.2rem) 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.45rem, 1.9vw, 1.72rem);
+    line-height: 1.75;
+  }
+
+  &__lists {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 1rem;
+    }
+
+    li {
+      position: relative;
+      padding: 1.2rem 1.2rem 1.2rem 3.7rem;
+      border-radius: 1rem;
+      background-color: rgba($color-white, 0.78);
+      color: rgba($color-dark, 0.78);
+      font-size: clamp(1.35rem, 1.6vw, 1.52rem);
+      font-weight: 700;
+      line-height: 1.38;
+      box-shadow: 0 0.8rem 2rem rgba($color-black, 0.06);
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 1.35rem;
+        top: 1.75rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: $color-logo-red;
+        box-shadow: 0 0 0 0.45rem rgba($color-logo-red, 0.12);
+      }
+    }
+  }
+}
+
+.services-quote {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: $color-dark;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(
+        90deg,
+        rgba($color-dark, 0.86),
+        rgba($color-logo-red, 0.74)
+      ),
+      radial-gradient(
+        circle at 16% 22%,
+        rgba($color-logo-red, 0.44),
+        transparent 34rem
+      );
+  }
+
+  &__overlay {
+    position: relative;
+    z-index: 1;
+    background:
+      linear-gradient(
+        135deg,
+        rgba($color-black, 0.42),
+        rgba($color-logo-red, 0.18)
+      ),
+      linear-gradient(
+        180deg,
+        rgba($color-black, 0.05),
+        rgba($color-black, 0.28)
+      );
+  }
+
+  &__inner {
+    width: min(100%, 124rem);
+    min-height: clamp(62rem, 82vh, 86rem);
+    margin-inline: auto;
+    padding: clamp(5rem, 8vw, 8rem) 1.5rem;
+
+    display: grid;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+
+    @include desktop {
+    width: min(100%, 122rem);
+      grid-template-columns: minmax(0, 0.9fr) minmax(48rem, 1.1fr);
+    }
+  }
+
+  &__content {
+    width: min(100%, 62rem);
+    color: $color-light;
+
+    p {
+      margin: clamp(1.6rem, 3vw, 2.6rem) 0 0;
+      color: rgba($color-light, 0.92);
+      font-size: clamp(1.6rem, 2vw, 2rem);
+      line-height: 1.75;
+    }
+  }
+
+  &__heading {
+    p,
+    h2 {
+      color: $color-light;
+      text-align: left;
+    }
+
+    p {
+      margin-bottom: 0.7rem;
+      font-size: clamp(1.25rem, 2vw, 1.55rem);
+      letter-spacing: 0.16rem;
+    }
+
+    h2 {
+      max-width: 62rem;
+      margin: 0;
+      font-size: clamp(3.8rem, 7vw, 7.4rem);
+      font-weight: 800;
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+  }
+
+  &__contact-button {
+    margin: 0;
+    width: auto;
+    min-width: min(100%, 24rem);
+    max-width: 100%;
+  }
+
+  &__contact-button {
+    margin: 0;
+    width: auto;
+    min-width: min(100%, 24rem);
+    max-width: 100%;
+
+    .button__mail__icon {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background-color: rgba($color-white, 0.14);
+      color: currentColor;
+      font-family: $font-montserrat;
+      font-size: 1.25rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+  }
+
+  &__form {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: clamp(2.2rem, 4vw, 4rem);
+
+    border: 0.1rem solid rgba($color-white, 0.52);
+    border-radius: 1.3rem;
+    background-color: rgba($color-light, 0.94);
+    box-shadow:
+      0 2rem 6rem rgba($color-black, 0.28),
+      inset 0 0 0 0.1rem rgba($color-white, 0.55);
+    backdrop-filter: blur(1rem);
+
+    .form__fieldset {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 1.6rem;
+
+      @include tablet {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      legend {
+        position: absolute;
+        width: 0.1rem;
+        height: 0.1rem;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    }
+
+    .form__status {
+      margin: 0;
+    }
+
+    .form-group {
+      margin: 0;
+    }
+
+    .form-control {
+      background-color: transparent;
+      border: 0;
+      border-bottom: 0.16rem solid rgba($color-dark, 0.36);
+      border-radius: 0;
+      box-shadow: none;
+      color: $color-dark;
+      font-family: $font-roboto;
+      font-size: 1.58rem;
+
+      &:focus {
+        border-color: $color-logo-red;
+        background-color: transparent;
+        box-shadow: 0 0.7rem 0.9rem -0.8rem rgba($color-logo-red, 0.62);
+      }
+    }
+
+    .form-label {
+      font-family: $font-montserrat;
+      font-weight: 900;
+      letter-spacing: 0.1rem;
+      text-transform: uppercase;
+    }
+
+    .form-group > input:focus + label,
+    .form-group > input:not(:placeholder-shown) + label,
+    .form-group > textarea:focus + label,
+    .form-group > textarea:not(:placeholder-shown) + label,
+    .form-group > select:focus + label {
+      top: 0.45rem;
+      transform: translateY(0);
+      color: darken($color-logo-red, 4);
+      font-size: 1.08rem;
+    }
+
+    .form-group--select select {
+      padding-top: 2.2rem;
+    }
+
+    .form-group__error {
+      margin-top: 0.35rem;
+      min-height: 1.6rem;
+      font-size: 1.18rem;
+    }
+
+    .button__submit {
+      margin: 0;
+      width: fit-content;
+      max-width: 100%;
+      min-height: 5.8rem;
+      padding: 1.35rem 3rem;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+
+      background-color: darken($color-logo-red, 4);
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: clamp(1.35rem, 2vw, 1.65rem);
+      font-weight: 900;
+      letter-spacing: 0.08rem;
+      text-transform: uppercase;
+      box-shadow: 0 1.2rem 2.6rem rgba($color-logo-red, 0.22);
+
+      &:hover,
+      &:focus {
+        background-color: $color-dark;
+        color: $color-light;
+      }
+    }
+  }
+
+  &__field--full,
+  &__status,
+  &__submit {
+    @include tablet {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__submit {
+    display: flex;
+    justify-content: center;
+
+    @include tablet {
+      justify-content: flex-start;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .services-quote {
+    &__content {
+      text-align: center;
+      margin-inline: auto;
+    }
+
+    &__heading {
+      p,
+      h2 {
+        text-align: center;
+      }
+    }
+
+    &__contact {
+      justify-content: center;
+    }
+
+    &__contact-button {
+      width: min(100%, 32rem);
+      justify-content: center;
+    }
+
+    &__submit {
+      justify-content: center;
+
+      .button__submit {
+        width: min(100%, 28rem);
+      }
+    }
+  }
+}
+@media (max-width: 480px) {
+  .services-card {
+    min-height: auto;
+    padding: 2rem;
+
+    &__number {
+      font-size: 3.2rem;
+    }
+
+    h3 {
+      padding-right: 3.4rem;
+    }
+  }
+
+  .services-quote__submit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-hero__secondary,
+  .services-card,
+  .services-card::before,
+  .services-card::after,
+  .services-card__icon,
+  .services-card__number,
+  .services-card__eyebrow,
+  .services-card h3,
+  .services-card p,
+  .services-card li,
+  .services-card__link,
+  .services-card__link span,
+  .services-quote__contact a,
+  .services-quote__form input,
+  .services-quote__form select,
+  .services-quote__form textarea {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+// ==========================================================
+// Home contacto con layout de cotización de servicios
+// ==========================================================
+
+.contacto.services-quote {
+  display: block;
+  align-items: initial;
+  justify-content: initial;
+  text-align: initial;
+  padding: 0;
+  margin: 0;
+
+  .section-heading {
+    margin-inline: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .contacto__links {
+    width: auto;
+    max-width: none;
+    margin: clamp(2.4rem, 4vw, 3.6rem) 0 0;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.1rem;
+  }
+
+  .button__mail {
+    width: auto;
+    min-width: min(100%, 24rem);
+  }
+
+  .contact__form {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+}
+
+.services-quote--home {
+  .services-quote__heading {
+    h2 {
+      max-width: 64rem;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .contacto.services-quote {
+    .services-quote__content {
+      text-align: center;
+      margin-inline: auto;
+    }
+
+    .section-heading,
+    .section-heading p,
+    .section-heading h2 {
+      text-align: center;
+    }
+
+    .contacto__links {
+      justify-content: center;
+    }
+
+    .button__mail {
+      width: min(100%, 32rem);
+      justify-content: center;
+    }
+  }
+}
+@media (max-width: 767px) {
+  .services-quote {
+    &__contact {
+      justify-content: center;
+    }
+
+    &__contact-button {
+      width: min(100%, 32rem);
+      justify-content: center;
+    }
+  }
+}
+// ==========================================================
+// Ajustes finales contacto Home + Servicios
+// ==========================================================
+
+.services-quote {
+  &__inner {
+    min-height: auto;
+    padding-block: clamp(5rem, 7vw, 7.5rem);
+
+    @include desktop {
+      grid-template-columns: minmax(0, 0.88fr) minmax(46rem, 1.12fr);
+    }
+  }
+
+  &__content {
+    p {
+      font-size: clamp(1.45rem, 1.55vw, 1.75rem);
+      line-height: 1.68;
+      font-weight: 400;
+    }
+  }
+
+  &__heading {
+    p {
+      font-size: clamp(1.15rem, 1.35vw, 1.35rem);
+      font-weight: 750;
+      letter-spacing: 0.14rem;
+    }
+
+    h2 {
+      font-size: clamp(3.4rem, 5.4vw, 6rem);
+      font-weight: 760;
+      line-height: 1.06;
+      letter-spacing: -0.055em;
+    }
+  }
+
+  &__contact {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 1rem;
+
+    @include tablet {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+  }
+
+  &__contact-button.button__mail {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    @include tablet {
+      width: auto;
+      min-width: 22rem;
+      max-width: 30rem;
+    }
+  }
+
+  &__form {
+    padding: clamp(2.2rem, 3.4vw, 3.5rem);
+
+    .form__fieldset {
+      gap: clamp(1.3rem, 2vw, 1.7rem);
+    }
+
+    .form-control {
+      height: 5.2rem;
+      padding: 1.7rem 0.85rem 0.45rem;
+      font-size: 1.45rem;
+      font-weight: 400;
+    }
+
+    textarea.form-control,
+    .form-group textarea {
+      min-height: 12.5rem;
+      padding-top: 2.05rem;
+      font-size: 1.45rem;
+      line-height: 1.45;
+    }
+
+    .form-label {
+      color: rgba($color-dark, 0.56);
+      font-size: clamp(1.35rem, 1.5vw, 1.55rem);
+      font-weight: 720;
+      letter-spacing: 0.075rem;
+      text-transform: uppercase;
+    }
+
+    .form-group > input:focus + label,
+    .form-group > input:not(:placeholder-shown) + label,
+    .form-group > textarea:focus + label,
+    .form-group > textarea:not(:placeholder-shown) + label,
+    .form-group > select:focus + label,
+    .form-group > select:required:valid + label {
+      top: 0.38rem;
+      color: darken($color-logo-red, 4);
+      font-size: 1.02rem;
+      font-weight: 760;
+    }
+
+    /*
+      IMPORTANTE:
+      Esto corrige el SELECT.
+      Quita el comportamiento de "siempre flotado / siempre rojo".
+    */
+    .form-group--select > select + label {
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba($color-dark, 0.56);
+      font-size: clamp(1.35rem, 1.5vw, 1.55rem);
+      font-weight: 720;
+    }
+
+    .form-group--select > select:focus + label,
+    .form-group--select > select:required:valid + label {
+      top: 0.38rem;
+      transform: translateY(0);
+      color: darken($color-logo-red, 4);
+      font-size: 1.02rem;
+      font-weight: 760;
+    }
+
+    .form-group--select select {
+      color: $color-dark;
+      font-weight: 400;
+
+      &:invalid {
+        color: transparent;
+      }
+
+      &:focus {
+        color: $color-dark;
+      }
+    }
+
+    .form-group.has-error {
+      .form-label {
+        color: $whis-form-danger !important;
+      }
+    }
+
+    .form-group.has-success {
+      .form-label {
+        color: $whis-form-success !important;
+      }
+    }
+
+    .button__submit {
+      min-height: 5.2rem;
+      padding: 1.1rem 2.5rem;
+      font-size: clamp(1.28rem, 1.55vw, 1.48rem);
+      font-weight: 800;
+      letter-spacing: 0.055rem;
+    }
+  }
+
+  &__submit {
+    justify-content: center;
+
+    @include tablet {
+      justify-content: flex-start;
+    }
+  }
+}
+
+// ==========================================================
+// Botones correo / teléfono: estilo home, layout usable
+// ==========================================================
+
+.button__mail {
+  --mail-button-color: #{darken($color-logo-red, 7)};
+  --mail-button-bg-hover: #{darken($color-logo-red, 5)};
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  min-height: 4.4rem;
+  padding: 0.75rem 1.35rem;
+
+  color: var(--mail-button-color);
+  background-color: transparent;
+  border: 0;
+  border-radius: 9999px;
+
+  font-size: clamp(1.35rem, 1.55vw, 1.55rem);
+  font-weight: 650;
+  line-height: 1.1;
+  text-decoration: none;
+
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0.45rem;
+    width: calc(100% - 3.2rem);
+    height: 0.12rem;
+    background-color: currentColor;
+    border-radius: 9999px;
+    transform: translateX(-50%);
+    opacity: 0.65;
+    transition:
+      width 180ms ease,
+      opacity 180ms ease;
+  }
+
+  svg {
+    flex: 0 0 auto;
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: currentColor;
+  }
+
+  .button__mail__text {
+    position: relative;
+    display: inline-grid;
+    grid-template-areas: "text";
+    align-items: center;
+    justify-items: center;
+    min-width: max-content;
+    overflow: hidden;
+  }
+
+  .button__mail__text-default,
+  .button__mail__text-hover {
+    grid-area: text;
+    display: block;
+    white-space: nowrap;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .button__mail__text-default {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .button__mail__text-hover {
+    opacity: 0;
+    transform: translateY(110%);
+  }
+
+  &:hover,
+  &:focus {
+    color: $color-light;
+    background-color: var(--mail-button-bg-hover);
+    transform: translateY(-0.18rem);
+    box-shadow: 0 1rem 2.2rem rgba($color-logo-red, 0.22);
+
+    &::after {
+      width: 0;
+      opacity: 0;
+    }
+
+    .button__mail__text-default {
+      opacity: 0;
+      transform: translateY(-110%);
+    }
+
+    .button__mail__text-hover {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+.services-quote__content {
+  .button__mail {
+    color: $color-light;
+
+    &::after {
+      background-color: rgba($color-light, 0.68);
+    }
+
+    &:hover,
+    &:focus {
+      color: $color-light;
+      background-color: rgba($color-logo-red, 0.82);
+    }
+  }
+}
+
+// ==========================================================
+// Redes en contacto home, basadas en footer
+// ==========================================================
+
+.services-quote__social-wrap {
+  margin-top: clamp(2rem, 3.2vw, 3rem);
+
+  > p {
+    margin: 0 0 1.2rem;
+    color: rgba($color-light, 0.78);
+    font-size: 1.5rem;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}
+
+.services-quote__socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  align-items: center;
+
+  @media (max-width: 767px) {
+    justify-content: center;
+  }
+}
+
+.services-quote__social {
+  --social-color: #{rgba($color-white, 0.8)};
+  --social-shadow: rgba($color-black, 0.22);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 3.9rem;
+  padding: 0.78rem 1.25rem;
+
+  border: 0.1rem solid rgba($color-white, 0.18);
+  border-radius: 0.8rem;
+  background-color: rgba($color-white, 0.075);
+  color: rgba($color-light, 0.9);
+
+  font-size: 1.5rem;
+  font-weight: 720;
+  line-height: 1;
+  text-decoration: none;
+
+  backdrop-filter: blur(0.8rem);
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
+
+  &:hover,
+  &:focus {
+    color: $color-white;
+    border-color: var(--social-color);
+    background: var(--social-color);
+    box-shadow: 0 0 2.4rem var(--social-shadow);
+    transform: translateY(-0.25rem);
+  }
+
+  &--facebook {
+    --social-color: #1877f2;
+    --social-shadow: rgba(24, 119, 242, 0.35);
+  }
+
+  &--linkedin {
+    --social-color: #0a66c2;
+    --social-shadow: rgba(10, 102, 194, 0.35);
+  }
+
+  &--whatsapp {
+    --social-color: #25d366;
+    --social-shadow: rgba(37, 211, 102, 0.35);
+  }
+
+  &--instagram {
+    --social-color: #e4405f;
+    --social-shadow: rgba(228, 64, 95, 0.38);
+
+    &:hover,
+    &:focus {
+      border-color: #e4405f;
+      background: radial-gradient(
+        circle at 30% 107%,
+        #fdf497 0%,
+        #fdf497 5%,
+        #fd5949 45%,
+        #d6249f 60%,
+        #285aeb 90%
+      );
+      box-shadow: 0 0 2.4rem rgba(214, 36, 159, 0.35);
+    }
+  }
+}
+
+// ==========================================================
+// Home contacto: detalles responsive
+// ==========================================================
+
+.contacto.services-quote {
+  .contacto__links,
+  .services-quote__contact {
+    @include tablet {
+      flex-direction: row;
+      justify-content: flex-start;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .services-quote__content {
+      text-align: center;
+    }
+
+    .services-quote__contact,
+    .contacto__links {
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+// ==========================================================
+// Servicios contacto: botones correo / teléfono siempre columna
+// ==========================================================
+

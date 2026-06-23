@@ -1,0 +1,54 @@
+	2026-06-19 03:48:32: RuntimeException by 192.168.100.86
+Uncaught exception: 'RuntimeException' with message 'Template not found: pages/main/proyectos. Attempts: E:/F22_LMASE-V2/assets/views/compiled/pages/main/proyectos.html'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(501): Whis\View\StencilEngine->resolveTemplatePath('pages/main/proy...', 'E:/F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(117): Whis\View\StencilEngine->resolveViewPath('pages/main/proy...')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(73): Whis\View\StencilEngine->compile('pages/main/proy...', NULL)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/proy...', Array, NULL, 'Proyectos')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/proy...', Array, NULL, 'Proyectos')
+#5 E:\F22_LMASE-V2\app\Controllers\Home.php(56): view('pages/main/proy...', 'Proyectos')
+#6 [internal function]: App\Controllers\Home->proyectos()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php' on line 547
+
+
+	2026-06-19 03:48:34: RuntimeException by 192.168.100.86
+Uncaught exception: 'RuntimeException' with message 'Template not found: pages/main/proyectos. Attempts: E:/F22_LMASE-V2/assets/views/compiled/pages/main/proyectos.html'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(501): Whis\View\StencilEngine->resolveTemplatePath('pages/main/proy...', 'E:/F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(117): Whis\View\StencilEngine->resolveViewPath('pages/main/proy...')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(73): Whis\View\StencilEngine->compile('pages/main/proy...', NULL)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/proy...', Array, NULL, 'Proyectos')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/proy...', Array, NULL, 'Proyectos')
+#5 E:\F22_LMASE-V2\app\Controllers\Home.php(56): view('pages/main/proy...', 'Proyectos')
+#6 [internal function]: App\Controllers\Home->proyectos()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php' on line 547
+
+
+	2026-06-19 12:27:47: RuntimeException by 192.168.68.53
+Uncaught exception: 'RuntimeException' with message 'Template not found: pages/main/home. Attempts: E:/F22_LMASE-V2/assets/views/compiled/pages/main/home.html'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(501): Whis\View\StencilEngine->resolveTemplatePath('pages/main/home', 'E:/F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(117): Whis\View\StencilEngine->resolveViewPath('pages/main/home')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(73): Whis\View\StencilEngine->compile('pages/main/home', NULL)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, NULL, 'Inicio')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, NULL, 'Inicio')
+#5 E:\F22_LMASE-V2\app\Controllers\Home.php(13): view('pages/main/home', 'Inicio')
+#6 [internal function]: App\Controllers\Home->home()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php' on line 547
+
+

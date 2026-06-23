@@ -258,6 +258,7 @@ export function initAjaxForm(formOrSelector, options = {}) {
   const state = createState(form, config);
 
   bindFieldEvents(state);
+  bindCharacterCounters(state);
 
   form.addEventListener("submit", (event) => {
     handleSubmit(event, state);
@@ -367,6 +368,7 @@ function getFormOptions(form, config) {
     successMessage: dataset.successMessage || "",
 
     errorMessage: dataset.errorMessage || "",
+    characterCounter: readBoolean(dataset.characterCounter, true),
   };
 }
 
@@ -420,6 +422,182 @@ function bindFieldEvents(state) {
     field.addEventListener("input", validateWhenTouched);
     field.addEventListener("change", validateWhenTouched);
   });
+}
+
+function bindCharacterCounters(state) {
+  if (!state.options.characterCounter) return;
+
+  state.fields.forEach((field) => {
+    if (shouldIgnoreField(field, state) || !supportsCharacterCounter(field)) {
+      return;
+    }
+
+    const rules = getFieldRules(field, state);
+    const minLength = getLengthLimit(
+      rules.minLength ?? field.getAttribute("minlength"),
+    );
+    const maxLength = getLengthLimit(
+      rules.maxLength ?? field.getAttribute("maxlength"),
+    );
+
+    const counterEnabled = readBoolean(field.dataset.characterCounter, true);
+
+    if (!counterEnabled || (!minLength && !maxLength)) return;
+
+    const group = findFieldGroup(field, state.form);
+    const counter = findOrCreateCharacterCounter(field, state.form, group);
+
+    if (!counter) return;
+
+    const update = () =>
+      updateCharacterCounter(field, state, counter, {
+        minLength,
+        maxLength,
+      });
+
+    field.addEventListener("input", update);
+    field.addEventListener("change", update);
+
+    update();
+  });
+}
+
+function supportsCharacterCounter(field) {
+  if (field.tagName === "TEXTAREA") return true;
+  if (field.tagName !== "INPUT") return false;
+
+  const type = String(field.type || "text").toLowerCase();
+
+  return ["text", "search", "email", "tel", "url", "password"].includes(type);
+}
+
+function getLengthLimit(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number) || number <= 0) return 0;
+
+  return Math.trunc(number);
+}
+
+function findOrCreateCharacterCounter(field, form, group) {
+  const candidates = getFieldNameCandidates(field.name);
+
+  for (const name of candidates) {
+    const counter =
+      group?.querySelector(
+        `[data-character-counter-for="${escapeAttribute(name)}"]`,
+      ) ||
+      form.querySelector(
+        `[data-character-counter-for="${escapeAttribute(name)}"]`,
+      );
+
+    if (counter) return counter;
+  }
+
+  group?.classList.add("has-character-counter");
+
+  if (field.tagName === "TEXTAREA") {
+    group?.classList.add("has-character-counter--textarea");
+  }
+
+  const counter = document.createElement("span");
+  const normalizedName = normalizeFieldName(field.name || field.id || "campo");
+  const safeName = normalizedName.replace(/[^a-zA-Z0-9_-]/g, "-") || "campo";
+
+  counter.className = "form-group__counter";
+  counter.dataset.characterCounter = "true";
+  counter.dataset.characterCounterFor = normalizedName;
+  counter.id = field.id ? `${field.id}-counter` : `counter-${safeName}`;
+  counter.setAttribute("aria-live", "polite");
+
+  group?.appendChild(counter);
+
+  const describedBy = new Set(
+    String(field.getAttribute("aria-describedby") || "")
+      .split(/\s+/)
+      .filter(Boolean),
+  );
+
+  describedBy.add(counter.id);
+  field.setAttribute("aria-describedby", Array.from(describedBy).join(" "));
+
+  return counter;
+}
+
+function updateCharacterCounter(field, state, counter, limits = {}) {
+  const rules = getFieldRules(field, state);
+  const value = normalizeValue(getFieldValue(field, state.form), rules);
+  const currentLength = typeof value === "string" ? value.length : 0;
+  const minLength = Number(limits.minLength || 0);
+  const maxLength = Number(limits.maxLength || 0);
+
+  counter.classList.remove(
+    "is-empty",
+    "is-under-min",
+    "is-near-limit",
+    "is-over-limit",
+    "is-valid-length",
+  );
+
+  counter.textContent = getCharacterCounterText(currentLength, {
+    minLength,
+    maxLength,
+  });
+
+  counter.title = getCharacterCounterTitle(currentLength, {
+    minLength,
+    maxLength,
+  });
+
+  if (currentLength === 0) {
+    counter.classList.add("is-empty");
+  }
+
+  if (minLength && currentLength > 0 && currentLength < minLength) {
+    counter.classList.add("is-under-min");
+  }
+
+  if (maxLength && currentLength > maxLength) {
+    counter.classList.add("is-over-limit");
+  } else if (maxLength && currentLength >= Math.floor(maxLength * 0.9)) {
+    counter.classList.add("is-near-limit");
+  }
+
+  if (
+    (!minLength || currentLength >= minLength) &&
+    (!maxLength || currentLength <= maxLength) &&
+    currentLength > 0
+  ) {
+    counter.classList.add("is-valid-length");
+  }
+}
+function getCharacterCounterText(currentLength, limits = {}) {
+  const maxLength = Number(limits.maxLength || 0);
+
+  if (maxLength) {
+    return `${currentLength}/${maxLength}`;
+  }
+
+  return String(currentLength);
+}
+function getCharacterCounterTitle(currentLength, limits = {}) {
+  const minLength = Number(limits.minLength || 0);
+  const maxLength = Number(limits.maxLength || 0);
+  const label = currentLength === 1 ? "carácter" : "caracteres";
+
+  if (minLength && maxLength) {
+    return `${currentLength} ${label}. Mínimo ${minLength}, máximo ${maxLength}.`;
+  }
+
+  if (maxLength) {
+    return `${currentLength} ${label}. Máximo ${maxLength}.`;
+  }
+
+  if (minLength) {
+    return `${currentLength} ${label}. Mínimo ${minLength}.`;
+  }
+
+  return `${currentLength} ${label}.`;
 }
 
 async function handleSubmit(event, state) {
@@ -1354,16 +1532,22 @@ function setFieldState(field, state, isValid, message = "") {
 
   field.removeAttribute("aria-invalid");
 
-  if (errorBox) {
-    errorBox.textContent = "";
-  }
+  if (errorBox.id) {
+    const describedBy = new Set(
+      String(field.getAttribute("aria-describedby") || "")
+        .split(/\s+/)
+        .filter(Boolean),
+    );
 
-  if (isValid) {
-    if (!isEmptyValue(getFieldValue(field, state.form))) {
-      group?.classList.add("has-success");
+    const counter = findCharacterCounter(field, state.form, group);
+
+    describedBy.add(errorBox.id);
+
+    if (counter?.id) {
+      describedBy.add(counter.id);
     }
 
-    return;
+    field.setAttribute("aria-describedby", Array.from(describedBy).join(" "));
   }
 
   group?.classList.add("has-error");
@@ -1372,7 +1556,7 @@ function setFieldState(field, state, isValid, message = "") {
   if (errorBox) {
     errorBox.textContent = message;
 
-    if (errorBox.id) {
+    if (errorBox?.id) {
       field.setAttribute("aria-describedby", errorBox.id);
     }
   }
@@ -1388,6 +1572,39 @@ function clearFieldState(field, state) {
   if (errorBox) {
     errorBox.textContent = "";
   }
+
+  const counter = findCharacterCounter(field, state.form, group);
+
+  if (counter) {
+    const rules = getFieldRules(field, state);
+
+    updateCharacterCounter(field, state, counter, {
+      minLength: getLengthLimit(
+        rules.minLength ?? field.getAttribute("minlength"),
+      ),
+      maxLength: getLengthLimit(
+        rules.maxLength ?? field.getAttribute("maxlength"),
+      ),
+    });
+  }
+}
+
+function findCharacterCounter(field, form, group) {
+  const candidates = getFieldNameCandidates(field.name);
+
+  for (const name of candidates) {
+    const counter =
+      group?.querySelector(
+        `[data-character-counter-for="${escapeAttribute(name)}"]`,
+      ) ||
+      form.querySelector(
+        `[data-character-counter-for="${escapeAttribute(name)}"]`,
+      );
+
+    if (counter) return counter;
+  }
+
+  return group?.querySelector(".form-group__counter") || null;
 }
 
 function resetValidationStyles(state) {

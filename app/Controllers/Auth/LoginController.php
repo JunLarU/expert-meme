@@ -27,6 +27,14 @@ class LoginController extends Controller
         $data = $request->validate([
             'email'    => 'required|email',
             'password' => 'required',
+        ], false, [
+            'email' => [
+                'required' => 'Completa tu correo electrónico.',
+                'email'    => 'Escribe un correo electrónico válido.',
+            ],
+            'password' => [
+                'required' => 'Completa tu contraseña.',
+            ],
         ]);
 
         $user = User::firstWhere('email', $data['email']);
@@ -35,17 +43,17 @@ class LoginController extends Controller
             if ($this->expectsJson($request)) {
                 return Response::json([
                     'ok'      => false,
-                    'message' => "Credentials don't match",
-                    'error'   => "Credentials don't match",
+                    'message' => "Las credenciales no coinciden.",
+                    'error'   => "Las credenciales no coinciden.",
                     'errors'  => [
-                        'email' => "Credentials don't match",
+                        'email' => "Las credenciales no coinciden.",
                     ],
                 ])->setStatus(422);
             }
 
             return back()->withErrors([
                 'email' => [
-                    'email' => "Credentials don't match",
+                    'email' => "Las credenciales no coinciden.",
                 ],
             ]);
         }

@@ -1,86 +1,131 @@
-<section class="form-page" aria-labelledby="login-title">
-  <div class="form-card">
-    <h1 id="login-title">Login</h1>
+<section class="form-page login-page lazy-bg" data-background-src="/images/JTRON.jpg" aria-labelledby="login-title">
+  <div class="login-page__overlay" aria-hidden="true"></div>
 
-    <form
-      class="form form--default"
-      id="login_form"
-      method="post"
-      action="@url/login"
-      data-ajax-form
-      data-validation="login"
-      data-send-as="urlencoded"
-      data-csrf="true"
-      data-csrf-field="_token"
-      data-reset-on-success="false"
-      novalidate
-      aria-labelledby="login-form-legend"
-    >
-      @csrf('login')
+  <div class="form-card login-card">
+    <div class="login-card__brand">
+      <span class="login-card__eyebrow">Acceso interno</span>
 
-      <fieldset class="form__fieldset">
-        <legend id="login-form-legend">Iniciar sesión</legend>
+      <h1 id="login-title">Panel L+E Ingeniería</h1>
 
-        <div
-          class="form__status"
-          id="loginFormStatus"
-          data-form-status
-          role="status"
-          aria-live="polite"
-        ></div>
+      <p>
+        Ingresa con tus credenciales para administrar proyectos, solicitudes,
+        contenido del sitio y herramientas internas.
+      </p>
 
-        <div class="form-group" data-field="email">
-          <input
-            value="{{old('email')}}"
-            name="email"
-            id="login-email"
-            type="email"
-            class="form-control"
-            placeholder=" "
-            autocomplete="email"
-            inputmode="email"
-            required
-            aria-describedby="error-login-email"
-          >
+      <ul class="login-card__features" aria-label="Características del acceso">
+        <li>Gestión segura</li>
+        <li>Control administrativo</li>
+        <li>Acceso autorizado</li>
+      </ul>
 
-          <label class="form-label" for="login-email">Email</label>
+      <a href="@url" class="login-card__back">
+        Volver al sitio <span aria-hidden="true">→</span>
+      </a>
+    </div>
 
-          <span
-            class="form-group__error text-danger"
-            id="error-login-email"
-            data-field-error
-            data-error-for="email"
+    <div class="login-card__form-wrap">
+      <div class="login-card__form-header">
+        <p>Bienvenido</p>
+        <h2>Iniciar sesión</h2>
+        <span>Usa tu correo y contraseña para continuar.</span>
+      </div>
+
+      <form
+        class="login-card__form form form--default"
+        id="login_form"
+        method="post"
+        action="@url/login"
+        data-ajax-form
+        data-validation="login"
+        data-send-as="urlencoded"
+        data-csrf="true"
+        data-csrf-field="_token"
+        data-reset-on-success="false"
+        data-character-counter="false"
+        data-loading-text="Iniciando sesión..."
+        data-error-message="No se pudo iniciar sesión. Verifica tus datos e intenta nuevamente."
+        data-success-message="Sesión iniciada correctamente."
+        novalidate
+        aria-labelledby="login-form-legend"
+      >
+        @csrf('login')
+
+        <fieldset class="form__fieldset login-card__fieldset">
+          <legend id="login-form-legend">Iniciar sesión</legend>
+
+          <div
+            class="form__status login-card__status"
+            id="loginFormStatus"
+            data-form-status
+            role="status"
             aria-live="polite"
-          >{{error('email')}}</span>
-        </div>
+          ></div>
 
-        <div class="form-group" data-field="password">
-          <input
-            name="password"
-            id="login-password"
-            type="password"
-            class="form-control"
-            placeholder=" "
-            autocomplete="current-password"
-            required
-            aria-describedby="error-login-password"
-          >
+          <div class="form-group login-card__field login-card__field--email" data-field="email">
+            <input
+              value="{{old('email')}}"
+              name="email"
+              id="login-email"
+              type="email"
+              class="form-control"
+              placeholder=" "
+              autocomplete="email"
+              inputmode="email"
+              required
+              data-label="correo electrónico"
+              data-normalize="trim"
+              data-message-required="Completa tu correo electrónico."
+              data-message-email="Escribe un correo electrónico válido."
+              aria-describedby="error-login-email"
+            >
 
-          <label class="form-label" for="login-password">Password</label>
+            <label class="form-label" for="login-email">Correo electrónico</label>
 
-          <span
-            class="form-group__error text-danger"
-            id="error-login-password"
-            data-field-error
-            data-error-for="password"
-            aria-live="polite"
-          >{{error('password')}}</span>
-        </div>
+            <span
+              class="form-group__error text-danger"
+              id="error-login-email"
+              data-field-error
+              data-error-for="email"
+              aria-live="polite"
+            >{{error('email')}}</span>
+          </div>
 
-        <button type="submit" class="button__submit btn btn-primary">
-          <span class="button__submit__text">Submit</span>
-        </button>
-      </fieldset>
-    </form>
+          <div class="form-group login-card__field login-card__field--password" data-field="password">
+            <input
+              name="password"
+              id="login-password"
+              type="password"
+              class="form-control"
+              placeholder=" "
+              autocomplete="current-password"
+              required
+              data-label="contraseña"
+              data-normalize="none"
+              data-message-required="Completa tu contraseña."
+              aria-describedby="error-login-password"
+            >
+
+            <label class="form-label" for="login-password">Contraseña</label>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-login-password"
+              data-field-error
+              data-error-for="password"
+              aria-live="polite"
+            >{{error('password')}}</span>
+          </div>
+
+          <div class="login-card__meta">
+            <span>Acceso exclusivo para usuarios autorizados.</span>
+          </div>
+
+          <button type="submit" class="button__submit btn btn-primary login-card__submit">
+            <span class="button__submit__text">Entrar</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </fieldset>
+      </form>
+    </div>
   </div>
 </section>

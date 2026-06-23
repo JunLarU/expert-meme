@@ -3,10 +3,10 @@
  * @param {string} selector - Selector CSS para los videos
  * @param {Object} options - Opciones de configuración
  */
-export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
+export function lazyLoadVideos(selector = ".lazy-video", options = {}) {
   const config = {
     threshold: 0.01,
-    rootMargin: '100px',
+    rootMargin: "100px",
     enableAutoQuality: true,
     enableRetry: true,
     maxRetries: 3,
@@ -22,26 +22,31 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
     onComplete: null,
     onPlay: null,
     onPause: null,
-    priority: 'auto',
-    ...options
+    priority: "auto",
+    ...options,
   };
 
   // Detectar calidad de conexión
-  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  const isSlowConnection = connection ? 
-    (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g' || connection.saveData) : 
-    false;
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+  const isSlowConnection = connection
+    ? connection.effectiveType === "slow-2g" ||
+      connection.effectiveType === "2g" ||
+      connection.saveData
+    : false;
 
   // Ajustar configuración según conexión
   if (config.enableAutoQuality && isSlowConnection) {
-    config.rootMargin = '0px';
+    config.rootMargin = "0px";
     config.threshold = 0.15;
     config.preloadMetadata = false;
     config.autoplay = false; // Nunca autoplay en conexiones lentas
   }
 
   const videos = document.querySelectorAll(selector);
-  
+
   if (!videos.length) {
     console.warn(`⚠️ No se encontraron videos con el selector: ${selector}`);
     return {
@@ -50,7 +55,7 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
       loadAll: () => {},
       playAll: () => {},
       pauseAll: () => {},
-      disconnect: () => {}
+      disconnect: () => {},
     };
   }
 
@@ -65,71 +70,93 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
    * Carga un video con manejo de errores y reintentos
    */
   const loadVideo = (videoElement, retryCount = 0) => {
+    const originalData = rememberOriginalVideoData(videoElement);
+
+    const videoSrc = originalData.src;
+    const posterSrc = originalData.poster;
+    const sources = originalData.sources.filter((source) => source.src);
+    const tracks = originalData.tracks.filter((track) => track.src);
+
     return new Promise((resolve, reject) => {
-      // Evitar cargar el mismo video múltiples veces
       if (loadedVideos.has(videoElement)) {
         resolve(videoElement);
         return;
       }
 
-      // Obtener fuentes del video
-      const videoSrc = videoElement.dataset.src;
-      const posterSrc = videoElement.dataset.poster;
-      const sources = videoElement.querySelectorAll('source[data-src]');
-      
       if (!videoSrc && sources.length === 0) {
-        reject(new Error('No data-src attribute found'));
+        reject(new Error("No data-src attribute found"));
         return;
       }
 
-      // Marcar como cargando
-      videoElement.classList.add('lazy-loading');
+      videoElement.classList.remove("lazy-error", "lazy-unloaded");
+      videoElement.classList.add("lazy-loading");
 
-      // Configurar poster si existe
       if (posterSrc) {
         videoElement.poster = posterSrc;
-        delete videoElement.dataset.poster;
       }
 
-      // Configurar preload
-      if (config.preloadMetadata) {
-        videoElement.preload = 'metadata';
-      } else {
-        videoElement.preload = 'none';
-      }
+      videoElement.preload = config.preloadMetadata ? "metadata" : "none";
 
-      // Manejar éxito de carga
-      const onLoadedData = () => {
+      const cleanup = () => {
+        videoElement.removeEventListener("loadeddata", onLoaded);
+        videoElement.removeEventListener("loadedmetadata", onLoaded);
+        videoElement.removeEventListener("canplay", onLoaded);
+        videoElement.removeEventListener("error", onError);
+      };
+
+      const onLoaded = () => {
+        cleanup();
         handleLoadSuccess(videoElement);
         loadedVideos.add(videoElement);
         resolve(videoElement);
       };
 
-      // Manejar error de carga
-      const onError = (e) => {
-        handleLoadError(videoElement, videoSrc || 'multiple sources', retryCount, reject, e);
+      const onError = (event) => {
+        cleanup();
+
+        if (config.enableRetry && retryCount < config.maxRetries) {
+          videoElement.classList.remove("lazy-loading");
+          videoElement.classList.add("lazy-error");
+
+          setTimeout(
+            () => {
+              videoElement.classList.remove("lazy-error");
+              loadVideo(videoElement, retryCount + 1)
+                .then(resolve)
+                .catch(reject);
+            },
+            config.retryDelay * (retryCount + 1),
+          );
+
+          return;
+        }
+
+        handleLoadError(
+          videoElement,
+          videoSrc || "multiple sources",
+          retryCount,
+          reject,
+          event,
+        );
       };
 
-      // Agregar event listeners
-      videoElement.addEventListener('loadeddata', onLoadedData, { once: true });
-      videoElement.addEventListener('error', onError, { once: true });
+      videoElement.addEventListener("loadeddata", onLoaded);
+      videoElement.addEventListener("loadedmetadata", onLoaded);
+      videoElement.addEventListener("canplay", onLoaded);
+      videoElement.addEventListener("error", onError);
 
-      // Cargar fuentes
       if (videoSrc) {
-        // Video con src directo
         videoElement.src = videoSrc;
-        delete videoElement.dataset.src;
-      } else if (sources.length > 0) {
-        // Video con múltiples sources
-        sources.forEach(source => {
-          if (source.dataset.src) {
-            source.src = source.dataset.src;
-            delete source.dataset.src;
-          }
+      } else {
+        sources.forEach(({ element, src }) => {
+          element.src = src;
         });
       }
 
-      // Iniciar carga
+      tracks.forEach(({ element, src }) => {
+        element.src = src;
+      });
+
       videoElement.load();
     });
   };
@@ -138,8 +165,8 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
    * Maneja la carga exitosa de un video
    */
   const handleLoadSuccess = (videoElement) => {
-    videoElement.classList.remove('lazy-loading');
-    videoElement.classList.add('lazy-loaded');
+    videoElement.classList.remove("lazy-loading");
+    videoElement.classList.add("lazy-loaded");
 
     loadedCount++;
 
@@ -147,12 +174,15 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
     console.log(`📹 Video cargado: ${loadedCount}/${totalVideos}`);
 
     // Callback personalizado
-    if (typeof config.onLoad === 'function') {
+    if (typeof config.onLoad === "function") {
       config.onLoad(videoElement, loadedCount, totalVideos);
     }
 
     // Verificar si todos los videos cargaron
-    if (loadedCount === totalVideos && typeof config.onComplete === 'function') {
+    if (
+      loadedCount === totalVideos &&
+      typeof config.onComplete === "function"
+    ) {
       config.onComplete(totalVideos);
     }
   };
@@ -160,25 +190,38 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
   /**
    * Maneja errores de carga con sistema de reintentos
    */
-  const handleLoadError = (videoElement, videoSrc, retryCount, reject, errorEvent) => {
+  const handleLoadError = (
+    videoElement,
+    videoSrc,
+    retryCount,
+    reject,
+    errorEvent,
+  ) => {
     console.error(`❌ Error al cargar video: ${videoSrc}`, errorEvent);
-    
-    videoElement.classList.remove('lazy-loading');
-    videoElement.classList.add('lazy-error');
+
+    videoElement.classList.remove("lazy-loading");
+    videoElement.classList.add("lazy-error");
 
     // Sistema de reintentos
     if (config.enableRetry && retryCount < config.maxRetries) {
-      console.log(`🔄 Reintentando carga de video (${retryCount + 1}/${config.maxRetries})...`);
-      setTimeout(() => {
-        videoElement.classList.remove('lazy-error');
-        loadVideo(videoElement, retryCount + 1);
-      }, config.retryDelay * (retryCount + 1));
+      console.log(
+        `🔄 Reintentando carga de video (${retryCount + 1}/${config.maxRetries})...`,
+      );
+      setTimeout(
+        () => {
+          videoElement.classList.remove("lazy-error");
+          loadVideo(videoElement, retryCount + 1);
+        },
+        config.retryDelay * (retryCount + 1),
+      );
     } else {
       // Callback de error
-      if (typeof config.onError === 'function') {
+      if (typeof config.onError === "function") {
         config.onError(videoElement, videoSrc, errorEvent);
       }
-      reject(new Error(`Failed to load video after ${config.maxRetries} retries`));
+      reject(
+        new Error(`Failed to load video after ${config.maxRetries} retries`),
+      );
     }
   };
 
@@ -189,7 +232,7 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
     if (isIntersecting) {
       // Video entra en viewport
       const delay = video.dataset.loadDelay || config.loadDelay;
-      
+
       setTimeout(() => {
         loadVideo(video)
           .then((loadedVideo) => {
@@ -198,16 +241,16 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
               playVideo(loadedVideo);
             }
           })
-          .catch(err => {
-            console.error('❌ Error definitivo cargando video:', err);
+          .catch((err) => {
+            console.error("❌ Error definitivo cargando video:", err);
           });
       }, delay);
     } else {
       // Video sale del viewport
       if (config.pauseOnExit && !video.paused) {
         video.pause();
-        
-        if (typeof config.onPause === 'function') {
+
+        if (typeof config.onPause === "function") {
           config.onPause(video);
         }
       }
@@ -229,18 +272,21 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
       }
 
       await video.play();
-      
-      if (typeof config.onPlay === 'function') {
+
+      if (typeof config.onPlay === "function") {
         config.onPlay(video);
       }
-      
-      console.log('▶️ Video reproduciéndose:', video.src || video.currentSrc);
+
+      console.log("▶️ Video reproduciéndose:", video.src || video.currentSrc);
     } catch (error) {
-      console.warn('⚠️ No se pudo reproducir el video automáticamente:', error.message);
-      
+      console.warn(
+        "⚠️ No se pudo reproducir el video automáticamente:",
+        error.message,
+      );
+
       // Autoplay falló (común en móviles sin interacción de usuario)
       // Mostrar controls para que el usuario pueda reproducir manualmente
-      if (error.name === 'NotAllowedError') {
+      if (error.name === "NotAllowedError") {
         video.controls = true;
       }
     }
@@ -251,41 +297,55 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
    */
   const unloadVideo = (video) => {
     video.pause();
-    video.removeAttribute('src');
-    video.load(); // Esto limpia el buffer
+
+    video.removeAttribute("src");
+
+    video.querySelectorAll("source").forEach((source) => {
+      source.removeAttribute("src");
+    });
+
+    video.querySelectorAll("track").forEach((track) => {
+      track.removeAttribute("src");
+    });
+
+    video.load();
+
     loadedVideos.delete(video);
-    video.classList.remove('lazy-loaded');
-    video.classList.add('lazy-unloaded');
-    
-    console.log('🗑️ Video descargado de memoria');
+    video.classList.remove("lazy-loaded", "lazy-loading");
+    video.classList.add("lazy-unloaded");
+
+    console.log("🗑️ Video descargado de memoria");
   };
 
   // Crear IntersectionObserver
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      processVideo(entry.target, entry.isIntersecting, observer);
-    });
-  }, {
-    threshold: config.threshold,
-    rootMargin: config.rootMargin
-  });
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        processVideo(entry.target, entry.isIntersecting, observer);
+      });
+    },
+    {
+      threshold: config.threshold,
+      rootMargin: config.rootMargin,
+    },
+  );
 
   // Separar videos en viewport y fuera de viewport
   const videosInViewport = [];
   const videosOutOfViewport = [];
 
-  videos.forEach(video => {
+  videos.forEach((video) => {
     // Añadir clase inicial
-    video.classList.add('lazy-video-initial');
-    
+    video.classList.add("lazy-video-initial");
+
     // Verificar si está en viewport
     const rect = video.getBoundingClientRect();
-    const isInViewport = (
+    const isInViewport =
       rect.top >= 0 &&
       rect.left >= 0 &&
-      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth);
 
     if (isInViewport) {
       videosInViewport.push(video);
@@ -294,24 +354,24 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
     }
 
     // Agregar event listeners para callbacks
-    video.addEventListener('play', () => {
-      if (typeof config.onPlay === 'function') {
+    video.addEventListener("play", () => {
+      if (typeof config.onPlay === "function") {
         config.onPlay(video);
       }
     });
 
-    video.addEventListener('pause', () => {
-      if (typeof config.onPause === 'function') {
+    video.addEventListener("pause", () => {
+      if (typeof config.onPause === "function") {
         config.onPause(video);
       }
     });
   });
 
   // Cargar inmediatamente los videos que ya están en viewport
-  videosInViewport.forEach(video => {
+  videosInViewport.forEach((video) => {
     const priority = video.dataset.priority || config.priority;
-    const delay = priority === 'high' ? 0 : (priority === 'low' ? 500 : 200);
-    
+    const delay = priority === "high" ? 0 : priority === "low" ? 500 : 200;
+
     setTimeout(() => {
       loadVideo(video)
         .then((loadedVideo) => {
@@ -319,27 +379,27 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
             playVideo(loadedVideo);
           }
         })
-        .catch(err => console.error('❌ Error cargando video inicial:', err));
+        .catch((err) => console.error("❌ Error cargando video inicial:", err));
     }, delay);
   });
 
   // Observar el resto
-  videosOutOfViewport.forEach(video => {
+  videosOutOfViewport.forEach((video) => {
     observer.observe(video);
   });
 
   // Pausar todos los videos cuando la página se oculta
-  document.addEventListener('visibilitychange', () => {
+  document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      videos.forEach(video => {
+      videos.forEach((video) => {
         if (!video.paused) {
           video.pause();
-          video.dataset.wasPlaying = 'true';
+          video.dataset.wasPlaying = "true";
         }
       });
     } else {
-      videos.forEach(video => {
-        if (video.dataset.wasPlaying === 'true' && config.autoplay) {
+      videos.forEach((video) => {
+        if (video.dataset.wasPlaying === "true" && config.autoplay) {
           playVideo(video);
           delete video.dataset.wasPlaying;
         }
@@ -351,34 +411,36 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
   return {
     observer,
     refresh: () => {
-      const newVideos = document.querySelectorAll(`${selector}[data-src], ${selector}:has(source[data-src])`);
-      newVideos.forEach(video => {
+      const newVideos = document.querySelectorAll(
+        `${selector}[data-src], ${selector}:has(source[data-src])`,
+      );
+      newVideos.forEach((video) => {
         if (!loadedVideos.has(video)) {
           observer.observe(video);
         }
       });
     },
     loadAll: () => {
-      videosOutOfViewport.forEach(video => {
-        loadVideo(video).catch(err => console.error(err));
+      videosOutOfViewport.forEach((video) => {
+        loadVideo(video).catch((err) => console.error(err));
       });
     },
     playAll: () => {
-      videos.forEach(video => {
+      videos.forEach((video) => {
         if (loadedVideos.has(video)) {
           playVideo(video);
         }
       });
     },
     pauseAll: () => {
-      videos.forEach(video => {
+      videos.forEach((video) => {
         if (!video.paused) {
           video.pause();
         }
       });
     },
     unloadAll: () => {
-      videos.forEach(video => {
+      videos.forEach((video) => {
         if (loadedVideos.has(video)) {
           unloadVideo(video);
         }
@@ -387,19 +449,48 @@ export function lazyLoadVideos(selector = '.lazy-video', options = {}) {
     disconnect: () => {
       observer.disconnect();
     },
-    getLoadedVideos: () => Array.from(loadedVideos)
+    getLoadedVideos: () => Array.from(loadedVideos),
   };
+}
+
+const ORIGINAL_VIDEO_DATA = new WeakMap();
+
+function rememberOriginalVideoData(videoElement) {
+  if (ORIGINAL_VIDEO_DATA.has(videoElement)) {
+    return ORIGINAL_VIDEO_DATA.get(videoElement);
+  }
+
+  const data = {
+    src: videoElement.dataset.src || "",
+    poster: videoElement.dataset.poster || "",
+    sources: Array.from(videoElement.querySelectorAll("source")).map(
+      (source) => ({
+        element: source,
+        src: source.dataset.src || source.getAttribute("src") || "",
+        type: source.getAttribute("type") || "",
+        media: source.getAttribute("media") || "",
+      }),
+    ),
+    tracks: Array.from(videoElement.querySelectorAll("track")).map((track) => ({
+      element: track,
+      src: track.dataset.src || track.getAttribute("src") || "",
+    })),
+  };
+
+  ORIGINAL_VIDEO_DATA.set(videoElement, data);
+
+  return data;
 }
 
 /**
  * Inyecta estilos CSS necesarios para videos lazy
  */
 function injectVideoStyles(config) {
-  const styleId = 'lazy-video-styles';
-  
+  const styleId = "lazy-video-styles";
+
   if (document.getElementById(styleId)) return;
 
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.id = styleId;
   style.textContent = `
     .lazy-video-initial {
@@ -485,60 +576,62 @@ function injectVideoStyles(config) {
       z-index: -1;
     }
   `;
-  
+
   document.head.appendChild(style);
 }
 
 /**
  * Helper para videos de fondo
  */
-export function lazyLoadBackgroundVideos(selector = '.lazy-video-bg') {
+export function lazyLoadBackgroundVideos(selector = ".lazy-video-bg") {
   return lazyLoadVideos(selector, {
     threshold: 0.1,
-    rootMargin: '200px',
+    rootMargin: "200px",
     autoplay: true,
     pauseOnExit: true,
     unloadOnExit: true, // Importante para videos de fondo (ahorra mucha memoria)
-    preloadMetadata: false
+    preloadMetadata: false,
   });
 }
 
 /**
  * Helper para videos interactivos (con controles)
  */
-export function lazyLoadInteractiveVideos(selector = '.lazy-video-interactive') {
+export function lazyLoadInteractiveVideos(
+  selector = ".lazy-video-interactive",
+) {
   return lazyLoadVideos(selector, {
     threshold: 0.25,
-    rootMargin: '100px',
+    rootMargin: "100px",
     autoplay: false, // No autoplay para videos interactivos
     pauseOnExit: false, // El usuario controla la reproducción
     unloadOnExit: false,
-    preloadMetadata: true
+    preloadMetadata: true,
   });
 }
 
 /**
  * Precargar videos críticos
  */
-export function preloadCriticalVideos(selector = '.critical-video') {
+export function preloadCriticalVideos(selector = ".critical-video") {
   const videos = document.querySelectorAll(selector);
-  videos.forEach(video => {
+  videos.forEach((video) => {
     const videoSrc = video.dataset.src;
-    const sources = video.querySelectorAll('source[data-src]');
-    
+    const sources = video.querySelectorAll("source[data-src]");
+
     if (videoSrc) {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'video';
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "video";
       link.href = videoSrc;
       document.head.appendChild(link);
     } else if (sources.length > 0) {
       // Precargar la primera fuente (generalmente la de mayor calidad)
       const firstSource = sources[0];
       if (firstSource.dataset.src) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'video';
+        const link = document.createElement("link");
+        link.rel = "preload";
+        link.as = "video";
         link.href = firstSource.dataset.src;
         document.head.appendChild(link);
       }

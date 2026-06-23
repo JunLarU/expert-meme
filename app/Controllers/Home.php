@@ -7,13 +7,8 @@ use Whis\Http\Response;
 
 class Home extends Controller
 {
-    public function create()
+    public function home()
     {
-        file_put_contents(
-            \Whis\App::$root . '/logs/home-create-test.txt',
-            date('Y-m-d H:i:s') . " Home::create ejecutado\n",
-            FILE_APPEND
-        );
 
         return view('pages/main/home', "Inicio");
     }
@@ -23,88 +18,51 @@ class Home extends Controller
             'name'    => 'required',
             'email'   => 'required|email',
             'message' => 'required',
-            'subject' => 'required',
+            'asunto' => 'required',
+        ],true, [
+            'name' => [
+                'required' => 'El nombre es obligatorio.',
+            ],
+            'email' => [
+                'required' => 'El correo electrónico es obligatorio.',
+                'email' => 'El correo electrónico no es válido.',
+            ],
+            'message' => [
+                'required' => 'El mensaje es obligatorio.',
+            ],
+            'asunto' => [
+                'required' => 'El asunto es obligatorio.',
+            ],
         ]);
 
-        /*
-         * Aquí puedes enviar correo, guardar en BD, mandar notificación, etc.
-         */
-
-        if ($this->expectsJson($request)) {
-            return Response::json([
-                'ok'      => true,
-                'message' => 'Tu mensaje fue enviado correctamente.',
-            ]);
-        }
-
-        return redirect('/');
+        return Response::json([
+            'ok'      => true,
+            'message' => 'Tu mensaje fue enviado correctamente.',
+        ]);
     }
 
-    // public function store(Request $request)
-    // {
-    //     /*
-    //      * Validación completa.
-    //      *
-    //      * filesquantity:,2  => mínimo libre, máximo 2 archivos.
-    //      * Por eso 0 archivos también es válido.
-    //      */
-    //     $request->validate([
-    //         'email' => 'required',
-    //         'name'  => 'required',
+    public function nosotros()
+    {
+        return view('pages/main/nosotros', "Nosotros");
+    }
 
-    //         'files' => [
-    //             'filesquantity:,1',
-    //             'filetype:png/jpeg/jpg',
-    //             'filesize:1mb',
-    //         ],
-    //     ]);
+    public function servicios()
+    {
+        return view('pages/main/servicios', "Servicios");
+    }
 
-    //     /*
-    //      * Obtener archivos ya validados.
-    //      */
-    //     $files = $request->file('files');
+     public function proyectos()
+    {
+        return view('pages/main/proyectos', "Proyectos");
+    }
 
-    //     if ($files instanceof File) {
-    //         $files = [$files];
-    //     }
+    public function contacto()
+    {
+        return view('pages/main/contacto', "Contacto");
+    }
 
-    //     if (!is_array($files)) {
-    //         $files = [];
-    //     }
-
-    //     $storedFiles = [];
-
-    //     foreach ($files as $file) {
-    //         if (!$file instanceof File) {
-    //             continue;
-    //         }
-
-    //         /*
-    //          * Si hubo error de subida, no intentes almacenarlo.
-    //          * Normalmente filesize/filetype ya deberían haberlo detectado,
-    //          * pero esto evita guardar archivos corruptos.
-    //          */
-    //         if ($file->hasUploadError()) {
-    //             continue;
-    //         }
-
-    //         $storedFiles[] = $file->store(
-    //             "profile_pictures",
-    //             false,
-    //             "storage/uploads",
-    //             false,
-    //             "storage/uploads"
-    //         );
-    //     }
-
-    //     if ($this->expectsJson($request)) {
-    //         return Response::json([
-    //             'ok'      => true,
-    //             'message' => 'Formulario enviado correctamente.',
-    //             'files'   => $storedFiles,
-    //         ]);
-    //     }
-
-    //     return redirect('/');
-    // }
+    public function store()
+    {
+        return view('pages/main/form', "Formulario");
+    } 
 }

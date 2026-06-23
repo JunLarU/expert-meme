@@ -1,4 +1,4 @@
-<section class="form-page" aria-labelledby="register-title">
+<!-- <section class="form-page" aria-labelledby="register-title">
   <div class="form-card">
     <h1 id="register-title">Register</h1>
 
@@ -36,7 +36,7 @@
           <select name="role" id="register-role" class="form-control" required data-label="role"
             aria-describedby="error-register-role">
             <option value="" disabled selected hidden></option>
-            <option value="user">User</option>
+            <option value="manager">Manager</option>
             <option value="admin">Admin</option>
           </select>
 
@@ -66,7 +66,7 @@
           <span class="form-group__error text-danger" id="error-register-confirm-password" data-field-error
             data-error-for="confirm_password" aria-live="polite">{{error('confirm_password')}}</span>
         </div>
-        <div class="form-group form-group--file" data-field="files">
+         <div class="form-group form-group--file" data-field="files">
           <label class="form-label" for="test-files">Files</label>
 
           <input type="file" name="files[]" id="test-files" class="form-control" multiple
@@ -82,10 +82,234 @@
 
           <span class="form-group__error text-danger" id="error-test-files" data-field-error data-error-for="files"
             aria-live="polite">{{error('files')}}</span>
-        </div>
+        </div> 
 
         <button type="submit" class="btn btn-primary">Submit</button>
       </fieldset>
     </form>
+  </div>
+</section> -->
+<section class="form-page register-page lazy-bg" data-background-src="/images/JTRON.jpg" aria-labelledby="register-title">
+  <div class="register-page__overlay" aria-hidden="true"></div>
+
+  <div class="form-card register-card">
+    <div class="register-card__brand">
+      <span class="register-card__eyebrow">Nuevo acceso</span>
+
+      <h1 id="register-title">Crear cuenta interna</h1>
+
+      <p>
+        Registra un nuevo usuario autorizado para acceder al panel administrativo
+        de L+E Ingeniería.
+      </p>
+
+      <ul class="register-card__features" aria-label="Características del registro">
+        <li>Usuarios administrativos</li>
+        <li>Roles controlados</li>
+        <li>Acceso protegido</li>
+      </ul>
+
+      <a href="@url/login" class="register-card__back">
+        Ya tengo cuenta <span aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <div class="register-card__form-wrap">
+      <div class="register-card__form-header">
+        <p>Registro</p>
+        <h2>Datos de acceso</h2>
+        <span>Completa la información para crear una cuenta autorizada.</span>
+      </div>
+
+      <form
+        class="register-card__form form form--default"
+        id="register_form"
+        method="post"
+        action="@url/register"
+        data-ajax-form
+        data-validation="html"
+        data-send-as="urlencoded"
+        data-csrf="true"
+        data-csrf-field="_token"
+        data-reset-on-success="false"
+        data-character-counter="false"
+        data-loading-text="Creando cuenta..."
+        data-error-message="No se pudo crear la cuenta. Revisa los datos e intenta nuevamente."
+        data-success-message="Cuenta creada correctamente."
+        novalidate
+        aria-labelledby="register-form-legend"
+      >
+        @csrf('register')
+
+        <fieldset class="form__fieldset register-card__fieldset">
+          <legend id="register-form-legend">Crear cuenta</legend>
+
+          <div
+            class="form__status register-card__status"
+            id="registerFormStatus"
+            data-form-status
+            role="status"
+            aria-live="polite"
+          ></div>
+
+          <div class="register-card__grid">
+            <div class="form-group register-card__field register-card__field--email" data-field="email">
+              <input
+                value="{{old('email')}}"
+                name="email"
+                id="register-email"
+                type="email"
+                class="form-control"
+                placeholder=" "
+                autocomplete="email"
+                inputmode="email"
+                required
+                maxlength="150"
+                data-label="correo electrónico"
+                data-normalize="trim"
+                data-message-required="Completa tu correo electrónico."
+                data-message-email="Escribe un correo electrónico válido."
+                data-message-max-length="El correo electrónico no debe exceder 150 caracteres."
+                aria-describedby="error-register-email"
+              >
+
+              <label class="form-label" for="register-email">Correo electrónico</label>
+
+              <span
+                class="form-group__error text-danger"
+                id="error-register-email"
+                data-field-error
+                data-error-for="email"
+                aria-live="polite"
+              >{{error('email')}}</span>
+            </div>
+
+            <div class="form-group register-card__field register-card__field--name" data-field="name">
+              <input
+                value="{{old('name')}}"
+                name="name"
+                id="register-name"
+                type="text"
+                class="form-control"
+                placeholder=" "
+                autocomplete="name"
+                required
+                minlength="3"
+                maxlength="120"
+                data-label="nombre"
+                data-normalize="spaces"
+                data-message-required="Completa el nombre."
+                data-message-min-length="El nombre debe tener al menos 3 caracteres."
+                data-message-max-length="El nombre no debe exceder 120 caracteres."
+                aria-describedby="error-register-name"
+              >
+
+              <label class="form-label" for="register-name">Nombre</label>
+
+              <span
+                class="form-group__error text-danger"
+                id="error-register-name"
+                data-field-error
+                data-error-for="name"
+                aria-live="polite"
+              >{{error('name')}}</span>
+            </div>
+
+            <div class="form-group form-group--select register-card__field register-card__field--role" data-field="role">
+              <select
+                name="role"
+                id="register-role"
+                class="form-control"
+                required
+                data-label="rol"
+                data-message-required="Selecciona un rol."
+                aria-describedby="error-register-role"
+              >
+                <option value="" disabled selected hidden></option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+
+              <label class="form-label" for="register-role">Rol</label>
+
+              <span
+                class="form-group__error text-danger"
+                id="error-register-role"
+                data-field-error
+                data-error-for="role"
+                aria-live="polite"
+              >{{error('role')}}</span>
+            </div>
+
+            <div class="form-group register-card__field register-card__field--password" data-field="password">
+              <input
+                name="password"
+                id="register-password"
+                type="password"
+                class="form-control"
+                placeholder=" "
+                autocomplete="new-password"
+                required
+                minlength="8"
+                data-label="contraseña"
+                data-normalize="none"
+                data-message-required="Completa tu contraseña."
+                data-message-min-length="La contraseña debe tener al menos 8 caracteres."
+                aria-describedby="error-register-password"
+              >
+
+              <label class="form-label" for="register-password">Contraseña</label>
+
+              <span
+                class="form-group__error text-danger"
+                id="error-register-password"
+                data-field-error
+                data-error-for="password"
+                aria-live="polite"
+              >{{error('password')}}</span>
+            </div>
+
+            <div class="form-group register-card__field register-card__field--password register-card__field--full" data-field="confirm_password">
+              <input
+                name="confirm_password"
+                id="register-confirm-password"
+                type="password"
+                class="form-control"
+                placeholder=" "
+                autocomplete="new-password"
+                required
+                minlength="8"
+                data-label="confirmación de contraseña"
+                data-normalize="none"
+                data-match="password"
+                data-message-required="Confirma tu contraseña."
+                data-message-min-length="La confirmación debe tener al menos 8 caracteres."
+                data-message-match="Las contraseñas no coinciden."
+                aria-describedby="error-register-confirm-password"
+              >
+
+              <label class="form-label" for="register-confirm-password">Confirmar contraseña</label>
+
+              <span
+                class="form-group__error text-danger"
+                id="error-register-confirm-password"
+                data-field-error
+                data-error-for="confirm_password"
+                aria-live="polite"
+              >{{error('confirm_password')}}</span>
+            </div>
+          </div>
+
+          <div class="register-card__meta">
+            <span>Solo crea cuentas para usuarios autorizados por L+E Ingeniería.</span>
+          </div>
+
+          <button type="submit" class="button__submit btn btn-primary register-card__submit">
+            <span class="button__submit__text">Crear cuenta</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </fieldset>
+      </form>
+    </div>
   </div>
 </section>

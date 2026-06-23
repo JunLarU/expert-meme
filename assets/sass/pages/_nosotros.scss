@@ -1,0 +1,1226 @@
+// ==========================================================
+// Página Nosotros - L+E Ingeniería
+// Inspirada en las secciones actuales del home,
+// pero aislada con clases propias para evitar conflictos.
+// ==========================================================
+
+.about-hero {
+  position: relative;
+  width: 100%;
+  min-height: calc(100svh - 6rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  background-image:
+    linear-gradient(rgba($color-dark, 0.58), rgba($color-dark, 0.58)),
+    url("/images/JTRON.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  @include desktop {
+    min-height: 100svh;
+    background-attachment: fixed;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 13%;
+    height: clamp(16rem, 26vw, 26rem);
+    background-color: rgba($color-logo-red, 0.52);
+    transform: skewY(-5deg);
+    z-index: 1;
+  }
+
+  &__overlay {
+    position: relative;
+    z-index: 2;
+    width: min(100%, 118rem);
+    padding: clamp(9rem, 15vw, 14rem) 2rem clamp(5rem, 8vw, 8rem);
+    display: flex;
+    justify-content: center;
+  }
+
+  &__content {
+    width: min(100%, 86rem);
+    margin: 0 auto;
+    text-align: center;
+    color: $color-light;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.8rem;
+    color: $color-light;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: 0.18rem;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: clamp(3.6rem, 8vw, 7.6rem);
+    font-weight: 600;
+    line-height: 1.02;
+    text-wrap: balance;
+    text-shadow: 0 1rem 3rem rgba($color-black, 0.28);
+  }
+
+  &__copy {
+    width: min(100%, 76rem);
+    margin: clamp(1.8rem, 3vw, 2.6rem) auto 0;
+    color: rgba($color-light, 0.92);
+    font-size: clamp(1.55rem, 2vw, 1.95rem);
+    line-height: 1.75;
+    text-wrap: pretty;
+  }
+
+  &__button {
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+  }
+}
+
+// ==========================================================
+// Reutilización de .nosotros para identidad + certificaciones
+// ==========================================================
+
+.nosotros--page {
+  margin-bottom: 0;
+  background:
+    radial-gradient(
+      circle at 10% 20%,
+      rgba($color-serenity, 0.24),
+      transparent 28rem
+    ),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  .text {
+    padding-block: clamp(4rem, 8vw, 9rem);
+  }
+
+  .nosotros__copy {
+    margin-bottom: clamp(1.8rem, 3vw, 2.6rem);
+  }
+
+  .nosotros__bullets {
+    width: min(100%, 56rem);
+    margin: clamp(2rem, 3vw, 2.8rem) auto 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+    text-align: left;
+
+    li {
+      position: relative;
+      padding: 1.1rem 1.2rem 1.1rem 3.8rem;
+      border-radius: 1rem;
+      background-color: rgba($color-white, 0.76);
+      color: rgba($color-dark, 0.86);
+      font-size: clamp(1.45rem, 1.8vw, 1.65rem);
+      line-height: 1.45;
+      box-shadow: 0 0.8rem 2rem rgba($color-black, 0.07);
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 1.35rem;
+        top: 1.55rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: $color-logo-red;
+        box-shadow: 0 0 0 0.45rem rgba($color-logo-red, 0.12);
+      }
+    }
+  }
+}
+
+.nosotros-carousel--logos {
+  background:
+    radial-gradient(
+      circle at center,
+      rgba($color-logo-red, 0.14),
+      transparent 34rem
+    ),
+    linear-gradient(180deg, rgba($color-white, 0.2), rgba($color-white, 0));
+
+  .nosotros-carousel__item {
+    height: clamp(13rem, 24vw, 18rem);
+    padding: clamp(1.6rem, 3vw, 2.6rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.9rem;
+
+    border: 0.1rem solid rgba($color-logo-red, 0.14);
+    background-color: rgba($color-white, 0.94);
+    box-shadow:
+      0 1.2rem 3rem rgba($color-black, 0.16),
+      inset 0 0 0 0.1rem rgba($color-white, 0.65);
+  }
+
+  .nosotros-carousel__img {
+    width: 100%;
+    height: min(100%, 9.2rem);
+    object-fit: contain;
+    object-position: center;
+  }
+
+  figcaption {
+    margin: 0;
+    color: rgba($color-dark, 0.72);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.14rem;
+    text-transform: uppercase;
+  }
+}
+
+// ==========================================================
+// CTA: Contactar y Enviar correo exactamente iguales
+// ==========================================================
+
+.about-cta {
+  .about-cta__actions {
+    .button__primary {
+      background-color: $color-azure;
+      color: darken($color-logo-red, 18);
+      border-color: transparent;
+      box-shadow: 0 0.9rem 2rem rgba($color-black, 0.13);
+
+      &:hover,
+      &:focus {
+        background-color: $color-logo-red;
+        color: $color-light;
+        border-color: rgba($color-logo-red, 0.35);
+      }
+    }
+  }
+}
+
+// ==========================================================
+// Ejes técnicos
+// ==========================================================
+
+.about-pillars {
+  position: relative;
+  padding: clamp(5rem, 8vw, 9rem) 1.5rem;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 90% 12%,
+      rgba($color-logo-red, 0.15),
+      transparent 28rem
+    ),
+    radial-gradient(
+      circle at 10% 90%,
+      rgba($color-serenity, 0.32),
+      transparent 34rem
+    ),
+    rgb(242, 246, 248);
+
+  &__heading {
+    width: min(100%, 88rem);
+    margin: 0 auto clamp(2.8rem, 5vw, 4.8rem);
+  }
+
+  &__grid {
+    width: min(100%, 118rem);
+    margin: 0 auto;
+    display: grid;
+    gap: 1.5rem;
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include desktop {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  &__card {
+    position: relative;
+    min-height: 28rem;
+    padding: clamp(2rem, 3vw, 2.8rem);
+    border-radius: 1.6rem;
+    overflow: hidden;
+    background-color: rgba($color-white, 0.88);
+    box-shadow: 0 1.2rem 3rem rgba($color-black, 0.08);
+    transition:
+      transform 260ms ease,
+      box-shadow 260ms ease,
+      background-color 260ms ease;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0.55rem;
+      background-color: $color-logo-red;
+      opacity: 0.82;
+    }
+
+    &:hover,
+    &:focus-within {
+      transform: translateY(-0.5rem);
+      background-color: $color-white;
+      box-shadow: 0 2rem 4rem rgba($color-black, 0.14);
+    }
+  }
+
+  &__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5.2rem;
+    height: 5.2rem;
+    margin-bottom: 1.6rem;
+    border-radius: 50%;
+    background-color: rgba($color-logo-red, 0.1);
+    color: $color-logo-red;
+    font-weight: 900;
+    font-size: 1.45rem;
+  }
+
+  h3 {
+    margin: 0 0 1rem;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(2rem, 2.4vw, 2.6rem);
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: left;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($color-dark, 0.74);
+    font-size: 1.55rem;
+    line-height: 1.68;
+  }
+}
+
+// ==========================================================
+// Capacidad técnica / normatividad
+// ==========================================================
+
+.about-standards {
+  padding: clamp(5rem, 8vw, 9rem) 1.5rem;
+  background-color: $color-light;
+
+  &__inner {
+    width: min(100%, 118rem);
+    margin: 0 auto;
+    display: grid;
+    gap: clamp(2.4rem, 5vw, 5rem);
+    align-items: center;
+
+    @include tablet {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+  }
+
+  &__heading {
+    margin: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+  }
+
+  &__content {
+    padding: clamp(2rem, 4vw, 3.2rem);
+    border-radius: 1.8rem;
+    background:
+      linear-gradient(
+        135deg,
+        rgba($color-logo-red, 0.08),
+        rgba($color-serenity, 0.16)
+      ),
+      $color-white;
+    box-shadow: 0 1.2rem 3rem rgba($color-black, 0.08);
+
+    p {
+      margin: 0;
+      color: rgba($color-dark, 0.78);
+      font-size: clamp(1.55rem, 1.8vw, 1.85rem);
+      line-height: 1.75;
+    }
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2.4rem;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.2rem;
+      border-radius: 9999px;
+      background-color: rgba($color-logo-red, 0.08);
+      color: darken($color-logo-red, 7);
+      font-size: 1.35rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+  }
+}
+
+// ==========================================================
+// CTA final
+// ==========================================================
+
+.about-cta {
+  position: relative;
+  min-height: 46rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-image:
+    linear-gradient(rgba($color-dark, 0.62), rgba($color-dark, 0.62)),
+    url("/images/STATS.jpg");
+  background-size: cover;
+  background-position: center;
+
+  @include desktop {
+    background-attachment: fixed;
+  }
+
+  &__overlay {
+    width: min(100%, 94rem);
+    padding: clamp(5rem, 8vw, 8rem) 2rem;
+    text-align: center;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($color-light, 0.86);
+    font-weight: 700;
+    letter-spacing: 0.16rem;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 1rem auto 0;
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: clamp(3rem, 6vw, 5.6rem);
+    font-weight: 600;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  &__actions {
+    margin-top: clamp(2.4rem, 4vw, 3.4rem);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.2rem;
+  }
+
+  .section-more-button--light {
+    background-color: $color-light;
+    color: darken($color-logo-red, 10);
+
+    &:hover,
+    &:focus {
+      background-color: lighten($color-logo-red, 6);
+      color: $color-light;
+    }
+  }
+}
+
+// ==========================================================
+// Motion safe
+// ==========================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .about-pillars__card {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+// ==========================================================
+// Botón primario para acciones que NO sean "Ver más" / "Leer más"
+// Estilo cercano a button__submit / botón del jumbotron.
+// ==========================================================
+
+.button__primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  width: fit-content;
+  min-height: 4.8rem;
+  padding: 0.95rem 2.35rem;
+
+  border: 0.15rem solid transparent;
+  border-radius: 9999px;
+
+  background-color: $color-logo-red;
+  color: $color-light;
+
+  font-family: $font-montserrat;
+  font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+
+  cursor: pointer;
+  box-shadow: 0 0.9rem 2rem rgba($color-black, 0.18);
+
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    border-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    gap 220ms ease;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: transform 220ms ease;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: lighten($color-logo-red, 6);
+    color: $color-light;
+    border-color: rgba($color-light, 0.34);
+    transform: translateY(-0.2rem);
+    gap: 1rem;
+    box-shadow: 0 1.2rem 2.8rem rgba($color-black, 0.24);
+
+    span {
+      transform: translateX(0.2rem);
+    }
+  }
+
+  &:focus-visible {
+    outline: 0.25rem solid rgba($color-logo-red, 0.35);
+    outline-offset: 0.35rem;
+  }
+
+  &--light {
+    background-color: $color-azure;
+    color: darken($color-logo-red, 18);
+    box-shadow: 0 0.9rem 2rem rgba($color-black, 0.13);
+
+    &:hover,
+    &:focus {
+      background-color: $color-logo-red;
+      color: $color-light;
+      border-color: rgba($color-logo-red, 0.35);
+    }
+  }
+}
+
+// ==========================================================
+// Hero / CTA con background lazy real.
+// Quita el url() directo de CSS para que lazy-bg haga su trabajo.
+// ==========================================================
+
+.about-hero,
+.about-cta {
+  background-image: none;
+  background-color: darken($color-serenity, 34);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(rgba($color-dark, 0.58), rgba($color-dark, 0.58)),
+      rgba($color-logo-red, 0.08);
+    pointer-events: none;
+  }
+}
+
+.about-hero {
+  &::before {
+    z-index: 1;
+  }
+
+  &__overlay {
+    z-index: 2;
+  }
+}
+
+.about-cta {
+  isolation: isolate;
+  overflow: hidden;
+
+  &__overlay {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+// ==========================================================
+// Carrusel vertical de certificaciones.
+// En tablet/desktop ocupa TODO el alto de .nosotros--page.
+// En mobile conserva alto controlado.
+// ==========================================================
+
+.nosotros--page {
+  align-items: stretch;
+
+  @include tablet {
+    min-height: clamp(64rem, 82vh, 92rem);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .image {
+    height: 62vh;
+    min-height: 42rem;
+
+    @include tablet {
+      height: auto;
+      min-height: 100%;
+      align-self: stretch;
+    }
+  }
+
+  .nosotros-carousel {
+    height: 62vh;
+    min-height: 42rem;
+
+    @include tablet {
+      height: 100%;
+      min-height: 100%;
+      border-radius: 0;
+    }
+  }
+}
+
+.nosotros-carousel--logos {
+  --carousel-card-height: clamp(11rem, 20vw, 16rem);
+
+  .nosotros-carousel__item {
+    width: min(calc(100% - 3rem), 48rem);
+    height: var(--carousel-card-height);
+    padding: clamp(1.3rem, 2.5vw, 2.2rem);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+
+    border-radius: 1rem;
+    border: 0.1rem solid rgba($color-logo-red, 0.12);
+    background-color: rgba($color-white, 0.94);
+    box-shadow:
+      0 1.1rem 2.6rem rgba($color-black, 0.14),
+      inset 0 0 0 0.1rem rgba($color-white, 0.55);
+
+    @include tablet {
+      width: min(calc(100% - 4rem), 50rem);
+    }
+  }
+
+  .nosotros-carousel__img {
+    width: min(100%, 25rem);
+    height: clamp(5.8rem, 9vw, 9rem);
+    object-fit: contain;
+    object-position: center;
+  }
+
+  figcaption {
+    margin: 0;
+    color: rgba($color-dark, 0.68);
+    font-family: $font-montserrat;
+    font-size: clamp(1.1rem, 1.5vw, 1.35rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.12rem;
+    text-transform: uppercase;
+  }
+}
+
+// ==========================================================
+// Mobile fino: evitar tarjetas gigantes en pantallas angostas.
+// ==========================================================
+
+@media (max-width: 480px) {
+  .nosotros--page {
+    .image,
+    .nosotros-carousel {
+      height: 58vh;
+      min-height: 36rem;
+    }
+  }
+
+  .nosotros-carousel--logos {
+    --carousel-card-height: 12rem;
+
+    .nosotros-carousel__item {
+      width: min(calc(100% - 2rem), 34rem);
+      padding: 1.2rem;
+    }
+
+    .nosotros-carousel__img {
+      width: min(100%, 18rem);
+      height: 5.8rem;
+    }
+  }
+
+  .about-mvv {
+    &__text {
+      p,
+      li {
+        font-size: 1.35rem;
+      }
+    }
+  }
+}
+
+// ==========================================================
+// Reduced motion
+// ==========================================================
+
+@media (prefers-reduced-motion: reduce) {
+  .button__primary,
+  .button__primary span {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+// ==========================================================
+// Identidad: fondo radial rojo en toda la sección
+// ==========================================================
+
+.nosotros--page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba($color-logo-red, 0.24) 0%,
+      rgba($color-logo-red, 0.14) 24%,
+      rgba($color-logo-red, 0.06) 44%,
+      rgba($color-logo-red, 0) 72%
+    ),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  .image,
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.nosotros-carousel--logos {
+  background: transparent !important;
+}
+
+// ==========================================================
+// Misión / Visión / Valores corregido definitivo
+// - Sin gap real
+// - No se queda abierto al quitar hover
+// - Animación más suave
+// - Sin :hover persistente en CSS
+// - Controlado por JS con .is-active
+// ==========================================================
+
+// ==========================================================
+// Scroll suave global para anclas internas
+// Opcional: mejora si algún navegador no toma behavior smooth.
+// ==========================================================
+
+
+// ==========================================================
+// Reduced motion
+// ==========================================================
+
+// ==========================================================
+// Títulos base iguales para todas las secciones
+// La alineación puede cambiar con modificadores.
+// ==========================================================
+
+.section-heading {
+  width: min(100%, 88rem);
+  margin-inline: auto;
+
+  p {
+    margin: 0;
+    color: darken($color-logo-red, 7);
+    font-family: $font-montserrat;
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: 0.16rem;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0.65rem 0 0;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(3rem, 5.4vw, 5.2rem);
+    font-weight: 600;
+    line-height: 1.08;
+    text-wrap: balance;
+  }
+
+  &--center {
+    text-align: center;
+
+    p,
+    h2 {
+      text-align: center;
+    }
+  }
+
+  &--light {
+    p {
+      color: rgba($color-light, 0.82);
+    }
+
+    h2 {
+      color: $color-light;
+    }
+  }
+}
+
+.about-standards__heading {
+  margin-inline: 0;
+
+  p,
+  h2 {
+    text-align: left;
+  }
+}
+
+// ==========================================================
+// Identidad: fondo radial rojo más pequeño en toda la sección
+// ==========================================================
+
+.nosotros--page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 50%,
+      rgba($color-logo-red, 0.22) 0%,
+      rgba($color-logo-red, 0.13) 18%,
+      rgba($color-logo-red, 0.06) 31%,
+      rgba($color-logo-red, 0.025) 43%,
+      rgba($color-logo-red, 0) 58%
+    ),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  .image,
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.nosotros-carousel--logos {
+  background: transparent !important;
+}
+
+// ==========================================================
+// Misión / Visión / Valores tipo CodePen real
+// Desktop:
+// - Estado normal en CSS
+// - Estado activo en :hover / :focus-within
+// - Regresa solo al quitar hover
+// Mobile:
+// - Estado abierto por .is-active mediante JS
+// ==========================================================
+
+// ==========================================================
+// Misión / Visión / Valores estilo CodePen suavizado
+// - Animación suave con flex-grow
+// - Sin cambios bruscos de width
+// - Títulos con posición vertical fija desde el borde superior
+// - Desktop: hover/focus mediante .is-active
+// - Mobile: acordeón controlado por JS
+// ==========================================================
+
+.about-mvv {
+  --mvv-duration: 900ms;
+  --mvv-text-duration: 700ms;
+  --mvv-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  // Ajusta estos valores si quieres subir/bajar todos los títulos.
+  --mvv-title-closed-top: 50%;
+  --mvv-title-open-top: clamp(6.2rem, 10vh, 8.4rem);
+  --mvv-text-top: clamp(13rem, 24vh, 17rem);
+
+  width: 100%;
+  padding: clamp(5rem, 8vw, 9rem) 0;
+  background-color: $color-light;
+
+  &__heading {
+    width: min(100%, 88rem);
+    margin: 0 auto clamp(3rem, 5vw, 5rem);
+    padding-inline: 1.5rem;
+  }
+
+  &__panels {
+    width: min(100%, 118rem);
+    min-height: clamp(48rem, 66vh, 60rem);
+    margin: 0 auto;
+    min-height: 75vh;
+
+    display: flex;
+    align-items: stretch;
+    gap: 0 !important;
+
+    overflow: hidden;
+    border-radius: 0.6rem;
+    box-shadow: 0 1.8rem 4rem rgba($color-black, 0.14);
+  }
+  &__panel {
+    position: relative;
+    flex: 1 1 0%;
+    min-width: 0;
+    min-height: clamp(48rem, 66vh, 60rem);
+
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    background-color: darken($color-serenity, 36);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    filter: saturate(0.82) brightness(0.82);
+    transform: translateZ(0);
+    backface-visibility: hidden;
+
+    transition:
+      flex-grow var(--mvv-duration) var(--mvv-ease),
+      filter 560ms ease;
+
+    will-change: flex-grow, filter;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    &::before {
+      background: rgba($color-dark, 0.5);
+    }
+
+    &::after {
+      opacity: 0.86;
+      transition: opacity 560ms ease;
+    }
+
+    &--mission::after {
+      background: linear-gradient(
+        90deg,
+        rgba($color-dark, 0.72),
+        rgba($color-midnight-blue, 0.52)
+      );
+    }
+
+    &--vision::after {
+      background: linear-gradient(
+        90deg,
+        rgba($color-logo-red, 0.58),
+        rgba($color-dark, 0.58)
+      );
+    }
+
+    &--values {
+      &::after {
+        background: linear-gradient(
+          90deg,
+          rgba($color-dark, 0.66),
+          rgba($color-logo-red, 0.52)
+        );
+      }
+
+      .about-mvv__text {
+        width: min(76%, 72rem);
+      }
+
+      li {
+        font-size: clamp(1.25rem, 1.32vw, 1.5rem);
+        line-height: 1.48;
+      }
+    }
+
+    &.is-active {
+      flex-grow: 3;
+      filter: saturate(1) brightness(1);
+
+      &::after {
+        opacity: 0.72;
+      }
+
+      h3 {
+        top: var(--mvv-title-open-top);
+        transform: translate3d(-50%, 0, 0) rotate(0deg);
+      }
+
+      .about-mvv__text {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translate3d(-50%, 0, 0);
+      }
+    }
+
+    &--values.is-active {
+      flex-grow: 3.25;
+    }
+
+    &:focus-visible {
+      outline: 0.25rem solid rgba($color-light, 0.85);
+      outline-offset: -0.45rem;
+    }
+  }
+
+  &__panel-inner {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+    min-height: inherit;
+    padding: clamp(2rem, 3vw, 3.5rem);
+  }
+
+  h3 {
+    position: absolute;
+    top: var(--mvv-title-closed-top);
+    left: 50%;
+    z-index: 2;
+
+    margin: 0;
+
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: clamp(4rem, 6vw, 6.6rem);
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 0 0.8rem 2.4rem rgba($color-black, 0.36);
+
+    transform: translate3d(-50%, -50%, 0) rotate(90deg);
+    transform-origin: center center;
+
+    transition:
+      top var(--mvv-duration) var(--mvv-ease),
+      transform var(--mvv-duration) var(--mvv-ease);
+
+    will-change: top, transform;
+  }
+
+  &__text {
+    position: absolute;
+    top: var(--mvv-text-top);
+    left: 50%;
+    z-index: 2;
+
+    width: min(70%, 68rem);
+    max-height: min(38rem, 44vh);
+    margin: 0;
+    padding: clamp(1.5rem, 2.4vw, 2.2rem);
+
+    border: 0.13rem solid rgba($color-light, 0.78);
+    border-radius: 0.7rem;
+    background-color: rgba($color-black, 0.22);
+    backdrop-filter: blur(0.38rem);
+
+    color: $color-light;
+    height: fit-content;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transform: translate3d(-50%, 2.2rem, 0);
+
+    transition:
+      opacity var(--mvv-text-duration) ease,
+      visibility var(--mvv-text-duration) ease,
+      transform 760ms var(--mvv-ease);
+
+    will-change: opacity, transform;
+
+    p,
+    li {
+      color: rgba($color-light, 0.95);
+      font-size: clamp(1.35rem, 1.45vw, 1.62rem);
+      line-height: 1.58;
+      text-shadow: 0 0.45rem 1.3rem rgba($color-black, 0.25);
+    }
+
+    p {
+      margin: 0;
+      text-align: center;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.45rem;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    strong {
+      color: $color-light;
+      font-weight: 900;
+    }
+  }
+
+  @media (max-width: 767px) {
+    padding-inline: 1.5rem;
+
+    --mvv-duration: 420ms;
+    --mvv-text-duration: 360ms;
+
+    &__heading {
+      padding-inline: 0;
+    }
+
+    &__panels {
+      width: 100%;
+      min-height: 0;
+      display: grid;
+      border-radius: 0.7rem;
+    }
+
+    &__panel {
+      min-height: auto;
+      flex: none;
+      filter: none !important;
+      background-size: cover;
+      background-position: center center; // Nota: CodePen usa "center center"
+      background-repeat: no-repeat;
+      background-attachment: fixed; // ← Propiedad clave
+
+      &.is-active {
+        .about-mvv__text {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+          max-height: 70rem;
+          transform: none;
+        }
+      }
+    }
+
+    &__panel-inner {
+      min-height: auto;
+      padding: 2.4rem 1.4rem;
+    }
+
+    h3 {
+      position: relative;
+      top: auto;
+      left: auto;
+
+      margin: 0;
+      transform: none !important;
+
+      white-space: normal;
+      font-size: clamp(3.4rem, 13vw, 5rem);
+      text-align: center;
+    }
+
+    &__text {
+      position: relative;
+      top: auto;
+      left: auto;
+
+      width: 100% !important;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: none;
+
+      transition:
+        opacity var(--mvv-text-duration) ease,
+        visibility var(--mvv-text-duration) ease,
+        max-height var(--mvv-duration) var(--mvv-ease),
+        margin-top var(--mvv-duration) var(--mvv-ease);
+
+      .about-mvv__panel.is-active & {
+        margin-top: 8rem;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-mvv__panel,
+  .about-mvv__panel::after,
+  .about-mvv h3,
+  .about-mvv__text {
+    transition: none !important;
+  }
+
+  .about-mvv__panel {
+    filter: none !important;
+  }
+
+  .about-mvv h3 {
+    top: var(--mvv-title-open-top) !important;
+    transform: translate3d(-50%, 0, 0) rotate(0deg) !important;
+  }
+
+  .about-mvv__text {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translate3d(-50%, 0, 0) !important;
+  }
+}

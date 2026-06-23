@@ -1,0 +1,468 @@
+// ==========================================================
+// Página Login - L+E Ingeniería
+// Usa base global de forms.scss, pero con apariencia del sitio.
+// ==========================================================
+
+.login-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  min-height: 100svh;
+  padding: clamp(9rem, 12vw, 12rem) 1.5rem clamp(4rem, 8vw, 7rem);
+
+  background:
+    linear-gradient(rgba($color-dark, 0.68), rgba($color-dark, 0.72)),
+    url("/images/JTRON.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  @include desktop {
+    background-attachment: fixed;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 12%;
+    z-index: -1;
+    height: clamp(16rem, 26vw, 27rem);
+    background-color: rgba($color-logo-red, 0.54);
+    transform: skewY(-5deg);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 12% 16%, rgba($color-serenity, 0.24), transparent 34rem),
+      radial-gradient(circle at 88% 24%, rgba($color-logo-red, 0.3), transparent 38rem);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba($color-dark, 0.2), rgba($color-logo-red, 0.12)),
+      radial-gradient(circle at center, rgba($color-white, 0.08), transparent 44rem);
+  }
+}
+
+.login-card {
+  position: relative;
+  overflow: hidden;
+
+  width: min(100%, 104rem);
+  max-width: 104rem;
+  padding: 0;
+  align-items: stretch;
+
+  border: 0.1rem solid rgba($color-light, 0.22);
+  border-radius: 1.5rem;
+  background-color: rgba($color-white, 0.94);
+  box-shadow:
+    0 2rem 5.5rem rgba($color-black, 0.24),
+    inset 0 0 0 0.1rem rgba($color-white, 0.58);
+  backdrop-filter: blur(1rem);
+
+  @include desktop {
+    display: grid;
+    grid-template-columns: minmax(32rem, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: clamp(2rem, 4vw, 4rem);
+    z-index: 2;
+    width: 1.6rem;
+    height: 8.6rem;
+    background-color: rgba($color-logo-red, 0.18);
+    transform: skewX(-18deg);
+    pointer-events: none;
+  }
+
+  &__brand {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    padding: clamp(3rem, 5vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    background:
+      linear-gradient(135deg, rgba($color-dark, 0.98), rgba($color-logo-red, 0.8)),
+      radial-gradient(circle at 20% 15%, rgba($color-logo-red, 0.32), transparent 26rem);
+    color: $color-light;
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: auto -8rem 12% -8rem;
+      z-index: -1;
+      height: 14rem;
+      background-color: rgba($color-light, 0.08);
+      transform: skewY(-8deg);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 2.4rem;
+      width: 1.3rem;
+      height: 7.4rem;
+      background-color: rgba($color-light, 0.14);
+      transform: skewX(-18deg);
+    }
+
+    h1 {
+      margin: 0;
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: clamp(3rem, 5vw, 5.2rem);
+      font-weight: 700;
+      line-height: 1.02;
+      text-align: left;
+      text-wrap: balance;
+      text-shadow: 0 1rem 2.4rem rgba($color-black, 0.25);
+    }
+
+    p {
+      margin: clamp(1.5rem, 3vw, 2.2rem) 0 0;
+      color: rgba($color-light, 0.82);
+      font-size: clamp(1.45rem, 1.9vw, 1.72rem);
+      line-height: 1.7;
+      text-align: left;
+      text-wrap: pretty;
+    }
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 1rem;
+    padding: 0.45rem 1rem;
+
+    border: 0.1rem solid rgba($color-light, 0.26);
+    border-radius: 9999px;
+    background-color: rgba($color-dark, 0.18);
+    color: rgba($color-light, 0.9);
+
+    font-family: $font-montserrat;
+    font-size: 1.12rem;
+    font-weight: 900;
+    letter-spacing: 0.14rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    backdrop-filter: blur(0.8rem);
+  }
+
+  &__features {
+    margin: clamp(2rem, 4vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.9rem;
+
+    li {
+      position: relative;
+      padding: 1rem 1.2rem 1rem 3.4rem;
+
+      border: 0.1rem solid rgba($color-light, 0.16);
+      border-radius: 1rem;
+      background-color: rgba($color-light, 0.08);
+      color: rgba($color-light, 0.9);
+
+      font-size: 1.42rem;
+      font-weight: 700;
+      line-height: 1.35;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 1.25rem;
+        top: 1.45rem;
+        width: 0.85rem;
+        height: 0.85rem;
+        border-radius: 50%;
+        background-color: $color-light;
+        box-shadow: 0 0 0 0.45rem rgba($color-light, 0.12);
+      }
+    }
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    margin-top: clamp(2.2rem, 4vw, 3.4rem);
+
+    color: $color-light;
+    font-size: 1.45rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    span {
+      transition: transform 200ms ease;
+    }
+
+    &:hover,
+    &:focus {
+      color: $color-light;
+      text-decoration: underline;
+      text-underline-offset: 0.35rem;
+
+      span {
+        transform: translateX(0.25rem);
+      }
+    }
+  }
+
+  &__form-wrap {
+    padding: clamp(2.4rem, 5vw, 5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__form-header {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+
+    p,
+    h2,
+    span {
+      margin: 0;
+      text-align: left;
+    }
+
+    p {
+      margin-bottom: 0.65rem;
+      color: darken($color-logo-red, 5);
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 900;
+      letter-spacing: 0.14rem;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      color: $color-dark;
+      font-family: $font-montserrat;
+      font-size: clamp(2.8rem, 5vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.06;
+      text-wrap: balance;
+    }
+
+    span {
+      display: block;
+      margin-top: 0.9rem;
+      color: rgba($color-dark, 0.64);
+      font-size: clamp(1.42rem, 1.8vw, 1.62rem);
+      line-height: 1.55;
+    }
+  }
+
+  &__form {
+    max-width: none;
+    margin-top: 0;
+  }
+
+  &__fieldset {
+    padding: 0;
+    gap: 0;
+
+    legend {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  }
+
+  &__status {
+    margin-bottom: 1.2rem;
+  }
+
+  &__field {
+    margin-top: 1.6rem;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+
+    &::before {
+      position: absolute;
+      right: 1.2rem;
+      top: 2.1rem;
+      z-index: 2;
+
+      color: rgba($color-dark, 0.38);
+      font-size: 1.55rem;
+      line-height: 1;
+      pointer-events: none;
+      transition: color 200ms ease;
+    }
+
+    &--email::before {
+      content: "@";
+      font-weight: 900;
+    }
+
+    &--password::before {
+      content: "●";
+      font-size: 1.15rem;
+      letter-spacing: 0.2rem;
+    }
+
+    .form-control {
+      padding-right: 4.4rem;
+      border-color: rgba($color-dark, 0.08);
+      background-color: rgba($color-white, 0.86);
+      box-shadow: inset 0 0 0 0.1rem rgba($color-white, 0.48);
+
+      &:focus {
+        border-color: rgba($color-logo-red, 0.42);
+        box-shadow:
+          0 0 0 0.4rem rgba($color-logo-red, 0.09),
+          inset 0 0 0 0.1rem rgba($color-white, 0.7);
+        background-color: rgba($color-white, 0.96);
+      }
+    }
+
+    &:focus-within::before {
+      color: darken($color-logo-red, 5);
+    }
+  }
+
+  &__meta {
+    margin-top: 1.1rem;
+
+    span {
+      display: block;
+      color: rgba($color-dark, 0.56);
+      font-size: 1.3rem;
+      line-height: 1.45;
+      text-align: left;
+    }
+  }
+
+  &__submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+
+    width: 100%;
+    max-width: none;
+    min-height: 5rem;
+    margin: clamp(1.8rem, 3vw, 2.4rem) 0 0;
+    padding: 1rem 2.4rem;
+
+    background-color: darken($color-logo-red, 6);
+    color: $color-white;
+    font-family: $font-montserrat;
+    font-size: 1.55rem;
+    font-weight: 850;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    box-shadow: 0 1rem 2.4rem rgba($color-logo-red, 0.18);
+
+    span[aria-hidden="true"] {
+      transition: transform 200ms ease;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: $color-dark;
+      color: $color-white;
+      box-shadow: 0 1.2rem 3rem rgba($color-black, 0.18);
+
+      span[aria-hidden="true"] {
+        transform: translateX(0.25rem);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .login-page {
+    padding-top: 8.5rem;
+  }
+
+  .login-card {
+    border-radius: 1.1rem;
+
+    &__brand,
+    &__form-wrap {
+      padding: 2.2rem;
+    }
+
+    &__brand {
+      text-align: center;
+
+      h1,
+      p {
+        text-align: center;
+      }
+    }
+
+    &__eyebrow,
+    &__back {
+      margin-inline: auto;
+    }
+
+    &__features {
+      text-align: left;
+    }
+
+    &__form-header {
+      p,
+      h2,
+      span {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding-inline: 1.2rem;
+  }
+
+  .login-card {
+    &__brand,
+    &__form-wrap {
+      padding: 1.8rem;
+    }
+
+    &__submit {
+      font-size: 1.42rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-card__back span,
+  .login-card__submit span[aria-hidden="true"] {
+    transition: none !important;
+  }
+}
