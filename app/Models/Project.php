@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Whis\Database\Model;
@@ -22,118 +21,312 @@ class Project extends Model
         "category_badge",
         "listing_number",
         "href",
+
         "cover_image_url",
         "cover_image_alt",
         "cover_mobile_url",
+
         "hero_eyebrow",
         "hero_title",
         "hero_copy",
         "hero_background_url",
         "hero_button_label",
         "hero_button_url",
+
         "location_display",
         "city",
         "state",
         "country",
         "project_year",
+
         "client_name",
         "client_type",
         "service",
         "specialty",
         "material_system",
+
         "weight_label",
         "area_label",
         "duration_label",
         "scope_label",
+
         "overview_eyebrow",
         "overview_title",
         "overview_body",
+
         "result_eyebrow",
         "result_title",
         "result_body",
         "result_button_label",
         "result_button_url",
+
         "is_featured",
         "is_newest",
+        "is_home_featured",
         "show_in_home",
         "show_in_projects",
         "show_on_map",
+
+        "map_type",
+        "map_lat",
+        "map_lng",
+        "map_state",
+        "map_title",
+        "map_kind",
+        "map_location",
+        "map_summary",
+        "map_image_url",
+        "map_image_alt",
+
         "sort_order",
+
         "seo_title",
         "seo_description",
+
         "created_by",
         "updated_by",
         "deleted_by",
         "deleted_at",
+
         "created_at",
         "updated_at",
     ];
 
-    public const STATUS_DRAFT = "draft";
+    public const STATUS_DRAFT     = "draft";
     public const STATUS_PUBLISHED = "published";
-    public const STATUS_HIDDEN = "hidden";
-    public const STATUS_ARCHIVED = "archived";
+    public const STATUS_HIDDEN    = "hidden";
+    public const STATUS_ARCHIVED  = "archived";
+
+    public const MAP_PROJECT  = "project";
+    public const MAP_OFFICE   = "office";
+    public const MAP_WORKSHOP = "workshop";
+
+    public static function visibleQueryWhere(): string
+    {
+        return "deleted_at IS NULL";
+    }
+
+    public static function allProjects(): array
+    {
+        $instance = new static();
+
+        return static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+             WHERE deleted_at IS NULL
+             ORDER BY sort_order ASC, id DESC"
+        ) ?: [];
+    }
 
     public static function published(): array
     {
-        return static::where("status", self::STATUS_PUBLISHED, "sort_order") ?? [];
-    }
+        $instance = new static();
 
-    public static function forHome(): array
-    {
-        return array_values(array_filter(static::published(), function (array $project) {
-            return (int) ($project["show_in_home"] ?? 0) === 1
-                && empty($project["deleted_at"]);
-        }));
+        return static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+             WHERE status = ? AND deleted_at IS NULL
+             ORDER BY sort_order ASC, id DESC",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
     }
 
     public static function forProjectsPage(): array
     {
-        return array_values(array_filter(static::published(), function (array $project) {
-            return (int) ($project["show_in_projects"] ?? 0) === 1
-                && empty($project["deleted_at"]);
-        }));
+        $instance = new static();
+
+        return static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+             WHERE status = ?
+               AND show_in_projects = 1
+               AND deleted_at IS NULL
+             ORDER BY sort_order ASC, project_year DESC, id DESC",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
     }
 
-    public static function newest(): ?static
+    public static function homeFeatured(): ?array
     {
-        return static::firstWhere("is_newest", 1, "sort_order");
+        $instance = new static();
+
+        $rows = static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+             WHERE status = ?
+               AND show_in_home = 1
+               AND is_home_featured = 1
+               AND deleted_at IS NULL
+             ORDER BY sort_order ASC, project_year DESC, id DESC
+             LIMIT 1",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
+
+        return $rows[0] ?? null;
     }
 
-    public function tags(): array
+    public static function latestForHome(int $limit = 3, ?int $excludeId = null): array
     {
-        return ProjectTag::where("project_id", $this->id, "sort_order") ?? [];
+        $instance = new static();
+
+        $limit = max(1, min(12, $limit));
+
+        $sql = "SELECT * FROM {$instance->table}
+                WHERE status = ?
+                  AND show_in_home = 1
+                  AND deleted_at IS NULL";
+
+        $params = [self::STATUS_PUBLISHED];
+
+        if ($excludeId !== null && $excludeId > 0) {
+            $sql .= " AND id <> ?";
+            $params[] = $excludeId;
+        }
+
+        $sql .= " ORDER BY COALESCE(project_year, 0) DESC, created_at DESC, id DESC LIMIT {$limit}";
+
+        return static::getDatabaseDriver()->statement($sql, $params) ?: [];
     }
 
-    public function facts(): array
+    public static function mapMarkers(): array
     {
-        return ProjectFact::where("project_id", $this->id, "sort_order") ?? [];
+        $instance = new static();
+
+        $projects = static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+             WHERE status = ?
+               AND show_on_map = 1
+               AND map_lat IS NOT NULL
+               AND map_lng IS NOT NULL
+               AND deleted_at IS NULL
+             ORDER BY sort_order ASC, id DESC",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
+
+        return array_values(array_map(
+            fn(array $project) => static::toMapMarker($project),
+            $projects
+        ));
     }
 
-    public function media(): array
+    public static function toMapMarker(array $project): array
     {
-        return ProjectMedia::where("project_id", $this->id, "sort_order") ?? [];
+        $slug = trim((string) ($project["slug"] ?? ""));
+        $href = trim((string) ($project["href"] ?? ""));
+
+        if ($href === "" && $slug !== "") {
+            $href = "/proyecto/" . $slug;
+        }
+
+        $mapType = trim((string) ($project["map_type"] ?? ""));
+        if (! in_array($mapType, [self::MAP_PROJECT, self::MAP_OFFICE, self::MAP_WORKSHOP], true)) {
+            $mapType = self::MAP_PROJECT;
+        }
+
+        return [
+            "id"       => (int) ($project["id"] ?? 0),
+            "lat"      => (float) ($project["map_lat"] ?? 0),
+            "lng"      => (float) ($project["map_lng"] ?? 0),
+            "type"     => $mapType,
+            "state"    => (string) ($project["map_state"] ?: ($project["state"] ?? "")),
+            "title"    => (string) ($project["map_title"] ?: ($project["title"] ?? "")),
+            "kind"     => (string) ($project["map_kind"] ?: ($project["category_badge"] ?: ($project["category"] ?? "Proyecto"))),
+            "location" => (string) ($project["map_location"] ?: ($project["location_display"] ?? "")),
+            "year"     => (string) ($project["project_year"] ?? ""),
+            "summary"  => (string) ($project["map_summary"] ?: ($project["brief"] ?: ($project["summary"] ?? ""))),
+            "href"     => $href,
+            "image"    => (string) ($project["map_image_url"] ?: ($project["cover_image_url"] ?? "")),
+            "imageAlt" => (string) ($project["map_image_alt"] ?: ($project["cover_image_alt"] ?: ($project["title"] ?? ""))),
+        ];
     }
 
-    public function gallery(): array
+    public static function findArray(int $id): ?array
     {
-        return array_values(array_filter($this->media(), function (array $media) {
-            return ($media["display_area"] ?? null) === ProjectMedia::AREA_GALLERY;
-        }));
+        $project = static::find($id);
+
+        return $project ? $project->toArray() : null;
     }
 
-    public function scopeItems(): array
+    public static function findBySlug(string $slug): ?array
     {
-        return ProjectScopeItem::where("project_id", $this->id, "sort_order") ?? [];
+        $project = static::firstWhere("slug", $slug);
+
+        return $project ? $project->toArray() : null;
     }
 
-    public function resultStats(): array
+    public static function findBySlugOrId(string $value): ?array
     {
-        return ProjectResultStat::where("project_id", $this->id, "sort_order") ?? [];
+        $value = trim($value);
+
+        if ($value === "") {
+            return null;
+        }
+
+        if (ctype_digit($value)) {
+            return static::findArray((int) $value);
+        }
+
+        return static::findBySlug($value);
     }
 
-    public function mapMarkers(): array
+    public static function updateById(int $id, array $attributes): bool
     {
-        return MapMarker::where("project_id", $this->id, "sort_order") ?? [];
+        $instance = new static();
+
+        $columns = [];
+        $values  = [];
+
+        foreach ($attributes as $key => $value) {
+            if (! in_array($key, $instance->fillable, true)) {
+                continue;
+            }
+
+            if ($key === $instance->primaryKey || $key === "created_at") {
+                continue;
+            }
+
+            $columns[] = $key;
+            $values[]  = $value;
+        }
+
+        if (! in_array("updated_at", $columns, true)) {
+            $columns[] = "updated_at";
+            $values[]  = date("Y-m-d H:i:s");
+        }
+
+        if (empty($columns)) {
+            return true;
+        }
+
+        $set = implode(", ", array_map(fn($column) => "{$column} = ?", $columns));
+        $values[] = $id;
+
+        static::getDatabaseDriver()->statement(
+            "UPDATE {$instance->table} SET {$set} WHERE {$instance->primaryKey} = ?",
+            $values
+        );
+
+        return true;
+    }
+
+    public static function deleteById(int $id): bool
+    {
+        $instance = new static();
+
+        static::getDatabaseDriver()->statement(
+            "DELETE FROM {$instance->table} WHERE {$instance->primaryKey} = ?",
+            [$id]
+        );
+
+        return true;
+    }
+
+    public static function nextSortOrder(): int
+    {
+        $projects = static::allProjects();
+
+        $max = 0;
+
+        foreach ($projects as $project) {
+            $max = max($max, (int) ($project["sort_order"] ?? 0));
+        }
+
+        return $max + 1;
     }
 }

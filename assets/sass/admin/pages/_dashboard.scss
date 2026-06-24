@@ -1249,3 +1249,156 @@
     transition: none !important;
   }
 }
+.admin-button {
+  &--danger {
+    background-color: #b91c1c;
+    color: $color-white;
+
+    &:hover,
+    &:focus {
+      background-color: #7f1d1d;
+      color: $color-white;
+    }
+  }
+}
+
+.admin-jumbotron-page {
+  .admin-panel--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.admin-jumbotron-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+
+  form {
+    margin: 0;
+  }
+
+  .admin-button {
+    min-height: 3.8rem;
+    padding-inline: 1.15rem;
+    font-size: 1.08rem;
+  }
+}
+
+.admin-jumbotron-form-panel {
+  grid-column: 1 / -1;
+}
+
+.admin-jumbotron-form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+
+  .form__fieldset {
+    padding: 1.8rem;
+    border-bottom: 0.1rem solid rgba($color-dark, 0.08);
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+  }
+}
+
+.admin-form-grid {
+  display: grid;
+  gap: 1.4rem;
+
+  @include tablet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  &__full {
+    @include tablet {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.admin-jumbotron-form__actions {
+  padding: 1.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.admin-jumbotron-delete-form {
+  padding: 0 1.8rem 1.8rem;
+}
+
+.admin-check {
+  min-height: 5.8rem;
+  padding: 1.2rem 1.4rem;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  border: 0.1rem solid rgba($color-dark, 0.08);
+  border-radius: 1rem;
+  background-color: #f7f7f7;
+
+  color: rgba($color-dark, 0.74);
+  font-size: 1.35rem;
+  font-weight: 800;
+  cursor: pointer;
+
+  input {
+    width: 1.8rem;
+    height: 1.8rem;
+    accent-color: $color-logo-red;
+  }
+}
+.admin-file-current {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.35rem;
+  color: rgba($color-dark, 0.58);
+  font-size: 1.18rem;
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: break-word;
+}
+.admin-file-current {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 0.7rem;
+
+  color: rgba($color-dark, 0.62);
+  font-size: 1.18rem;
+  font-weight: 800;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.admin-file-current--link {
+  align-items: center;
+  gap: 0.45rem;
+
+  color: $color-logo-red;
+  text-decoration: none;
+  border-bottom: 0.1rem solid rgba($color-logo-red, 0.28);
+
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+
+  &::after {
+    content: "↗";
+    font-size: 1.05em;
+    line-height: 1;
+  }
+
+  &:hover,
+  &:focus {
+    color: darken($color-logo-red, 8);
+    border-color: currentColor;
+    transform: translateY(-0.1rem);
+  }
+}

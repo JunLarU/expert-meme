@@ -17,8 +17,8 @@ export {
   destroyWhisDefaults,
 } from "../helpers/framework-defaults";
 
-bootstrapWhisDefaults();
 
+bootstrapWhisDefaults();
 document.addEventListener("DOMContentLoaded", () => {
   initAdminDashboard();
   initAdminApiTokens();  

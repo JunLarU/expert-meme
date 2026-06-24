@@ -1,0 +1,210 @@
+{%
+$projects = $projects ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$published = (int) ($stats['published'] ?? 0);
+$draft = (int) ($stats['draft'] ?? 0);
+$home = (int) ($stats['home'] ?? 0);
+$featured = (int) ($stats['featured'] ?? 0);
+$map = (int) ($stats['map'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-projects-page" aria-labelledby="admin-projects-title">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Portafolio</p>
+      <h2 id="admin-projects-title">Proyectos</h2>
+      <span>
+        Administra proyectos, galería multimedia, portada, contenido de entry,
+        datos del home y pines del mapa. Al reemplazar o eliminar archivos, se limpia el almacenamiento.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+      <a href="@url/admin/proyectos/crear" class="admin-button admin-button--primary">Nuevo proyecto</a>
+    </div>
+  </header>
+
+  <section class="admin-stats" aria-label="Resumen de proyectos">
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Total</span>
+        <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+        <small>Proyectos registrados</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">▤</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Publicados</span>
+        <strong data-admin-count data-value="{{ ($published) }}">0</strong>
+        <small>Visibles públicamente</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Home</span>
+        <strong data-admin-count data-value="{{ ($home) }}">0</strong>
+        <small>Candidatos a últimos 3</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⌂</span>
+    </article>
+
+    <article class="admin-stat-card admin-stat-card--alert">
+      <div class="admin-stat-card__content">
+        <span>Destacado Home</span>
+        <strong data-admin-count data-value="{{ ($featured) }}">0</strong>
+        <small>Debe ser 1 principal</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">★</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Mapa</span>
+        <strong data-admin-count data-value="{{ ($map) }}">0</strong>
+        <small>Pines activos</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
+    </article>
+  </section>
+
+  <article class="admin-panel admin-panel--wide">
+    <header class="admin-panel__header">
+      <div>
+        <p>Registros</p>
+        <h3>Listado de proyectos</h3>
+      </div>
+
+      <a href="@url/admin/proyectos/crear" class="admin-panel__link">
+        Crear proyecto <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" data-admin-filterable>
+        <thead>
+          <tr>
+            <th>Proyecto</th>
+            <th>Ubicación</th>
+            <th>Año</th>
+            <th>Estado</th>
+            <th>Home</th>
+            <th>Mapa</th>
+            <th>Orden</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% foreach ($projects as $project): %}
+          {%
+          $id = (int) ($project['id'] ?? 0);
+          $title = $project['title'] ?? 'Proyecto sin título';
+          $slug = $project['slug'] ?? '';
+          $location = $project['location_display'] ?? 'Sin ubicación';
+          $year = $project['project_year'] ?? '—';
+          $status = $project['status'] ?? 'draft';
+          $sortOrder = $project['sort_order'] ?? 0;
+          $showHome = (int) ($project['show_in_home'] ?? 0) === 1;
+          $homeFeatured = (int) ($project['is_home_featured'] ?? 0) === 1;
+          $showMap = (int) ($project['show_on_map'] ?? 0) === 1;
+          $mapType = $project['map_type'] ?? 'project';
+
+          $statusLabel = match ($status) {
+              'published' => 'Publicado',
+              'hidden' => 'Oculto',
+              'archived' => 'Archivado',
+              default => 'Borrador',
+          };
+
+          $statusClass = match ($status) {
+              'published' => 'admin-badge--success',
+              'hidden', 'archived' => 'admin-badge--muted',
+              default => 'admin-badge--warning',
+          };
+
+          $mapLabel = match ($mapType) {
+              'office' => 'Oficina',
+              'workshop' => 'Taller',
+              default => 'Proyecto',
+          };
+          %}
+
+          <tr>
+            <td>
+              <strong>{{{ ($title) }}}</strong>
+              <small>@url/proyecto/{{{ ($slug) }}}</small>
+            </td>
+
+            <td>{{{ ($location) }}}</td>
+            <td>{{{ ($year) }}}</td>
+
+            <td>
+              <span class="admin-badge {{ ($statusClass) }}">
+                {{{ ($statusLabel) }}}
+              </span>
+            </td>
+
+            <td>
+              {% if ($homeFeatured): %}
+                <span class="admin-badge admin-badge--neutral">Destacado</span>
+              {% elseif ($showHome): %}
+                <span class="admin-badge admin-badge--success">Últimos 3</span>
+              {% else: %}
+                <span class="admin-badge admin-badge--muted">No</span>
+              {% endif; %}
+            </td>
+
+            <td>
+              {% if ($showMap): %}
+                <span class="admin-badge admin-badge--neutral">{{{ ($mapLabel) }}}</span>
+              {% else: %}
+                <span class="admin-badge admin-badge--muted">Oculto</span>
+              {% endif; %}
+            </td>
+
+            <td>{{{ ($sortOrder) }}}</td>
+
+            <td>
+              <div class="admin-table__actions">
+                <a href="@url/admin/proyectos/{{ ($id) }}/editar" class="admin-button admin-button--xs admin-button--secondary">
+                  Editar
+                </a>
+
+                {% if (!empty($slug)): %}
+                <a href="@url/proyecto/{{{ ($slug) }}}" target="_blank" rel="noopener noreferrer" class="admin-button admin-button--xs admin-button--secondary">
+                  Ver
+                </a>
+                {% endif; %}
+
+                <a
+                  href="@url/admin/proyectos/{{ ($id) }}/eliminar"
+                  class="admin-button admin-button--xs admin-button--danger"
+                  onclick="return confirm('¿Eliminar este proyecto? También se borrarán sus archivos del servidor.');"
+                >
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endforeach; %}
+
+          {% if (empty($projects)): %}
+          <tr>
+            <td colspan="8">
+              <strong>No hay proyectos registrados todavía.</strong>
+              <small>Crea tu primer proyecto para alimentar el home, el mapa y el portafolio.</small>
+            </td>
+          </tr>
+          {% endif; %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>

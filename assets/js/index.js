@@ -71,16 +71,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initLatestReveal();
 
-  initAdminApiTokens();
-   try {
-    const response = await siteApi("/projects", {
-      query: {
-        limit: 6,
-      },
-    });
+  // initAdminApiTokens();
+  //  try {
+  //   const response = await siteApi("/projects", {
+  //     query: {
+  //       limit: 6,
+  //     },
+  //   });
 
-    console.log(response.projects);
-  } catch (error) {
-    console.error(error.message, error.data);
-  }
+  //   console.log(response.projects);
+  // } catch (error) {
+  //   console.error(error.message, error.data);
+  // }
 });

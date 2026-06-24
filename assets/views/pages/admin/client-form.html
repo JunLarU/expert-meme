@@ -1,0 +1,207 @@
+{%
+$mode = $mode ?? 'create';
+$client = $client ?? [];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($client['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/clientes/' . $id . '/actualizar'
+: '/admin/clientes';
+
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear cliente';
+$pageTitle = $isEdit ? 'Editar cliente' : 'Nuevo cliente';
+
+$name = $client['name'] ?? '';
+$slug = $client['slug'] ?? '';
+$url = $client['url'] ?? '';
+$logoUrl = $client['logo_url'] ?? '';
+$logoAlt = $client['logo_alt'] ?? '';
+$initials = $client['initials'] ?? '';
+$description = $client['description'] ?? '';
+$industry = $client['industry'] ?? '';
+$isFeatured = (int) ($client['is_featured'] ?? 0);
+$isActive = (int) ($client['is_active'] ?? 1);
+$sortOrder = (int) ($client['sort_order'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-client-form-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Clientes</p>
+            <h2 id="admin-client-form-title">{{{ ($pageTitle) }}}</h2>
+            <span>
+                Sube el logo, define si está activo y ordénalo para la sección de clientes del home.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/clientes" class="admin-button admin-button--secondary">Volver</a>
+        </div>
+    </header>
+
+    <article class="admin-panel admin-jumbotron-form-panel admin-client-form-panel">
+        <header class="admin-panel__header">
+            <div>
+                <p>Formulario</p>
+                <h3>{{{ ($pageTitle) }}}</h3>
+            </div>
+        </header>
+
+        <form class="form form--default admin-jumbotron-form admin-client-form" action="@url{{{ ($formAction) }}}"
+            method="post" enctype="multipart/form-data" data-ajax-form data-validation="html" data-send-as="formdata"
+            data-csrf="true" data-csrf-field="_token" data-reset-on-success="false"
+            data-loading-text="{{{ ($loadingText) }}}" novalidate>
+            @csrf
+
+            <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+            <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+            <input type="hidden" name="logo_url" value="{{{ ($logoUrl) }}}">
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Datos del cliente</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group admin-form-grid__full" data-field="name">
+                        <input type="text" id="client-name" name="name" class="form-control" value="{{{ ($name) }}}"
+                            placeholder=" " required maxlength="255" data-label="nombre del cliente">
+                        <label class="form-label" for="client-name">Nombre del cliente</label>
+                        <span class="form-group__error" data-field-error data-error-for="name"></span>
+                    </div>
+
+                    <div class="form-group" data-field="industry">
+                        <input type="text" id="client-industry" name="industry" class="form-control"
+                            value="{{{ ($industry) }}}" placeholder=" " maxlength="160" data-label="industria">
+                        <label class="form-label" for="client-industry">Industria / sector</label>
+                        <span class="form-group__error" data-field-error data-error-for="industry"></span>
+                    </div>
+
+                    <div class="form-group" data-field="url">
+                        <input type="url" id="client-url" name="url" class="form-control" value="{{{ ($url) }}}"
+                            placeholder=" " maxlength="600" data-label="sitio web">
+                        <label class="form-label" for="client-url">Sitio web</label>
+                        <span class="form-group__error" data-field-error data-error-for="url"></span>
+                    </div>
+
+                    <div class="form-group" data-field="initials">
+                        <input type="text" id="client-initials" name="initials" class="form-control"
+                            value="{{{ ($initials) }}}" placeholder=" " maxlength="10" data-label="iniciales">
+                        <label class="form-label" for="client-initials">Iniciales si no hay logo</label>
+                        <span class="form-group__error" data-field-error data-error-for="initials"></span>
+                    </div>
+
+                    <div class="form-group" data-field="sort_order">
+                        <input type="number" id="client-sort-order" name="sort_order" class="form-control"
+                            value="{{{ ($sortOrder) }}}" placeholder=" " min="0" step="1" data-label="orden">
+                        <label class="form-label" for="client-sort-order">Orden</label>
+                        <span class="form-group__error" data-field-error data-error-for="sort_order"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
+                        <textarea id="client-description" name="description" class="form-control" placeholder=" "
+                            maxlength="1200" data-label="descripción">{{{ ($description) }}}</textarea>
+                        <label class="form-label" for="client-description">Descripción interna / breve</label>
+                        <span class="form-group__error" data-field-error data-error-for="description"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Logo</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="logo_file">
+                        <label class="form-label" for="client-logo-file">
+                            Logo PNG, JPG o WEBP
+                        </label>
+
+                        <input type="file" id="client-logo-file" name="logo_file" class="form-control"
+                            accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-min-files="0"
+                            data-max-files="1" data-max-file-size="4mb" data-max-total-size="4mb"
+                            data-file-types=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                            data-message-file-size="El logo debe pesar máximo 4 MB."
+                            data-message-file-total-size="El logo debe pesar máximo 4 MB."
+                            data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP." data-label="logo"
+                            aria-describedby="error-client-logo-file">
+
+                        {% if ($isEdit && !empty($logoUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($logoUrl) }}}" target="_blank"
+                            rel="noopener noreferrer">
+                            Ver logo actual
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__error" id="error-client-logo-file" data-field-error
+                            data-error-for="logo_file" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="logo_alt">
+                        <input type="text" id="client-logo-alt" name="logo_alt" class="form-control"
+                            value="{{{ ($logoAlt) }}}" placeholder=" " maxlength="255" data-label="texto alternativo">
+
+                        <label class="form-label" for="client-logo-alt">
+                            Texto alternativo del logo
+                        </label>
+
+                        <span class="form-group__error" data-field-error data-error-for="logo_alt"></span>
+                    </div>
+
+                    {% if ($isEdit && !empty($logoUrl)): %}
+                    <div class="admin-form-grid__full">
+                        <label class="admin-check"
+                            style="margin-top: 1rem; display: inline-flex; gap: .75rem; align-items: center;">
+                            <input type="checkbox" name="remove_logo" value="1">
+                            <span>Quitar logo actual</span>
+                        </label>
+                    </div>
+                    {% endif; %}
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Visibilidad</legend>
+
+                <div class="admin-form-grid">
+                    <input type="hidden" name="is_active" value="0">
+                    <label class="admin-check">
+                        {% if ($isActive === 1): %}
+                        <input type="checkbox" name="is_active" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_active" value="1">
+                        {% endif; %}
+                        <span>Activo / visible en Home</span>
+                    </label>
+
+                    <input type="hidden" name="is_featured" value="0">
+                    <label class="admin-check">
+                        {% if ($isFeatured === 1): %}
+                        <input type="checkbox" name="is_featured" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_featured" value="1">
+                        {% endif; %}
+                        <span>Destacado</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="admin-form-actions">
+                <button type="submit" class="admin-button admin-button--primary">
+                    {{{ ($submitText) }}}
+                </button>
+
+                <a href="@url/admin/clientes" class="admin-button admin-button--secondary">
+                    Cancelar
+                </a>
+
+                {% if ($isEdit): %}
+                <a href="@url/admin/clientes/{{ ($id) }}/eliminar" class="admin-button admin-button--danger"
+                    onclick="return confirm('¿Eliminar definitivamente este cliente? También se borrará su logo del servidor.');">
+                    Eliminar cliente
+                </a>
+                {% endif; %}
+            </div>
+        </form>
+    </article>
+</section>

@@ -1,45 +1,15 @@
+{%
+$jumbotronSlides = $jumbotronSlides ?? [];
+%}
+
 <div class="home__jumbotron">
-    <section class="splide" aria-label="Presentación principal de ISA UAQ">
+    <section class="splide" aria-label="Presentación principal de L+E Ingeniería">
         <div class="splide__track">
             <ul class="splide__list">
-                <!-- <li class="splide__slide fill">
-                    <img
-                        data-src="/images/JTRON.jpg"
-                        alt="Sección estudiantil ISA UAQ en actividades de automatización, instrumentación y control"
-                        class="lazy-image critical-image"
-                    >
-                    <div class="home__jumbotron__overlay">
-                        <div class="home__jumbotron__overlay__wrapper">
-                            <div class="home__jumbotron__overlay__text">
-                                <div>
-                                    <h1 class="line line1" id="line1" data-text="Bienvenid@"></h1>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>-->
-
-                <!-- <li class="splide__slide full-width media-top">
-                    <div class="home__jumbotron__overlay">
-                        <div class="home__jumbotron__overlay__wrapper">
-                            <div class="home__jumbotron__overlay__text">
-                                <div></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <video
-                        class="lazy-video"
-                        data-src="/videos/Diseño sin título (7).mp4"
-                        controls
-                        preload="none"
-                        playsinline
-                        poster="/images/JTRON.jpg"
-                        aria-label="Video de presentación de ISA UAQ"
-                    ></video>
-                </li>  -->
-
-
+                <!--
+                    Primer slide fijo.
+                    Este siempre será el primero, sin importar los slides del admin.
+                -->
                 <li class="splide__slide splide__slide--site-hero lazy-bg" data-background-src="/images/JTRON.jpg">
                     <div class="content content--site-hero">
                         <p class="overhead">Sobre nosotros</p>
@@ -57,57 +27,185 @@
                         </a>
                     </div>
                 </li>
-                <li class="splide__slide">
-                    <div class="content">
-                        <p class="overhead">Sobre nosotros</p>
-                        <h1>Bienvenido al sitio web de ISA UAQ</h1>
-                        <p>
-                            Conoce la Sección Estudiantil ISA de la Universidad Autónoma de Querétaro y descubre
-                            actividades, recursos y oportunidades de formación en automatización, instrumentación y
-                            control.
-                        </p>
-                        <a href="/nosotros" class="button__more" title="Conocer más sobre ISA UAQ">Saber más</a>
-                    </div>
-                </li>
 
-                <!-- <li class="splide__slide content-full-width-not-mobile content-top">
-                    <div class="content">
-                        <a href="@url/evento/registro" class="button__more"
-                            title="Registrarse a la ponencia Automatización: del aula a la industria"
-                            aria-label="Registrarse a la ponencia Automatización: del aula a la industria"
-                            style="background-color: #122e76; color: #ddeafd;">
-                            Regístrate
+                {% foreach ($jumbotronSlides as $slide): %}
+                {%
+                $slideClass = trim((string) ($slide['slide_class'] ?? ''));
+                $contentClass = trim((string) ($slide['content_class'] ?? ''));
+                $buttonClass = trim((string) ($slide['button_class'] ?? ''));
+
+                $backgroundType = trim((string) ($slide['background_type'] ?? 'none'));
+                $backgroundUrl = trim((string) ($slide['background_url'] ?? ''));
+                $backgroundMobileUrl = trim((string) ($slide['background_mobile_url'] ?? ''));
+                $backgroundAlt = trim((string) ($slide['background_alt'] ?? ''));
+
+                $videoUrl = trim((string) ($slide['video_url'] ?? ''));
+                $videoMobileUrl = trim((string) ($slide['video_mobile_url'] ?? ''));
+                $videoPosterUrl = trim((string) ($slide['video_poster_url'] ?? ''));
+                $videoAriaLabel = trim((string) ($slide['video_aria_label'] ?? 'Video de presentación'));
+                $videoPreload = trim((string) ($slide['video_preload'] ?? 'none'));
+
+                $eyebrow = trim((string) ($slide['eyebrow'] ?? ''));
+                $title = trim((string) ($slide['title'] ?? ''));
+                $subtitle = trim((string) ($slide['subtitle'] ?? ''));
+                $body = trim((string) ($slide['body'] ?? ''));
+
+                $buttonLabel = trim((string) ($slide['button_label'] ?? ''));
+                $buttonUrl = trim((string) ($slide['button_url'] ?? ''));
+                $buttonTitle = trim((string) ($slide['button_title'] ?? ''));
+                $buttonAriaLabel = trim((string) ($slide['button_aria_label'] ?? ''));
+                $buttonTarget = trim((string) ($slide['button_target'] ?? ''));
+                $buttonRel = trim((string) ($slide['button_rel'] ?? ''));
+
+                $contentPosition = trim((string) ($slide['content_position'] ?? ''));
+                $overlayVariant = trim((string) ($slide['overlay_variant'] ?? ''));
+
+                $finalSlideClass = 'splide__slide';
+
+                if ($slideClass !== '') {
+                $finalSlideClass .= ' ' . $slideClass;
+                } else {
+                $finalSlideClass .= ' splide__slide--site-hero';
+                }
+
+                if ($backgroundType === 'image' && $backgroundUrl !== '') {
+                $finalSlideClass .= ' lazy-bg';
+                }
+
+                if ($contentPosition !== '' && $contentPosition !== 'default') {
+                $finalSlideClass .= ' content-' . $contentPosition;
+                }
+
+                if ($overlayVariant !== '') {
+                $finalSlideClass .= ' overlay-' . $overlayVariant;
+                }
+
+                $finalContentClass = $contentClass !== ''
+                ? $contentClass
+                : 'content content--site-hero';
+
+                $finalButtonClass = $buttonClass !== ''
+                ? $buttonClass
+                : 'button__primary button__primary--light';
+
+                $finalButtonTitle = $buttonTitle !== ''
+                ? $buttonTitle
+                : $buttonLabel;
+
+                $finalButtonAriaLabel = $buttonAriaLabel !== ''
+                ? $buttonAriaLabel
+                : $buttonLabel;
+
+                $finalButtonTarget = $buttonTarget !== ''
+                ? $buttonTarget
+                : '_self';
+
+                $finalButtonRel = $buttonRel;
+
+                if ($finalButtonTarget === '_blank' && $finalButtonRel === '') {
+                $finalButtonRel = 'noopener noreferrer';
+                }
+
+                $hasButton = $buttonLabel !== '' && $buttonUrl !== '';
+                $hasImageBackground = $backgroundType === 'image' && $backgroundUrl !== '';
+                $hasVideoBackground = $backgroundType === 'video' && $videoUrl !== '';
+                %}
+
+                {% if ($hasImageBackground): %}
+                <li class="{{{ ($finalSlideClass) }}}" data-background-src="{{{ ($backgroundUrl) }}}"
+                    data-background-mobile-src="{{{ ($backgroundMobileUrl) }}}" aria-label="{{{ ($backgroundAlt) }}}">
+                    <div class="{{{ ($finalContentClass) }}}">
+                        {% if ($eyebrow !== ''): %}
+                        <p class="overhead">{{{ ($eyebrow) }}}</p>
+                        {% endif; %}
+
+                        {% if ($title !== ''): %}
+                        <h1>{{{ ($title) }}}</h1>
+                        {% endif; %}
+
+                        {% if ($subtitle !== ''): %}
+                        <p>{{{ ($subtitle) }}}</p>
+                        {% endif; %}
+
+                        {% if ($body !== ''): %}
+                        <p>{{{ ($body) }}}</p>
+                        {% endif; %}
+
+                        {% if ($hasButton): %}
+                        <a href="{{{ ($buttonUrl) }}}" class="{{{ ($finalButtonClass) }}}"
+                            title="{{{ ($finalButtonTitle) }}}" aria-label="{{{ ($finalButtonAriaLabel) }}}"
+                            target="{{{ ($finalButtonTarget) }}}" rel="{{{ ($finalButtonRel) }}}">
+                            {{{ ($buttonLabel) }}}
                         </a>
+                        {% endif; %}
                     </div>
-
-                    <img data-src="/images/platica2.jpg"
-                        alt="Banner de la ponencia Automatización: del aula a la industria, evento virtual abierto al público el miércoles 27 de mayo de 2026 a las 11:00 a. m., organizado por ISA UAQ e IEEE Student Branch UAQ"
-                        class="lazy-image critical-image on-mobile-not">
-
-                    <img data-src="/images/mplatica2.png"
-                        alt="Banner móvil de la ponencia Automatización: del aula a la industria, evento virtual abierto al público el miércoles 27 de mayo de 2026 a las 11:00 a. m."
-                        class="lazy-image critical-image on-desktop-not">
                 </li>
+                {% endif; %}
 
-                <li class="splide__slide full-width content-top">
-                    <div class="content">
-                        <a href="https://wa.me/5214422014627?text=Hola.%20H%C3%A1blame%20sobre%20PrintISA"
-                            class="button__more" title="Solicitar información sobre PRINTISA UAQ por WhatsApp"
-                            aria-label="Solicitar información sobre PRINTISA UAQ por WhatsApp"
-                            style="background-color: #122e76; color: #ddeafd;">Saber más</a>
+                {% if ($hasVideoBackground): %}
+                <li class="{{{ ($finalSlideClass) }}}">
+                    <video class="lazy-video" data-src="{{{ ($videoUrl) }}}" data-mobile-src="{{{ ($videoMobileUrl) }}}"
+                        poster="{{{ ($videoPosterUrl) }}}" preload="{{{ ($videoPreload) }}}" autoplay muted loop
+                        playsinline aria-label="{{{ ($videoAriaLabel) }}}"></video>
+
+                    <div class="{{{ ($finalContentClass) }}}">
+                        {% if ($eyebrow !== ''): %}
+                        <p class="overhead">{{{ ($eyebrow) }}}</p>
+                        {% endif; %}
+
+                        {% if ($title !== ''): %}
+                        <h1>{{{ ($title) }}}</h1>
+                        {% endif; %}
+
+                        {% if ($subtitle !== ''): %}
+                        <p>{{{ ($subtitle) }}}</p>
+                        {% endif; %}
+
+                        {% if ($body !== ''): %}
+                        <p>{{{ ($body) }}}</p>
+                        {% endif; %}
+
+                        {% if ($hasButton): %}
+                        <a href="{{{ ($buttonUrl) }}}" class="{{{ ($finalButtonClass) }}}"
+                            title="{{{ ($finalButtonTitle) }}}" aria-label="{{{ ($finalButtonAriaLabel) }}}"
+                            target="{{{ ($finalButtonTarget) }}}" rel="{{{ ($finalButtonRel) }}}">
+                            {{{ ($buttonLabel) }}}
+                        </a>
+                        {% endif; %}
                     </div>
-                    <img data-src="/images/Print.jpg" alt="Imagen de presentación de PRINTISA UAQ"
-                        class="lazy-image critical-image on-mobile-not">
-                    <img data-src="/images/Print-mobile.jpg" alt="Imagen de presentación de PRINTISA UAQ"
-                        class="lazy-image critical-image on-mobile-only">
-                </li> -->
-                <!-- <li class="splide__slide content-full-width-not-mobile content-top">
-                    <div class="content">
-                        <a href="https://wa.me/5214422014627?text=Me%20interesa%20la%20ponencia" class="button__more" title="Conocer más sobre PRINTISA UAQ" style="background-color: #122e76; color: #ddeafd;">Saber más</a>
+                </li>
+                {% endif; %}
+
+                {% if (!$hasImageBackground && !$hasVideoBackground): %}
+                <li class="{{{ ($finalSlideClass) }}}">
+                    <div class="{{{ ($finalContentClass) }}}">
+                        {% if ($eyebrow !== ''): %}
+                        <p class="overhead">{{{ ($eyebrow) }}}</p>
+                        {% endif; %}
+
+                        {% if ($title !== ''): %}
+                        <h1>{{{ ($title) }}}</h1>
+                        {% endif; %}
+
+                        {% if ($subtitle !== ''): %}
+                        <p>{{{ ($subtitle) }}}</p>
+                        {% endif; %}
+
+                        {% if ($body !== ''): %}
+                        <p>{{{ ($body) }}}</p>
+                        {% endif; %}
+
+                        {% if ($hasButton): %}
+                        <a href="{{{ ($buttonUrl) }}}" class="{{{ ($finalButtonClass) }}}"
+                            title="{{{ ($finalButtonTitle) }}}" aria-label="{{{ ($finalButtonAriaLabel) }}}"
+                            target="{{{ ($finalButtonTarget) }}}" rel="{{{ ($finalButtonRel) }}}">
+                            {{{ ($buttonLabel) }}}
+                        </a>
+                        {% endif; %}
                     </div>
-                    <img data-src="/images/Polish_20260422_132945278.png" alt="Banner de po0nencia de control Dr. Sergio Miguel Delfin Prieto" class="lazy-image critical-image on-mobile-not">
-                    <img data-src="/images/file_00000000883c71f88d4298a51beca628.png" alt="Banner de po0nencia de control Dr. Sergio Miguel Delfin Prieto" class="lazy-image critical-image on-mobile-only">
-                </li>  -->
+                </li>
+                {% endif; %}
+                {% endforeach; %}
             </ul>
         </div>
     </section>
@@ -205,61 +303,43 @@
     </div>
 </section>
 
+{%
+$clients = $clients ?? [];
+%}
+
 <section class="clients-hex" id="clientes" aria-labelledby="clientes-title">
     <div class="clients-hex__heading section-heading">
         <p>Nuestros clientes</p>
         <h2 id="clientes-title">Empresas que confían en nosotros</h2>
     </div>
 
-    <!--
-        Lista fuente.
-        Agrega/quita tantos clientes como quieras.
-        Webpack procesará los data-src de estas imágenes.
-        El JS genera el grid infinito usando esta lista.
-    -->
     <ul class="clients-hex__source" hidden>
-        <li data-name="Cliente 1" data-url="">
-            <img data-src="/images/SOCIAL1.png" alt="Cliente 1">
-        </li>
+        {% foreach ($clients as $client): %}
+        {%
+        $clientName = trim((string) ($client['name'] ?? 'Cliente'));
+        $clientUrl = trim((string) ($client['url'] ?? ''));
+        $logoUrl = trim((string) ($client['logo_url'] ?? ''));
+        $logoAlt = trim((string) ($client['logo_alt'] ?? $clientName));
+        %}
 
-        <li data-name="Cliente 2" data-url="">
-            <img data-src="/images/SOCIAL2.png" alt="Cliente 2">
+        <li data-name="{{{ ($clientName) }}}" data-url="{{{ ($clientUrl) }}}">
+            {% if ($logoUrl !== ''): %}
+            <img data-src="{{{ ($logoUrl) }}}" alt="{{{ ($logoAlt) }}}">
+            {% endif; %}
         </li>
+        {% endforeach; %}
 
-        <li data-name="Cliente 3" data-url="">
-            <img data-src="/images/SOCIAL3.png" alt="Cliente 3">
-        </li>
-
-        <li data-name="Cliente 4" data-url="">
-            <img data-src="/images/SOCIAL4.png" alt="Cliente 4">
-        </li>
-
-        <li data-name="Cliente 5" data-url="">
-            <img data-src="/images/SOCIAL5.png" alt="Cliente 5">
-        </li>
-
-        <li data-name="Cliente 6" data-url="">
-            <img data-src="/images/SOCIAL6.png" alt="Cliente 6">
-        </li>
-        <li data-name="Cliente 7" data-url="">
-            <img data-src="/images/SOCIAL7.png" alt="Cliente 7">
-        </li>
-        <li data-name="Cliente 8" data-url="">
-            <img data-src="/images/SOCIAL8.png" alt="Cliente 8">
-        </li>
-        <li data-name="Cliente 9" data-url="">
-            <img data-src="/images/SOCIAL9.png" alt="Cliente 9">
-        </li>
+        {% if (empty($clients)): %}
+        <li data-name="L+E Ingeniería" data-url=""></li>
+        {% endif; %}
     </ul>
 
     <div class="clients-hex__viewport" data-clients-hex-grid>
         <div class="clients-hex__track"></div>
-
         <div class="clients-hex__fade clients-hex__fade--left" aria-hidden="true"></div>
         <div class="clients-hex__fade clients-hex__fade--right" aria-hidden="true"></div>
     </div>
 </section>
-
 <section class="stats lazy-bg" data-background-src="/images/STATS.jpg" aria-labelledby="stats-title">
     <div class="section-heading section-heading--light stats__heading">
         <p>Experiencia comprobada</p>

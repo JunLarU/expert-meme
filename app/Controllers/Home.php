@@ -1,6 +1,8 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\Client;
+use App\Models\HomeJumbotronSlide;
 use Whis\Http\Controller;
 use Whis\Http\Request;
 use Whis\Http\Response;
@@ -9,28 +11,31 @@ class Home extends Controller
 {
     public function home()
     {
-
-        return view('pages/main/home', "Inicio");
+        return view('pages/main/home', 'Inicio', [
+            'jumbotronSlides' => HomeJumbotronSlide::published('home'),
+            'clients'         => Client::active(),
+        ], 'layouts/main');
     }
+
     public function contactSend(Request $request)
     {
         $data = $request->validate([
             'name'    => 'required',
             'email'   => 'required|email',
             'message' => 'required',
-            'asunto' => 'required',
-        ],true, [
-            'name' => [
+            'asunto'  => 'required',
+        ], true, [
+            'name'    => [
                 'required' => 'El nombre es obligatorio.',
             ],
-            'email' => [
+            'email'   => [
                 'required' => 'El correo electrónico es obligatorio.',
-                'email' => 'El correo electrónico no es válido.',
+                'email'    => 'El correo electrónico no es válido.',
             ],
             'message' => [
                 'required' => 'El mensaje es obligatorio.',
             ],
-            'asunto' => [
+            'asunto'  => [
                 'required' => 'El asunto es obligatorio.',
             ],
         ]);
@@ -43,26 +48,26 @@ class Home extends Controller
 
     public function nosotros()
     {
-        return view('pages/main/nosotros', "Nosotros");
+        return view('pages/main/nosotros', 'Nosotros');
     }
 
     public function servicios()
     {
-        return view('pages/main/servicios', "Servicios");
+        return view('pages/main/servicios', 'Servicios');
     }
 
-     public function proyectos()
+    public function proyectos()
     {
-        return view('pages/main/proyectos', "Proyectos");
+        return view('pages/main/proyectos', 'Proyectos');
     }
 
     public function contacto()
     {
-        return view('pages/main/contacto', "Contacto");
+        return view('pages/main/contacto', 'Contacto');
     }
 
     public function store()
     {
-        return view('pages/main/form', "Formulario");
-    } 
+        return view('pages/main/form', 'Formulario');
+    }
 }

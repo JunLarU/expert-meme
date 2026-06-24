@@ -1,0 +1,909 @@
+{%
+$mode = $mode ?? 'create';
+$project = $project ?? [];
+$galleryMedia = $galleryMedia ?? [];
+$projectTags = $projectTags ?? [];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($project['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/proyectos/' . $id . '/actualizar'
+: '/admin/proyectos';
+
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear proyecto';
+$pageTitle = $isEdit ? 'Editar proyecto' : 'Nuevo proyecto';
+
+$title = $project['title'] ?? '';
+$slug = $project['slug'] ?? '';
+$status = $project['status'] ?? 'draft';
+$subtitle = $project['subtitle'] ?? '';
+$brief = $project['brief'] ?? '';
+$summary = $project['summary'] ?? '';
+$description = $project['description'] ?? '';
+$category = $project['category'] ?? '';
+$categoryBadge = $project['category_badge'] ?? '';
+$listingNumber = $project['listing_number'] ?? '';
+
+$coverImageUrl = $project['cover_image_url'] ?? '';
+$coverImageAlt = $project['cover_image_alt'] ?? '';
+$coverMobileUrl = $project['cover_mobile_url'] ?? '';
+$heroBackgroundUrl = $project['hero_background_url'] ?? '';
+$mapImageUrl = $project['map_image_url'] ?? '';
+$mapImageAlt = $project['map_image_alt'] ?? '';
+
+$heroEyebrow = $project['hero_eyebrow'] ?? '';
+$heroTitle = $project['hero_title'] ?? '';
+$heroCopy = $project['hero_copy'] ?? '';
+$heroButtonLabel = $project['hero_button_label'] ?? 'Ver galería';
+$heroButtonUrl = $project['hero_button_url'] ?? '#galeria';
+
+$locationDisplay = $project['location_display'] ?? '';
+$city = $project['city'] ?? '';
+$state = $project['state'] ?? '';
+$country = $project['country'] ?? 'México';
+$projectYear = $project['project_year'] ?? '';
+
+$clientName = $project['client_name'] ?? '';
+$clientType = $project['client_type'] ?? '';
+$service = $project['service'] ?? '';
+$specialty = $project['specialty'] ?? '';
+$materialSystem = $project['material_system'] ?? '';
+
+$weightLabel = $project['weight_label'] ?? '';
+$areaLabel = $project['area_label'] ?? '';
+$durationLabel = $project['duration_label'] ?? '';
+$scopeLabel = $project['scope_label'] ?? '';
+
+$overviewEyebrow = $project['overview_eyebrow'] ?? 'Portafolio';
+$overviewTitle = $project['overview_title'] ?? '';
+$overviewBody = $project['overview_body'] ?? '';
+
+$resultEyebrow = $project['result_eyebrow'] ?? 'Resultado';
+$resultTitle = $project['result_title'] ?? '';
+$resultBody = $project['result_body'] ?? '';
+$resultButtonLabel = $project['result_button_label'] ?? '';
+$resultButtonUrl = $project['result_button_url'] ?? '';
+
+$showInHome = (int) ($project['show_in_home'] ?? 1);
+$showInProjects = (int) ($project['show_in_projects'] ?? 1);
+$showOnMap = (int) ($project['show_on_map'] ?? 1);
+$isFeatured = (int) ($project['is_featured'] ?? 0);
+$isHomeFeatured = (int) ($project['is_home_featured'] ?? 0);
+$sortOrder = (int) ($project['sort_order'] ?? 0);
+
+$mapType = $project['map_type'] ?? 'project';
+$mapLat = $project['map_lat'] ?? '';
+$mapLng = $project['map_lng'] ?? '';
+$mapState = $project['map_state'] ?? '';
+$mapTitle = $project['map_title'] ?? '';
+$mapKind = $project['map_kind'] ?? '';
+$mapLocation = $project['map_location'] ?? '';
+$mapSummary = $project['map_summary'] ?? '';
+
+$seoTitle = $project['seo_title'] ?? '';
+$seoDescription = $project['seo_description'] ?? '';
+
+$tagsText = '';
+if (!empty($projectTags)) {
+$tagNames = [];
+foreach ($projectTags as $tag) {
+$tagNames[] = $tag['name'] ?? '';
+}
+$tagsText = implode(', ', array_filter($tagNames));
+}
+%}
+
+
+<section class="admin-dashboard admin-projects-page" aria-labelledby="admin-project-form-title">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Proyectos</p>
+      <h2 id="admin-project-form-title">{{{ ($pageTitle) }}}</h2>
+      <span>
+        Registra contenido del proyecto, portada, galería multimedia, datos para home y pines del mapa.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin/proyectos" class="admin-button admin-button--secondary">Volver</a>
+    </div>
+  </header>
+
+  <article class="admin-panel admin-jumbotron-form-panel admin-project-form-panel">
+    <header class="admin-panel__header">
+      <div>
+        <p>Formulario</p>
+        <h3>{{{ ($pageTitle) }}}</h3>
+      </div>
+    </header>
+
+    <form class="form form--default admin-jumbotron-form admin-project-form" action="@url{{{ ($formAction) }}}"
+      method="post" enctype="multipart/form-data" data-ajax-form data-validation="none" data-send-as="formdata"
+      data-csrf="true" data-csrf-field="_token" data-reset-on-success="false" data-loading-text="{{{ ($loadingText) }}}"
+      novalidate>
+      @csrf
+
+      <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+      <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+      <input type="hidden" name="cover_image_url" value="{{{ ($coverImageUrl) }}}">
+      <input type="hidden" name="cover_mobile_url" value="{{{ ($coverMobileUrl) }}}">
+      <input type="hidden" name="hero_background_url" value="{{{ ($heroBackgroundUrl) }}}">
+      <input type="hidden" name="map_image_url" value="{{{ ($mapImageUrl) }}}">
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Contenido principal</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group admin-form-grid__full" data-field="title">
+            <input type="text" id="project-title" name="title" class="form-control" value="{{{ ($title) }}}"
+              placeholder=" " required maxlength="255" data-label="título">
+            <label class="form-label" for="project-title">Título del proyecto</label>
+            <span class="form-group__error" data-field-error data-error-for="title"></span>
+          </div>
+
+          <div class="form-group form-group--select" data-field="status">
+            <select id="project-status" name="status" class="form-control" required data-label="estado">
+              {% if ($status === 'draft'): %}
+              <option value="draft" selected>Borrador</option>
+              {% else: %}
+              <option value="draft">Borrador</option>
+              {% endif; %}
+
+              {% if ($status === 'published'): %}
+              <option value="published" selected>Publicado</option>
+              {% else: %}
+              <option value="published">Publicado</option>
+              {% endif; %}
+
+              {% if ($status === 'hidden'): %}
+              <option value="hidden" selected>Oculto</option>
+              {% else: %}
+              <option value="hidden">Oculto</option>
+              {% endif; %}
+
+              {% if ($status === 'archived'): %}
+              <option value="archived" selected>Archivado</option>
+              {% else: %}
+              <option value="archived">Archivado</option>
+              {% endif; %}
+            </select>
+            <label class="form-label" for="project-status">Estado</label>
+            <span class="form-group__error" data-field-error data-error-for="status"></span>
+          </div>
+
+          <div class="form-group" data-field="project_year">
+            <input type="number" id="project-year" name="project_year" class="form-control"
+              value="{{{ ($projectYear) }}}" placeholder=" " min="1900" max="2100" step="1" data-label="año">
+            <label class="form-label" for="project-year">Año</label>
+            <span class="form-group__error" data-field-error data-error-for="project_year"></span>
+          </div>
+
+          <div class="form-group" data-field="category">
+            <input type="text" id="project-category" name="category" class="form-control" value="{{{ ($category) }}}"
+              placeholder=" " maxlength="120" data-label="categoría">
+            <label class="form-label" for="project-category">Categoría</label>
+            <span class="form-group__error" data-field-error data-error-for="category"></span>
+          </div>
+
+          <div class="form-group" data-field="category_badge">
+            <input type="text" id="project-category-badge" name="category_badge" class="form-control"
+              value="{{{ ($categoryBadge) }}}" placeholder=" " maxlength="120" data-label="badge">
+            <label class="form-label" for="project-category-badge">Badge visible</label>
+            <span class="form-group__error" data-field-error data-error-for="category_badge"></span>
+          </div>
+
+          <div class="form-group" data-field="listing_number">
+            <input type="text" id="project-listing-number" name="listing_number" class="form-control"
+              value="{{{ ($listingNumber) }}}" placeholder=" " maxlength="20" data-label="número">
+            <label class="form-label" for="project-listing-number">Número de listado</label>
+            <span class="form-group__error" data-field-error data-error-for="listing_number"></span>
+          </div>
+
+          <div class="form-group" data-field="sort_order">
+            <input type="number" id="project-sort-order" name="sort_order" class="form-control"
+              value="{{{ ($sortOrder) }}}" placeholder=" " min="0" step="1" data-label="orden">
+            <label class="form-label" for="project-sort-order">Orden</label>
+            <span class="form-group__error" data-field-error data-error-for="sort_order"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="brief">
+            <textarea id="project-brief" name="brief" class="form-control" placeholder=" " maxlength="700"
+              data-label="resumen breve">{{{ ($brief) }}}</textarea>
+            <label class="form-label" for="project-brief">Resumen breve para cards/mapa</label>
+            <span class="form-group__error" data-field-error data-error-for="brief"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="summary">
+            <textarea id="project-summary" name="summary" class="form-control" placeholder=" " maxlength="1200"
+              data-label="resumen">{{{ ($summary) }}}</textarea>
+            <label class="form-label" for="project-summary">Resumen del proyecto</label>
+            <span class="form-group__error" data-field-error data-error-for="summary"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
+            <textarea id="project-description" name="description" class="form-control" placeholder=" "
+              data-label="descripción">{{{ ($description) }}}</textarea>
+            <label class="form-label" for="project-description">Descripción extendida</label>
+            <span class="form-group__error" data-field-error data-error-for="description"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="tags_text">
+            <input type="text" id="project-tags-text" name="tags_text" class="form-control" value="{{{ ($tagsText) }}}"
+              placeholder=" " maxlength="700" data-label="etiquetas">
+            <label class="form-label" for="project-tags-text">Etiquetas separadas por coma</label>
+            <span class="form-group__error" data-field-error data-error-for="tags_text"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Home y portafolio</legend>
+
+        <div class="admin-form-grid">
+          <input type="hidden" name="show_in_home" value="0">
+          <label class="admin-check">
+            {% if ($showInHome === 1): %}
+            <input type="checkbox" name="show_in_home" value="1" checked>
+            {% else: %}
+            <input type="checkbox" name="show_in_home" value="1">
+            {% endif; %}
+            <span>Mostrar en Home como candidato a “últimos 3 proyectos”</span>
+          </label>
+
+          <input type="hidden" name="is_home_featured" value="0">
+          <label class="admin-check">
+            {% if ($isHomeFeatured === 1): %}
+            <input type="checkbox" name="is_home_featured" value="1" checked>
+            {% else: %}
+            <input type="checkbox" name="is_home_featured" value="1">
+            {% endif; %}
+            <span>Proyecto destacado del Home (cuarta card especial)</span>
+          </label>
+
+          <input type="hidden" name="show_in_projects" value="0">
+          <label class="admin-check">
+            {% if ($showInProjects === 1): %}
+            <input type="checkbox" name="show_in_projects" value="1" checked>
+            {% else: %}
+            <input type="checkbox" name="show_in_projects" value="1">
+            {% endif; %}
+            <span>Mostrar en página de proyectos</span>
+          </label>
+
+          <input type="hidden" name="is_featured" value="0">
+          <label class="admin-check">
+            {% if ($isFeatured === 1): %}
+            <input type="checkbox" name="is_featured" value="1" checked>
+            {% else: %}
+            <input type="checkbox" name="is_featured" value="1">
+            {% endif; %}
+            <span>Marcar como destacado general</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Hero del entry</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group" data-field="hero_eyebrow">
+            <input type="text" id="project-hero-eyebrow" name="hero_eyebrow" class="form-control"
+              value="{{{ ($heroEyebrow) }}}" placeholder=" " maxlength="180" data-label="texto superior">
+            <label class="form-label" for="project-hero-eyebrow">Texto superior</label>
+            <span class="form-group__error" data-field-error data-error-for="hero_eyebrow"></span>
+          </div>
+
+          <div class="form-group" data-field="hero_title">
+            <input type="text" id="project-hero-title" name="hero_title" class="form-control"
+              value="{{{ ($heroTitle) }}}" placeholder=" " maxlength="255" data-label="título hero">
+            <label class="form-label" for="project-hero-title">Título del hero</label>
+            <span class="form-group__error" data-field-error data-error-for="hero_title"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="hero_copy">
+            <textarea id="project-hero-copy" name="hero_copy" class="form-control" placeholder=" " maxlength="900"
+              data-label="copy hero">{{{ ($heroCopy) }}}</textarea>
+            <label class="form-label" for="project-hero-copy">Texto del hero</label>
+            <span class="form-group__error" data-field-error data-error-for="hero_copy"></span>
+          </div>
+
+          <div class="form-group" data-field="hero_button_label">
+            <input type="text" id="project-hero-button-label" name="hero_button_label" class="form-control"
+              value="{{{ ($heroButtonLabel) }}}" placeholder=" " maxlength="180" data-label="botón hero">
+            <label class="form-label" for="project-hero-button-label">Texto del botón</label>
+            <span class="form-group__error" data-field-error data-error-for="hero_button_label"></span>
+          </div>
+
+          <div class="form-group" data-field="hero_button_url">
+            <input type="text" id="project-hero-button-url" name="hero_button_url" class="form-control"
+              value="{{{ ($heroButtonUrl) }}}" placeholder=" " maxlength="600" data-label="url botón hero">
+            <label class="form-label" for="project-hero-button-url">URL del botón</label>
+            <span class="form-group__error" data-field-error data-error-for="hero_button_url"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Ubicación y datos técnicos</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group admin-form-grid__full" data-field="location_display">
+            <input type="text" id="project-location-display" name="location_display" class="form-control"
+              value="{{{ ($locationDisplay) }}}" placeholder=" " maxlength="255" data-label="ubicación">
+            <label class="form-label" for="project-location-display">Ubicación visible</label>
+            <span class="form-group__error" data-field-error data-error-for="location_display"></span>
+          </div>
+
+          <div class="form-group" data-field="city">
+            <input type="text" id="project-city" name="city" class="form-control" value="{{{ ($city) }}}"
+              placeholder=" " maxlength="120" data-label="ciudad">
+            <label class="form-label" for="project-city">Ciudad</label>
+            <span class="form-group__error" data-field-error data-error-for="city"></span>
+          </div>
+
+          <div class="form-group" data-field="state">
+            <input type="text" id="project-state" name="state" class="form-control" value="{{{ ($state) }}}"
+              placeholder=" " maxlength="120" data-label="estado">
+            <label class="form-label" for="project-state">Estado</label>
+            <span class="form-group__error" data-field-error data-error-for="state"></span>
+          </div>
+
+          <div class="form-group" data-field="country">
+            <input type="text" id="project-country" name="country" class="form-control" value="{{{ ($country) }}}"
+              placeholder=" " maxlength="120" data-label="país">
+            <label class="form-label" for="project-country">País</label>
+            <span class="form-group__error" data-field-error data-error-for="country"></span>
+          </div>
+
+          <div class="form-group" data-field="client_name">
+            <input type="text" id="project-client-name" name="client_name" class="form-control"
+              value="{{{ ($clientName) }}}" placeholder=" " maxlength="255" data-label="cliente">
+            <label class="form-label" for="project-client-name">Cliente</label>
+            <span class="form-group__error" data-field-error data-error-for="client_name"></span>
+          </div>
+
+          <div class="form-group" data-field="client_type">
+            <input type="text" id="project-client-type" name="client_type" class="form-control"
+              value="{{{ ($clientType) }}}" placeholder=" " maxlength="160" data-label="tipo de cliente">
+            <label class="form-label" for="project-client-type">Tipo de cliente</label>
+            <span class="form-group__error" data-field-error data-error-for="client_type"></span>
+          </div>
+
+          <div class="form-group" data-field="service">
+            <input type="text" id="project-service" name="service" class="form-control" value="{{{ ($service) }}}"
+              placeholder=" " maxlength="255" data-label="servicio">
+            <label class="form-label" for="project-service">Servicio</label>
+            <span class="form-group__error" data-field-error data-error-for="service"></span>
+          </div>
+
+          <div class="form-group" data-field="specialty">
+            <input type="text" id="project-specialty" name="specialty" class="form-control" value="{{{ ($specialty) }}}"
+              placeholder=" " maxlength="255" data-label="especialidad">
+            <label class="form-label" for="project-specialty">Especialidad</label>
+            <span class="form-group__error" data-field-error data-error-for="specialty"></span>
+          </div>
+
+          <div class="form-group" data-field="material_system">
+            <input type="text" id="project-material-system" name="material_system" class="form-control"
+              value="{{{ ($materialSystem) }}}" placeholder=" " maxlength="255" data-label="sistema/material">
+            <label class="form-label" for="project-material-system">Sistema / material</label>
+            <span class="form-group__error" data-field-error data-error-for="material_system"></span>
+          </div>
+
+          <div class="form-group" data-field="weight_label">
+            <input type="text" id="project-weight-label" name="weight_label" class="form-control"
+              value="{{{ ($weightLabel) }}}" placeholder=" " maxlength="120" data-label="tonelaje">
+            <label class="form-label" for="project-weight-label">Tonelaje</label>
+            <span class="form-group__error" data-field-error data-error-for="weight_label"></span>
+          </div>
+
+          <div class="form-group" data-field="area_label">
+            <input type="text" id="project-area-label" name="area_label" class="form-control"
+              value="{{{ ($areaLabel) }}}" placeholder=" " maxlength="120" data-label="área">
+            <label class="form-label" for="project-area-label">Área intervenida</label>
+            <span class="form-group__error" data-field-error data-error-for="area_label"></span>
+          </div>
+
+          <div class="form-group" data-field="duration_label">
+            <input type="text" id="project-duration-label" name="duration_label" class="form-control"
+              value="{{{ ($durationLabel) }}}" placeholder=" " maxlength="120" data-label="duración">
+            <label class="form-label" for="project-duration-label">Duración</label>
+            <span class="form-group__error" data-field-error data-error-for="duration_label"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="scope_label">
+            <textarea id="project-scope-label" name="scope_label" class="form-control" placeholder=" " maxlength="1000"
+              data-label="alcance">{{{ ($scopeLabel) }}}</textarea>
+            <label class="form-label" for="project-scope-label">Alcance</label>
+            <span class="form-group__error" data-field-error data-error-for="scope_label"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Mapa</legend>
+
+        <div class="admin-form-grid">
+          <input type="hidden" name="show_on_map" value="0">
+          <label class="admin-check admin-form-grid__full">
+            {% if ($showOnMap === 1): %}
+            <input type="checkbox" name="show_on_map" value="1" checked>
+            {% else: %}
+            <input type="checkbox" name="show_on_map" value="1">
+            {% endif; %}
+            <span>Mostrar pin en mapa</span>
+          </label>
+
+          <div class="form-group form-group--select" data-field="map_type">
+            <select id="project-map-type" name="map_type" class="form-control" data-label="tipo de pin">
+              {% if ($mapType === 'project'): %}
+              <option value="project" selected>Proyecto / obra</option>
+              {% else: %}
+              <option value="project">Proyecto / obra</option>
+              {% endif; %}
+
+              {% if ($mapType === 'office'): %}
+              <option value="office" selected>Oficina / sucursal</option>
+              {% else: %}
+              <option value="office">Oficina / sucursal</option>
+              {% endif; %}
+
+              {% if ($mapType === 'workshop'): %}
+              <option value="workshop" selected>Taller</option>
+              {% else: %}
+              <option value="workshop">Taller</option>
+              {% endif; %}
+            </select>
+            <label class="form-label" for="project-map-type">Tipo de pin</label>
+            <span class="form-group__error" data-field-error data-error-for="map_type"></span>
+          </div>
+
+          <div class="form-group" data-field="map_lat">
+            <input type="number" id="project-map-lat" name="map_lat" class="form-control" value="{{{ ($mapLat) }}}"
+              placeholder=" " step="0.00000001" min="-90" max="90" data-label="latitud">
+            <label class="form-label" for="project-map-lat">Latitud</label>
+            <span class="form-group__error" data-field-error data-error-for="map_lat"></span>
+          </div>
+
+          <div class="form-group" data-field="map_lng">
+            <input type="number" id="project-map-lng" name="map_lng" class="form-control" value="{{{ ($mapLng) }}}"
+              placeholder=" " step="0.00000001" min="-180" max="180" data-label="longitud">
+            <label class="form-label" for="project-map-lng">Longitud</label>
+            <span class="form-group__error" data-field-error data-error-for="map_lng"></span>
+          </div>
+
+          <div class="form-group" data-field="map_state">
+            <input type="text" id="project-map-state" name="map_state" class="form-control" value="{{{ ($mapState) }}}"
+              placeholder=" " maxlength="120" data-label="estado mapa">
+            <label class="form-label" for="project-map-state">Estado para agrupar</label>
+            <span class="form-group__error" data-field-error data-error-for="map_state"></span>
+          </div>
+
+          <div class="form-group" data-field="map_title">
+            <input type="text" id="project-map-title" name="map_title" class="form-control" value="{{{ ($mapTitle) }}}"
+              placeholder=" " maxlength="255" data-label="título pin">
+            <label class="form-label" for="project-map-title">Título del pin</label>
+            <span class="form-group__error" data-field-error data-error-for="map_title"></span>
+          </div>
+
+          <div class="form-group" data-field="map_kind">
+            <input type="text" id="project-map-kind" name="map_kind" class="form-control" value="{{{ ($mapKind) }}}"
+              placeholder=" " maxlength="160" data-label="tipo visible">
+            <label class="form-label" for="project-map-kind">Tipo visible</label>
+            <span class="form-group__error" data-field-error data-error-for="map_kind"></span>
+          </div>
+
+          <div class="form-group" data-field="map_location">
+            <input type="text" id="project-map-location" name="map_location" class="form-control"
+              value="{{{ ($mapLocation) }}}" placeholder=" " maxlength="255" data-label="ubicación pin">
+            <label class="form-label" for="project-map-location">Ubicación del pin</label>
+            <span class="form-group__error" data-field-error data-error-for="map_location"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="map_summary">
+            <textarea id="project-map-summary" name="map_summary" class="form-control" placeholder=" " maxlength="700"
+              data-label="resumen pin">{{{ ($mapSummary) }}}</textarea>
+            <label class="form-label" for="project-map-summary">Resumen para tarjeta del mapa</label>
+            <span class="form-group__error" data-field-error data-error-for="map_summary"></span>
+          </div>
+
+          <div class="form-group form-group--file admin-form-grid__full" data-field="map_image_file">
+            <label class="form-label" for="project-map-image-file">Imagen de la tarjeta del pin</label>
+            <input type="file" id="project-map-image-file" name="map_image_file" class="form-control"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-label="imagen de mapa">
+            {% if ($isEdit && !empty($mapImageUrl)): %}
+            <a class="admin-file-current admin-file-current--link" href="{{{ ($mapImageUrl) }}}" target="_blank"
+              rel="noopener noreferrer">Ver imagen actual del pin</a>
+            <label class="admin-check"
+              style="margin-top: 1rem; display: inline-flex; gap: .75rem; align-items: center;">
+              <input type="checkbox" name="remove_map_image" value="1">
+              <span>Quitar imagen actual del pin</span>
+            </label>
+            {% endif; %}
+            <span class="form-group__error" data-field-error data-error-for="map_image_file"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="map_image_alt">
+            <input type="text" id="project-map-image-alt" name="map_image_alt" class="form-control"
+              value="{{{ ($mapImageAlt) }}}" placeholder=" " maxlength="255" data-label="alt mapa">
+            <label class="form-label" for="project-map-image-alt">Texto alternativo imagen del pin</label>
+            <span class="form-group__error" data-field-error data-error-for="map_image_alt"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Portadas y hero</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group form-group--file admin-form-grid__full" data-field="cover_image_file">
+            <label class="form-label" for="project-cover-image-file">Portada principal</label>
+            <input type="file" id="project-cover-image-file" name="cover_image_file" class="form-control"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-label="portada">
+            {% if ($isEdit && !empty($coverImageUrl)): %}
+            <a class="admin-file-current admin-file-current--link" href="{{{ ($coverImageUrl) }}}" target="_blank"
+              rel="noopener noreferrer">Ver portada actual</a>
+            <label class="admin-check"
+              style="margin-top: 1rem; display: inline-flex; gap: .75rem; align-items: center;">
+              <input type="checkbox" name="remove_cover_image" value="1">
+              <span>Quitar portada actual</span>
+            </label>
+            {% endif; %}
+            <span class="form-group__error" data-field-error data-error-for="cover_image_file"></span>
+          </div>
+
+          <div class="form-group form-group--file admin-form-grid__full" data-field="cover_mobile_file">
+            <label class="form-label" for="project-cover-mobile-file">Portada móvil</label>
+            <input type="file" id="project-cover-mobile-file" name="cover_mobile_file" class="form-control"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-label="portada móvil">
+            {% if ($isEdit && !empty($coverMobileUrl)): %}
+            <a class="admin-file-current admin-file-current--link" href="{{{ ($coverMobileUrl) }}}" target="_blank"
+              rel="noopener noreferrer">Ver portada móvil actual</a>
+            <label class="admin-check"
+              style="margin-top: 1rem; display: inline-flex; gap: .75rem; align-items: center;">
+              <input type="checkbox" name="remove_cover_mobile" value="1">
+              <span>Quitar portada móvil actual</span>
+            </label>
+            {% endif; %}
+            <span class="form-group__error" data-field-error data-error-for="cover_mobile_file"></span>
+          </div>
+
+          <div class="form-group form-group--file admin-form-grid__full" data-field="hero_background_file">
+            <label class="form-label" for="project-hero-background-file">Fondo del hero</label>
+            <input type="file" id="project-hero-background-file" name="hero_background_file" class="form-control"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-label="fondo hero">
+            {% if ($isEdit && !empty($heroBackgroundUrl)): %}
+            <a class="admin-file-current admin-file-current--link" href="{{{ ($heroBackgroundUrl) }}}" target="_blank"
+              rel="noopener noreferrer">Ver fondo actual del hero</a>
+            <label class="admin-check"
+              style="margin-top: 1rem; display: inline-flex; gap: .75rem; align-items: center;">
+              <input type="checkbox" name="remove_hero_background" value="1">
+              <span>Quitar fondo actual del hero</span>
+            </label>
+            {% endif; %}
+            <span class="form-group__error" data-field-error data-error-for="hero_background_file"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="cover_image_alt">
+            <input type="text" id="project-cover-image-alt" name="cover_image_alt" class="form-control"
+              value="{{{ ($coverImageAlt) }}}" placeholder=" " maxlength="255" data-label="alt portada">
+            <label class="form-label" for="project-cover-image-alt">Texto alternativo de portada</label>
+            <span class="form-group__error" data-field-error data-error-for="cover_image_alt"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Contenido del entry</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group" data-field="overview_eyebrow">
+            <input type="text" id="project-overview-eyebrow" name="overview_eyebrow" class="form-control"
+              value="{{{ ($overviewEyebrow) }}}" placeholder=" " maxlength="180" data-label="texto superior">
+            <label class="form-label" for="project-overview-eyebrow">Texto superior del resumen</label>
+            <span class="form-group__error" data-field-error data-error-for="overview_eyebrow"></span>
+          </div>
+
+          <div class="form-group" data-field="overview_title">
+            <input type="text" id="project-overview-title" name="overview_title" class="form-control"
+              value="{{{ ($overviewTitle) }}}" placeholder=" " maxlength="255" data-label="título resumen">
+            <label class="form-label" for="project-overview-title">Título del resumen</label>
+            <span class="form-group__error" data-field-error data-error-for="overview_title"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="overview_body">
+            <textarea id="project-overview-body" name="overview_body" class="form-control" placeholder=" "
+              data-label="cuerpo resumen">{{{ ($overviewBody) }}}</textarea>
+            <label class="form-label" for="project-overview-body">Cuerpo del resumen</label>
+            <span class="form-group__error" data-field-error data-error-for="overview_body"></span>
+          </div>
+
+          <div class="form-group" data-field="result_eyebrow">
+            <input type="text" id="project-result-eyebrow" name="result_eyebrow" class="form-control"
+              value="{{{ ($resultEyebrow) }}}" placeholder=" " maxlength="180" data-label="texto superior resultado">
+            <label class="form-label" for="project-result-eyebrow">Texto superior del resultado</label>
+            <span class="form-group__error" data-field-error data-error-for="result_eyebrow"></span>
+          </div>
+
+          <div class="form-group" data-field="result_title">
+            <input type="text" id="project-result-title" name="result_title" class="form-control"
+              value="{{{ ($resultTitle) }}}" placeholder=" " maxlength="255" data-label="título resultado">
+            <label class="form-label" for="project-result-title">Título del resultado</label>
+            <span class="form-group__error" data-field-error data-error-for="result_title"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="result_body">
+            <textarea id="project-result-body" name="result_body" class="form-control" placeholder=" "
+              data-label="resultado">{{{ ($resultBody) }}}</textarea>
+            <label class="form-label" for="project-result-body">Contenido de resultado</label>
+            <span class="form-group__error" data-field-error data-error-for="result_body"></span>
+          </div>
+
+          <div class="form-group" data-field="result_button_label">
+            <input type="text" id="project-result-button-label" name="result_button_label" class="form-control"
+              value="{{{ ($resultButtonLabel) }}}" placeholder=" " maxlength="180" data-label="botón resultado">
+            <label class="form-label" for="project-result-button-label">Texto botón resultado</label>
+            <span class="form-group__error" data-field-error data-error-for="result_button_label"></span>
+          </div>
+
+          <div class="form-group" data-field="result_button_url">
+            <input type="text" id="project-result-button-url" name="result_button_url" class="form-control"
+              value="{{{ ($resultButtonUrl) }}}" placeholder=" " maxlength="600" data-label="url resultado">
+            <label class="form-label" for="project-result-button-url">URL botón resultado</label>
+            <span class="form-group__error" data-field-error data-error-for="result_button_url"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Galería multimedia</legend>
+
+        {%
+        $gallerySlots = [0, 1, 2, 3, 4];
+        $galleryMediaBySlot = array_values($galleryMedia ?? []);
+        %}
+
+        <div class="admin-form-grid">
+          {% foreach ($gallerySlots as $mediaIndex): %}
+          {%
+          $mediaNumber = $mediaIndex + 1;
+          $currentMedia = $galleryMediaBySlot[$mediaIndex] ?? [];
+          $hasCurrentMedia = $isEdit && !empty($currentMedia) && !empty($currentMedia['file_url']);
+
+          $mediaId = (int) ($currentMedia['id'] ?? 0);
+          $mediaType = $currentMedia['media_type'] ?? 'image';
+          $mediaTitle = $currentMedia['title'] ?? '';
+          $mediaDescription = $currentMedia['description'] ?? '';
+          $mediaFileUrl = $currentMedia['file_url'] ?? '';
+          $mediaPosterUrl = $currentMedia['poster_url'] ?? '';
+          $mediaAltText = $currentMedia['alt_text'] ?? '';
+          $mediaAriaLabel = $currentMedia['aria_label'] ?? '';
+          $mediaSortOrder = (int) ($currentMedia['sort_order'] ?? $mediaIndex);
+          $mediaFeatured = (int) ($currentMedia['is_featured'] ?? 0);
+          %}
+
+          <div class="admin-panel admin-form-grid__full" style="padding: 1.4rem;">
+            <header class="admin-panel__header">
+              <div>
+                {% if ($hasCurrentMedia): %}
+                <p>Archivo actual</p>
+                <h3>Archivo de galería {{ ($mediaNumber) }} de 5</h3>
+                {% else: %}
+                <p>Nuevo archivo</p>
+                <h3>Archivo de galería {{ ($mediaNumber) }} de 5</h3>
+                {% endif; %}
+              </div>
+            </header>
+
+            <div class="admin-form-grid">
+              {% if ($hasCurrentMedia): %}
+              <input type="hidden" name="existing_media[{{ ($mediaId) }}][id]" value="{{ ($mediaId) }}">
+
+              <div class="form-group admin-form-grid__full" data-field="existing_media_{{ ($mediaId) }}_file_url">
+                <label class="form-label">Archivo guardado</label>
+
+                <div class="admin-table__actions" style="margin-top: 1rem;">
+                  {% if (!empty($mediaFileUrl)): %}
+                  {% if ($mediaType === 'video'): %}
+                  <a href="{{{ ($mediaFileUrl) }}}" target="_blank" rel="noopener noreferrer"
+                    class="admin-button admin-button--xs admin-button--secondary">
+                    Ver video actual
+                  </a>
+                  {% else: %}
+                  <a href="{{{ ($mediaFileUrl) }}}" target="_blank" rel="noopener noreferrer"
+                    class="admin-button admin-button--xs admin-button--secondary">
+                    Ver imagen actual
+                  </a>
+                  {% endif; %}
+                  {% endif; %}
+
+                  {% if (!empty($mediaPosterUrl)): %}
+                  <a href="{{{ ($mediaPosterUrl) }}}" target="_blank" rel="noopener noreferrer"
+                    class="admin-button admin-button--xs admin-button--secondary">
+                    Ver miniatura actual
+                  </a>
+                  {% endif; %}
+                </div>
+              </div>
+
+              <div class="form-group" data-field="existing_media_{{ ($mediaId) }}_title">
+                <input type="text" name="existing_media[{{ ($mediaId) }}][title]" class="form-control"
+                  value="{{{ ($mediaTitle) }}}" placeholder=" " maxlength="255"
+                  data-label="título del archivo actual {{ ($mediaNumber) }}">
+                <label class="form-label">Título actual</label>
+              </div>
+
+              <div class="form-group" data-field="existing_media_{{ ($mediaId) }}_sort_order">
+                <input type="number" name="existing_media[{{ ($mediaId) }}][sort_order]" class="form-control"
+                  value="{{ ($mediaSortOrder) }}" placeholder=" " min="0" step="1"
+                  data-label="orden del archivo actual {{ ($mediaNumber) }}">
+                <label class="form-label">Orden actual</label>
+              </div>
+
+              <div class="form-group admin-form-grid__full" data-field="existing_media_{{ ($mediaId) }}_alt_text">
+                <input type="text" name="existing_media[{{ ($mediaId) }}][alt_text]" class="form-control"
+                  value="{{{ ($mediaAltText) }}}" placeholder=" " maxlength="255"
+                  data-label="texto alternativo del archivo actual {{ ($mediaNumber) }}">
+                <label class="form-label">Alt / texto accesible actual</label>
+              </div>
+
+              <div class="form-group admin-form-grid__full" data-field="existing_media_{{ ($mediaId) }}_aria_label">
+                <input type="text" name="existing_media[{{ ($mediaId) }}][aria_label]" class="form-control"
+                  value="{{{ ($mediaAriaLabel) }}}" placeholder=" " maxlength="255"
+                  data-label="aria-label del video actual {{ ($mediaNumber) }}">
+                <label class="form-label">Aria-label actual del video</label>
+              </div>
+
+              <div class="form-group form-group--textarea admin-form-grid__full"
+                data-field="existing_media_{{ ($mediaId) }}_description">
+                <textarea name="existing_media[{{ ($mediaId) }}][description]" class="form-control" placeholder=" "
+                  maxlength="900"
+                  data-label="descripción del archivo actual {{ ($mediaNumber) }}">{{{ ($mediaDescription) }}}</textarea>
+                <label class="form-label">Descripción actual</label>
+              </div>
+
+              <input type="hidden" name="existing_media[{{ ($mediaId) }}][is_featured]" value="0">
+
+              <label class="admin-check">
+                {% if ($mediaFeatured === 1): %}
+                <input type="checkbox" name="existing_media[{{ ($mediaId) }}][is_featured]" value="1" checked>
+                {% else: %}
+                <input type="checkbox" name="existing_media[{{ ($mediaId) }}][is_featured]" value="1">
+                {% endif; %}
+                <span>Destacar archivo actual dentro de galería</span>
+              </label>
+
+              <label class="admin-check">
+                <input type="checkbox" name="remove_media_ids[]" value="{{ ($mediaId) }}">
+                <span>Eliminar archivo actual</span>
+              </label>
+              {% endif; %}
+
+              <div class="form-group form-group--file admin-form-grid__full"
+                data-field="gallery_media_files_{{ ($mediaIndex) }}">
+                <label class="form-label" for="project-gallery-media-file-{{ ($mediaIndex) }}">
+                  {% if ($hasCurrentMedia): %}
+                  Subir reemplazo o nuevo archivo
+                  {% else: %}
+                  Imagen o video
+                  {% endif; %}
+                </label>
+
+                <input type="file" id="project-gallery-media-file-{{ ($mediaIndex) }}"
+                  name="gallery_media_files[{{ ($mediaIndex) }}]" class="form-control"
+                  accept=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                  data-min-files="0" data-max-files="1" data-max-file-size="75mb" data-max-total-size="75mb"
+                  data-file-types=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                  data-message-file-size="El archivo de galería debe pesar máximo 75 MB."
+                  data-message-file-total-size="El archivo de galería debe pesar máximo 75 MB."
+                  data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG, WEBP o videos MP4/WEBM."
+                  data-label="archivo de galería {{ ($mediaNumber) }}">
+
+                <span class="form-group__error" data-field-error data-error-for="gallery_media_files"></span>
+              </div>
+
+              <div class="form-group form-group--file admin-form-grid__full"
+                data-field="gallery_poster_files_{{ ($mediaIndex) }}">
+                <label class="form-label" for="project-gallery-poster-file-{{ ($mediaIndex) }}">
+                  Miniatura si es video
+                </label>
+
+                <input type="file" id="project-gallery-poster-file-{{ ($mediaIndex) }}"
+                  name="gallery_poster_files[{{ ($mediaIndex) }}]" class="form-control"
+                  accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-min-files="0" data-max-files="1"
+                  data-max-file-size="6mb" data-max-total-size="6mb"
+                  data-file-types=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                  data-message-file-size="La miniatura debe pesar máximo 6 MB."
+                  data-message-file-total-size="La miniatura debe pesar máximo 6 MB."
+                  data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP."
+                  data-label="miniatura del video {{ ($mediaNumber) }}">
+
+                <span class="form-group__error" data-field-error data-error-for="gallery_poster_files"></span>
+              </div>
+
+              <div class="form-group" data-field="gallery_media_titles_{{ ($mediaIndex) }}">
+                <input type="text" name="gallery_media_titles[{{ ($mediaIndex) }}]" class="form-control" placeholder=" "
+                  maxlength="255" data-label="título del archivo nuevo {{ ($mediaNumber) }}">
+                <label class="form-label">Título nuevo</label>
+              </div>
+
+              <div class="form-group" data-field="gallery_media_sort_orders_{{ ($mediaIndex) }}">
+                <input type="number" name="gallery_media_sort_orders[{{ ($mediaIndex) }}]" class="form-control"
+                  placeholder=" " min="0" step="1" value="{{ ($mediaIndex) }}"
+                  data-label="orden del archivo nuevo {{ ($mediaNumber) }}">
+                <label class="form-label">Orden nuevo</label>
+              </div>
+
+              <div class="form-group admin-form-grid__full" data-field="gallery_media_alt_texts_{{ ($mediaIndex) }}">
+                <input type="text" name="gallery_media_alt_texts[{{ ($mediaIndex) }}]" class="form-control"
+                  placeholder=" " maxlength="255" data-label="texto alternativo del archivo nuevo {{ ($mediaNumber) }}">
+                <label class="form-label">Alt / texto accesible nuevo</label>
+              </div>
+
+              <div class="form-group admin-form-grid__full" data-field="gallery_media_aria_labels_{{ ($mediaIndex) }}">
+                <input type="text" name="gallery_media_aria_labels[{{ ($mediaIndex) }}]" class="form-control"
+                  placeholder=" " maxlength="255" data-label="aria-label del video nuevo {{ ($mediaNumber) }}">
+                <label class="form-label">Aria-label nuevo del video</label>
+              </div>
+
+              <div class="form-group form-group--textarea admin-form-grid__full"
+                data-field="gallery_media_descriptions_{{ ($mediaIndex) }}">
+                <textarea name="gallery_media_descriptions[{{ ($mediaIndex) }}]" class="form-control" placeholder=" "
+                  maxlength="900" data-label="descripción del archivo nuevo {{ ($mediaNumber) }}"></textarea>
+                <label class="form-label">Descripción nueva</label>
+              </div>
+
+              <input type="hidden" name="gallery_media_is_featured[{{ ($mediaIndex) }}]" value="0">
+
+              <label class="admin-check">
+                <input type="checkbox" name="gallery_media_is_featured[{{ ($mediaIndex) }}]" value="1">
+                <span>Destacar archivo nuevo dentro de galería</span>
+              </label>
+            </div>
+          </div>
+          {% endforeach; %}
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>SEO</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group admin-form-grid__full" data-field="seo_title">
+            <input type="text" id="project-seo-title" name="seo_title" class="form-control" value="{{{ ($seoTitle) }}}"
+              placeholder=" " maxlength="255" data-label="seo title">
+            <label class="form-label" for="project-seo-title">SEO title</label>
+            <span class="form-group__error" data-field-error data-error-for="seo_title"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="seo_description">
+            <textarea id="project-seo-description" name="seo_description" class="form-control" placeholder=" "
+              maxlength="700" data-label="seo descripción">{{{ ($seoDescription) }}}</textarea>
+            <label class="form-label" for="project-seo-description">SEO description</label>
+            <span class="form-group__error" data-field-error data-error-for="seo_description"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="admin-form-actions">
+        <button type="submit" class="admin-button admin-button--primary">
+          {{{ ($submitText) }}}
+        </button>
+
+        <a href="@url/admin/proyectos" class="admin-button admin-button--secondary">
+          Cancelar
+        </a>
+
+        {% if ($isEdit): %}
+        <a href="@url/admin/proyectos/{{ ($id) }}/eliminar" class="admin-button admin-button--danger"
+          onclick="return confirm('¿Eliminar definitivamente este proyecto? También se borrarán sus archivos del servidor.');">
+          Eliminar proyecto
+        </a>
+        {% endif; %}
+      </div>
+    </form>
+  </article>
+</section>

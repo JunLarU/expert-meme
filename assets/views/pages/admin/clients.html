@@ -1,0 +1,158 @@
+{%
+$clients = $clients ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$active = (int) ($stats['active'] ?? 0);
+$featured = (int) ($stats['featured'] ?? 0);
+$inactive = (int) ($stats['inactive'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-clients-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Contenido principal</p>
+            <h2 id="admin-clients-title">Clientes</h2>
+            <span>
+                Administra los logos que alimentan la sección de clientes del home.
+                Al cambiar o eliminar un logo también se limpia el archivo anterior del almacenamiento.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+            <a href="@url/admin/clientes/crear" class="admin-button admin-button--primary">Nuevo cliente</a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de clientes">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Total</span>
+                <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+                <small>Clientes registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Activos</span>
+                <strong data-admin-count data-value="{{ ($active) }}">0</strong>
+                <small>Visibles en home</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Destacados</span>
+                <strong data-admin-count data-value="{{ ($featured) }}">0</strong>
+                <small>Clientes prioritarios</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">★</span>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Inactivos</span>
+                <strong data-admin-count data-value="{{ ($inactive) }}">0</strong>
+                <small>No se muestran en home</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">—</span>
+        </article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header">
+            <div>
+                <p>Logos</p>
+                <h3>Listado de clientes</h3>
+            </div>
+
+            <a href="@url/admin/clientes/crear" class="admin-panel__link">
+                Crear cliente <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Industria</th>
+                        <th>Estado</th>
+                        <th>Destacado</th>
+                        <th>Orden</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% foreach ($clients as $client): %}
+                    {%
+                    $id = (int) ($client['id'] ?? 0);
+                    $name = $client['name'] ?? 'Cliente sin nombre';
+                    $slug = $client['slug'] ?? '';
+                    $industry = $client['industry'] ?? '—';
+                    $url = $client['url'] ?? '';
+                    $logoUrl = $client['logo_url'] ?? '';
+                    $initials = $client['initials'] ?? 'C';
+                    $sortOrder = $client['sort_order'] ?? 0;
+                    $isActive = (int) ($client['is_active'] ?? 0) === 1;
+                    $isFeatured = (int) ($client['is_featured'] ?? 0) === 1;
+                    %}
+
+                    <tr>
+                        <td>
+                            <strong>{{{ ($name) }}}</strong>
+                            <small>{{{ ($slug) }}}</small>
+                            {% if (!empty($logoUrl)): %}
+                            <small>{{{ ($logoUrl) }}}</small>
+                            {% else: %}
+                            <small>Sin logo · {{{ ($initials) }}}</small>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($industry) }}}</td>
+                        <td>
+                            {% if ($isActive): %}
+                            <span class="admin-badge admin-badge--success">Activo</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Inactivo</span>
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($isFeatured): %}
+                            <span class="admin-badge admin-badge--neutral">Destacado</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Normal</span>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($sortOrder) }}}</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <a href="@url/admin/clientes/{{ ($id) }}/editar"
+                                    class="admin-button admin-button--xs admin-button--secondary">Editar</a>
+                                <a href="@url/admin/clientes/{{ ($id) }}/eliminar"
+                                    class="admin-button admin-button--xs admin-button--danger"
+                                    onclick="return confirm('¿Eliminar este cliente? También se borrará su logo del servidor.');">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endforeach; %}
+
+                    {% if (empty($clients)): %}
+                    <tr>
+                        <td colspan="6">
+                            <strong>No hay clientes registrados todavía.</strong>
+                            <small>Crea tu primer cliente para alimentar la sección del home.</small>
+                        </td>
+                    </tr>
+                    {% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

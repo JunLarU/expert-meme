@@ -1,0 +1,355 @@
+{%
+$mode = $mode ?? 'create';
+$slide = $slide ?? [];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($slide['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/jumbotron/' . $id . '/actualizar'
+: '/admin/jumbotron';
+
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear slide';
+$pageTitle = $isEdit ? 'Editar slide' : 'Nuevo slide';
+
+$title = $slide['title'] ?? '';
+$eyebrow = $slide['eyebrow'] ?? '';
+$subtitle = $slide['subtitle'] ?? '';
+$body = $slide['body'] ?? '';
+
+$status = $slide['status'] ?? 'draft';
+$sortOrder = $slide['sort_order'] ?? 0;
+$slug = $slide['slug'] ?? '';
+
+$backgroundUrl = $slide['background_url'] ?? '';
+$backgroundMobileUrl = $slide['background_mobile_url'] ?? '';
+$backgroundAlt = $slide['background_alt'] ?? '';
+
+$videoUrl = $slide['video_url'] ?? '';
+$videoMobileUrl = $slide['video_mobile_url'] ?? '';
+$videoPosterUrl = $slide['video_poster_url'] ?? '';
+
+$hasMedia = !empty($backgroundUrl) || !empty($backgroundMobileUrl) || !empty($videoUrl) || !empty($videoMobileUrl);
+$mediaChoice = $hasMedia ? 'media' : 'none';
+
+$buttonLabel = $slide['button_label'] ?? '';
+$buttonUrl = $slide['button_url'] ?? '';
+$buttonTarget = $slide['button_target'] ?? '_self';
+$buttonTargetChoice = $buttonTarget === '_blank' ? 'new' : 'same';
+
+$startsAt = '';
+if (!empty($slide['starts_at'])) {
+$startsAt = date('Y-m-d\TH:i', strtotime($slide['starts_at']));
+}
+
+$endsAt = '';
+if (!empty($slide['ends_at'])) {
+$endsAt = date('Y-m-d\TH:i', strtotime($slide['ends_at']));
+}
+%}
+
+<section class="admin-dashboard admin-jumbotron-page" aria-labelledby="admin-jumbotron-form-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Jumbotron</p>
+            <h2 id="admin-jumbotron-form-title">{{{ ($pageTitle) }}}</h2>
+            <span>
+                Edita el contenido visible del slide. Los estilos del sitio se aplican automáticamente.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/jumbotron" class="admin-button admin-button--secondary">
+                Volver
+            </a>
+        </div>
+    </header>
+
+    <article class="admin-panel admin-jumbotron-form-panel">
+        <header class="admin-panel__header">
+            <div>
+                <p>Formulario</p>
+                <h3>{{{ ($pageTitle) }}}</h3>
+            </div>
+        </header>
+
+        <form class="form form--default admin-jumbotron-form" action="@url{{{ ($formAction) }}}" method="post"
+            enctype="multipart/form-data" data-ajax-form data-validation="html" data-send-as="formdata" data-csrf="true"
+            data-csrf-field="_token" data-reset-on-success="false" data-loading-text="{{{ ($loadingText) }}}"
+            novalidate>
+            @csrf
+
+            <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+            <input type="hidden" name="page" value="home">
+            <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+            <input type="hidden" name="sort_order" value="{{{ ($sortOrder) }}}">
+            <input type="hidden" name="background_url" value="{{{ ($backgroundUrl) }}}">
+            <input type="hidden" name="background_mobile_url" value="{{{ ($backgroundMobileUrl) }}}">
+            <input type="hidden" name="video_url" value="{{{ ($videoUrl) }}}">
+            <input type="hidden" name="video_mobile_url" value="{{{ ($videoMobileUrl) }}}">
+            <input type="hidden" name="video_poster_url" value="{{{ ($videoPosterUrl) }}}">
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Contenido del slide</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group admin-form-grid__full" data-field="title">
+                        <input type="text" id="jumbotron-title" name="title" class="form-control"
+                            value="{{{ ($title) }}}" placeholder=" " required maxlength="255" data-label="título">
+                        <label class="form-label" for="jumbotron-title">Título</label>
+                        <span class="form-group__error" data-field-error data-error-for="title"></span>
+                    </div>
+
+                    <div class="form-group" data-field="eyebrow">
+                        <input type="text" id="jumbotron-eyebrow" name="eyebrow" class="form-control"
+                            value="{{{ ($eyebrow) }}}" placeholder=" " maxlength="180" data-label="texto superior">
+                        <label class="form-label" for="jumbotron-eyebrow">Texto superior</label>
+                        <span class="form-group__error" data-field-error data-error-for="eyebrow"></span>
+                    </div>
+
+                    <div class="form-group form-group--select" data-field="status">
+                        <select id="jumbotron-status" name="status" class="form-control" required data-label="estado">
+                            {% if ($status === 'draft'): %}
+                            <option value="draft" selected>Borrador</option>
+                            {% else: %}
+                            <option value="draft">Borrador</option>
+                            {% endif; %}
+
+                            {% if ($status === 'published'): %}
+                            <option value="published" selected>Publicado</option>
+                            {% else: %}
+                            <option value="published">Publicado</option>
+                            {% endif; %}
+
+                            {% if ($status === 'hidden'): %}
+                            <option value="hidden" selected>Oculto</option>
+                            {% else: %}
+                            <option value="hidden">Oculto</option>
+                            {% endif; %}
+                        </select>
+                        <label class="form-label" for="jumbotron-status">Estado</label>
+                        <span class="form-group__error" data-field-error data-error-for="status"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="subtitle">
+                        <textarea id="jumbotron-subtitle" name="subtitle" class="form-control" placeholder=" "
+                            maxlength="600" data-label="subtítulo">{{{ ($subtitle) }}}</textarea>
+                        <label class="form-label" for="jumbotron-subtitle">Subtítulo</label>
+                        <span class="form-group__error" data-field-error data-error-for="subtitle"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="body">
+                        <textarea id="jumbotron-body" name="body" class="form-control" placeholder=" " maxlength="1200"
+                            data-label="descripción">{{{ ($body) }}}</textarea>
+                        <label class="form-label" for="jumbotron-body">Descripción adicional</label>
+                        <span class="form-group__error" data-field-error data-error-for="body"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Archivo de fondo</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--select admin-form-grid__full" data-field="media_choice">
+                        <select id="jumbotron-media-choice" name="media_choice" class="form-control"
+                            data-label="archivo de fondo">
+                            {% if ($mediaChoice === 'media'): %}
+                            <option value="media" selected>Usar foto o video de fondo</option>
+                            {% else: %}
+                            <option value="media">Usar foto o video de fondo</option>
+                            {% endif; %}
+
+                            {% if ($mediaChoice === 'none'): %}
+                            <option value="none" selected>Sin foto ni video de fondo</option>
+                            {% else: %}
+                            <option value="none">Sin foto ni video de fondo</option>
+                            {% endif; %}
+                        </select>
+
+                        <label class="form-label" for="jumbotron-media-choice">Fondo del slide</label>
+                        <span class="form-group__error" data-field-error data-error-for="media_choice"></span>
+                    </div>
+
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="desktop_media_file">
+                        <label class="form-label" for="jumbotron-desktop-media-file">
+                            Archivo principal para desktop
+                        </label>
+
+                        <input type="file" name="desktop_media_file" id="jumbotron-desktop-media-file"
+                            class="form-control"
+                            accept=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                            data-min-files="0" data-max-files="1" data-max-file-size="35mb" data-max-total-size="35mb"
+                            data-file-types=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                            data-message-file-size="El archivo debe pesar máximo 35 MB."
+                            data-message-file-total-size="El archivo debe pesar máximo 35 MB."
+                            data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG, WEBP o videos MP4/WEBM."
+                            aria-describedby="error-jumbotron-desktop-media-file">
+
+                        {% if ($isEdit && !empty($backgroundUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($backgroundUrl) }}}"
+                            target="_blank" rel="noopener noreferrer">
+                            Ver foto actual de desktop
+                        </a>
+                        {% endif; %}
+
+                        {% if ($isEdit && !empty($videoUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($videoUrl) }}}"
+                            target="_blank" rel="noopener noreferrer">
+                            Ver video actual de desktop
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__error" id="error-jumbotron-desktop-media-file" data-field-error
+                            data-error-for="desktop_media_file" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="mobile_media_file">
+                        <label class="form-label" for="jumbotron-mobile-media-file">
+                            Archivo para móvil
+                        </label>
+
+                        <input type="file" name="mobile_media_file" id="jumbotron-mobile-media-file"
+                            class="form-control"
+                            accept=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                            data-min-files="0" data-max-files="1" data-max-file-size="35mb" data-max-total-size="35mb"
+                            data-file-types=".png,.jpg,.jpeg,.webp,.mp4,.webm,image/png,image/jpeg,image/webp,video/mp4,video/webm"
+                            data-message-file-size="El archivo móvil debe pesar máximo 35 MB."
+                            data-message-file-total-size="El archivo móvil debe pesar máximo 35 MB."
+                            data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG, WEBP o videos MP4/WEBM."
+                            aria-describedby="error-jumbotron-mobile-media-file">
+
+                        {% if ($isEdit && !empty($backgroundMobileUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($backgroundMobileUrl) }}}"
+                            target="_blank" rel="noopener noreferrer">
+                            Ver foto actual para móvil
+                        </a>
+                        {% endif; %}
+
+                        {% if ($isEdit && !empty($videoMobileUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($videoMobileUrl) }}}"
+                            target="_blank" rel="noopener noreferrer">
+                            Ver video actual para móvil
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__error" id="error-jumbotron-mobile-media-file" data-field-error
+                            data-error-for="mobile_media_file" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="video_poster_file">
+                        <label class="form-label" for="jumbotron-video-poster-file">
+                            Miniatura para video
+                        </label>
+
+                        <input type="file" name="video_poster_file" id="jumbotron-video-poster-file"
+                            class="form-control" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                            data-min-files="0" data-max-files="1" data-max-file-size="4mb" data-max-total-size="4mb"
+                            data-file-types=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+                            data-message-file-size="La miniatura debe pesar máximo 4 MB."
+                            data-message-file-total-size="La miniatura debe pesar máximo 4 MB."
+                            data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP."
+                            aria-describedby="error-jumbotron-video-poster-file">
+
+                        {% if ($isEdit && !empty($videoPosterUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($videoPosterUrl) }}}"
+                            target="_blank" rel="noopener noreferrer">
+                            Ver miniatura actual
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__error" id="error-jumbotron-video-poster-file" data-field-error
+                            data-error-for="video_poster_file" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="background_alt">
+                        <input type="text" id="jumbotron-background-alt" name="background_alt" class="form-control"
+                            value="{{{ ($backgroundAlt) }}}" placeholder=" " maxlength="255"
+                            data-label="descripción del archivo">
+
+                        <label class="form-label" for="jumbotron-background-alt">Descripción del archivo</label>
+                        <span class="form-group__error" data-field-error data-error-for="background_alt"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Botón del slide</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group" data-field="button_label">
+                        <input type="text" id="jumbotron-button-label" name="button_label" class="form-control"
+                            value="{{{ ($buttonLabel) }}}" placeholder=" " maxlength="180" data-label="texto del botón">
+                        <label class="form-label" for="jumbotron-button-label">Texto del botón</label>
+                        <span class="form-group__error" data-field-error data-error-for="button_label"></span>
+                    </div>
+
+                    <div class="form-group" data-field="button_url">
+                        <input type="text" id="jumbotron-button-url" name="button_url" class="form-control"
+                            value="{{{ ($buttonUrl) }}}" placeholder=" " maxlength="1000" data-label="enlace del botón">
+                        <label class="form-label" for="jumbotron-button-url">Enlace del botón</label>
+                        <span class="form-group__error" data-field-error data-error-for="button_url"></span>
+                    </div>
+
+                    <div class="form-group form-group--select" data-field="button_target_choice">
+                        <select id="jumbotron-button-target-choice" name="button_target_choice" class="form-control"
+                            data-label="cómo abrir el enlace">
+                            {% if ($buttonTargetChoice === 'same'): %}
+                            <option value="same" selected>Abrir en la misma pestaña</option>
+                            {% else: %}
+                            <option value="same">Abrir en la misma pestaña</option>
+                            {% endif; %}
+
+                            {% if ($buttonTargetChoice === 'new'): %}
+                            <option value="new" selected>Abrir en una nueva pestaña</option>
+                            {% else: %}
+                            <option value="new">Abrir en una nueva pestaña</option>
+                            {% endif; %}
+                        </select>
+                        <label class="form-label" for="jumbotron-button-target-choice">Comportamiento del enlace</label>
+                        <span class="form-group__error" data-field-error data-error-for="button_target_choice"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Programación</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group" data-field="starts_at">
+                        <input type="datetime-local" id="jumbotron-starts-at" name="starts_at" class="form-control"
+                            value="{{{ ($startsAt) }}}" placeholder=" " data-label="fecha de inicio">
+                        <label class="form-label" for="jumbotron-starts-at">Mostrar desde</label>
+                        <span class="form-group__error" data-field-error data-error-for="starts_at"></span>
+                    </div>
+
+                    <div class="form-group" data-field="ends_at">
+                        <input type="datetime-local" id="jumbotron-ends-at" name="ends_at" class="form-control"
+                            value="{{{ ($endsAt) }}}" placeholder=" " data-label="fecha de expiración">
+                        <label class="form-label" for="jumbotron-ends-at">Mostrar hasta</label>
+                        <span class="form-group__error" data-field-error data-error-for="ends_at"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="admin-jumbotron-form__actions">
+                <button type="submit" class="admin-button admin-button--primary button__submit">
+                    <span class="button__submit__text">{{{ ($submitText) }}}</span>
+                </button>
+
+                <a href="@url/admin/jumbotron" class="admin-button admin-button--secondary">
+                    Cancelar
+                </a>
+
+                {% if ($isEdit): %}
+                <a href="@url/admin/jumbotron/{{ ($id) }}/eliminar" class="admin-button admin-button--danger"
+                    onclick="return confirm('¿Eliminar definitivamente este slide?');">
+                    Eliminar slide
+                </a>
+                {% endif; %}
+            </div>
+        </form>
+    </article>
+</section>

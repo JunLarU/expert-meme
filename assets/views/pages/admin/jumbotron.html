@@ -1,0 +1,188 @@
+{%
+$slides = $slides ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$published = (int) ($stats['published'] ?? 0);
+$draft = (int) ($stats['draft'] ?? 0);
+$expired = (int) ($stats['expired'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-jumbotron-page" aria-labelledby="admin-jumbotron-title">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Contenido principal</p>
+      <h2 id="admin-jumbotron-title">Jumbotron</h2>
+      <span>
+        Administra los slides del jumbotron principal. Puedes publicar, ocultar,
+        programar inicio y definir fecha de expiración. Si no hay expiración,
+        el slide permanece hasta que lo elimines.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin" class="admin-button admin-button--secondary">
+        Dashboard
+      </a>
+
+      <a href="@url/admin/jumbotron/crear" class="admin-button admin-button--primary">
+        Nuevo slide
+      </a>
+    </div>
+  </header>
+
+  <section class="admin-stats" aria-label="Resumen de jumbotron">
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Total</span>
+        <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+        <small>Slides registrados</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">▣</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Publicados</span>
+        <strong data-admin-count data-value="{{ ($published) }}">0</strong>
+        <small>Visibles actualmente</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Borradores</span>
+        <strong data-admin-count data-value="{{ ($draft) }}">0</strong>
+        <small>Pendientes de publicar</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">✎</span>
+    </article>
+
+    <article class="admin-stat-card admin-stat-card--alert">
+      <div class="admin-stat-card__content">
+        <span>Expirados</span>
+        <strong data-admin-count data-value="{{ ($expired) }}">0</strong>
+        <small>Ya no aparecen en home</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⌛</span>
+    </article>
+  </section>
+
+  <article class="admin-panel admin-panel--wide">
+    <header class="admin-panel__header">
+      <div>
+        <p>Slides</p>
+        <h3>Listado del jumbotron</h3>
+      </div>
+
+      <a href="@url/admin/jumbotron/crear" class="admin-panel__link">
+        Crear slide <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" data-admin-filterable>
+        <thead>
+          <tr>
+            <th>Slide</th>
+            <th>Estado</th>
+            <th>Orden</th>
+            <th>Fondo</th>
+            <th>Inicio</th>
+            <th>Expira</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% foreach ($slides as $slide): %}
+          {%
+          $id = (int) ($slide['id'] ?? 0);
+          $title = $slide['title'] ?? 'Slide sin título';
+          $eyebrow = $slide['eyebrow'] ?? '';
+          $status = $slide['status'] ?? 'draft';
+          $sortOrder = $slide['sort_order'] ?? 0;
+          $backgroundType = $slide['background_type'] ?? 'none';
+          $startsAt = $slide['starts_at'] ?? '';
+          $endsAt = $slide['ends_at'] ?? '';
+
+          $isExpired = !empty($endsAt) && time() >= strtotime($endsAt);
+
+          $statusLabel = match ($status) {
+          'published' => $isExpired ? 'Expirado' : 'Publicado',
+          'hidden' => 'Oculto',
+          default => 'Borrador',
+          };
+
+          $statusClass = match ($status) {
+          'published' => $isExpired ? 'admin-badge--warning' : 'admin-badge--success',
+          'hidden' => 'admin-badge--muted',
+          default => 'admin-badge--warning',
+          };
+          %}
+
+          <tr>
+            <td>
+              <strong>{{{ ($title) }}}</strong>
+              <small>{{{ ($eyebrow) }}}</small>
+            </td>
+
+            <td>
+              <span class="admin-badge {{ ($statusClass) }}">
+                {{{ ($statusLabel) }}}
+              </span>
+            </td>
+
+            <td>{{{ ($sortOrder) }}}</td>
+
+            <td>
+              <span class="admin-badge admin-badge--neutral">
+                {{{ ($backgroundType) }}}
+              </span>
+            </td>
+
+            <td>
+              {% if (!empty($startsAt)): %}
+              {{{ ($startsAt) }}}
+              {% else: %}
+              <span class="admin-badge admin-badge--muted">Inmediato</span>
+              {% endif; %}
+            </td>
+
+            <td>
+              {% if (!empty($endsAt)): %}
+              {{{ ($endsAt) }}}
+              {% else: %}
+              <span class="admin-badge admin-badge--muted">No expira</span>
+              {% endif; %}
+            </td>
+
+            <td>
+              <div class="admin-jumbotron-actions">
+                <a href="@url/admin/jumbotron/{{ ($id) }}/editar" class="admin-button admin-button--secondary">
+                  Editar
+                </a>
+
+                <a href="@url/admin/jumbotron/{{ ($id) }}/eliminar" class="admin-button admin-button--danger"
+                  onclick="return confirm('¿Eliminar definitivamente este slide?');">
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endforeach; %}
+
+          {% if (empty($slides)): %}
+          <tr>
+            <td colspan="7">
+              <strong>No hay slides registrados.</strong>
+              <small>Crea el primer slide del jumbotron principal.</small>
+            </td>
+          </tr>
+          {% endif; %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
