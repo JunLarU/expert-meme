@@ -1,0 +1,200 @@
+{%
+$token = $token ?? [];
+$abilityPresets = $abilityPresets ?? [];
+
+$tokenId = $token['id'] ?? 0;
+$tokenName = $token['name'] ?? 'API Token';
+$expiresAtInput = $token['expires_at_input'] ?? '';
+$abilities = $token['abilities_array'] ?? [];
+$customAbilities = $token['custom_abilities'] ?? '';
+$expiresMin = date('Y-m-d\TH:i');
+%}
+
+<section class="admin-api-page" aria-labelledby="api-token-edit-title" data-admin-api-tokens>
+  <header class="admin-dashboard__hero admin-api-page__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Edición</p>
+      <h2 id="api-token-edit-title">Editar token</h2>
+      <span>
+        Puedes cambiar nombre, permisos y expiración.
+        El valor secreto del token no puede verse ni editarse de nuevo.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin/api-tokens/{{ ($tokenId) }}" class="admin-button admin-button--secondary">Ver detalle</a>
+      <a href="@url/admin/api-tokens" class="admin-button admin-button--secondary">Volver</a>
+    </div>
+  </header>
+
+  <article class="admin-panel admin-api-edit-panel">
+    <header class="admin-panel__header">
+      <div>
+        <p>Token</p>
+        <h3>{{{ ($tokenName) }}}</h3>
+      </div>
+    </header>
+
+    <form
+      class="form form--default admin-api-form"
+      method="post"
+      action="@url/admin/api-tokens/{{ ($tokenId) }}/actualizar"
+      data-ajax-form
+      data-form-handler="ajax"
+      data-validation="apiTokenUpdate"
+      data-send-as="urlencoded"
+      data-csrf="true"
+      data-csrf-field="_token"
+      data-reset-on-success="false"
+      data-character-counter="true"
+      data-loading-text="Guardando cambios..."
+      data-success-message="Token actualizado correctamente."
+      data-error-message="No se pudo actualizar el token."
+      novalidate
+      aria-labelledby="edit-token-legend"
+    >
+      @csrf('admin-api-token-edit')
+
+      <fieldset class="form__fieldset">
+        <legend id="edit-token-legend">Datos editables</legend>
+
+        <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+        <div class="form-group has-character-counter" data-field="name">
+          <input
+            name="name"
+            id="api-token-edit-name"
+            type="text"
+            class="form-control"
+            placeholder=" "
+            value="{{{ ($tokenName) }}}"
+            required
+            minlength="3"
+            maxlength="120"
+            autocomplete="off"
+            data-label="nombre del token"
+            data-normalize="spaces"
+            data-no-links="true"
+            data-no-emails="true"
+            data-character-counter="true"
+            aria-describedby="error-api-token-edit-name api-token-edit-name-counter"
+          >
+
+          <label class="form-label" for="api-token-edit-name">Nombre del token</label>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-api-token-edit-name"
+            data-field-error
+            data-error-for="name"
+            aria-live="polite"
+          ></span>
+
+          <span
+            class="form-group__counter"
+            id="api-token-edit-name-counter"
+            data-character-counter-for="name"
+            aria-live="polite"
+          ></span>
+        </div>
+
+        <div class="form-group" data-field="expires_at">
+          <input
+            name="expires_at"
+            id="api-token-edit-expires-at"
+            type="datetime-local"
+            class="form-control"
+            placeholder=" "
+            value="{{{ ($expiresAtInput) }}}"
+            min="{{{ ($expiresMin) }}}"
+            data-label="fecha de expiración"
+            aria-describedby="error-api-token-edit-expires-at"
+          >
+
+          <label class="form-label" for="api-token-edit-expires-at">Expira en</label>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-api-token-edit-expires-at"
+            data-field-error
+            data-error-for="expires_at"
+            aria-live="polite"
+          ></span>
+        </div>
+
+        <div class="admin-api-permissions" data-field="abilities" data-field-group="abilities">
+          <div class="admin-api-permissions__heading">
+            <h4>Permisos</h4>
+            <p>Marca los permisos que tendrá este token a partir de la actualización.</p>
+          </div>
+
+          <div class="admin-api-permissions__grid">
+            {% foreach ($abilityPresets as $ability => $label): %}
+            <label class="admin-api-check">
+              {% if (in_array($ability, $abilities, true)): %}
+              <input type="checkbox" name="abilities[]" value="{{{ ($ability) }}}" checked>
+              {% else: %}
+              <input type="checkbox" name="abilities[]" value="{{{ ($ability) }}}">
+              {% endif; %}
+
+              <span>
+                <strong>{{{ ($label) }}}</strong>
+                <small>{{{ ($ability) }}}</small>
+              </span>
+            </label>
+            {% endforeach; %}
+          </div>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-api-token-edit-abilities"
+            data-field-error
+            data-error-for="abilities"
+            aria-live="polite"
+          ></span>
+        </div>
+
+        <div
+          class="form-group form-group--textarea has-character-counter has-character-counter--textarea"
+          data-field="custom_abilities"
+        >
+          <textarea
+            name="custom_abilities"
+            id="api-token-edit-custom-abilities"
+            class="form-control"
+            placeholder=" "
+            maxlength="500"
+            data-label="permisos personalizados"
+            data-normalize="trim"
+            data-no-links="true"
+            data-character-counter="true"
+            aria-describedby="error-api-token-edit-custom-abilities api-token-edit-custom-abilities-counter"
+          >{{{ ($customAbilities) }}}</textarea>
+
+          <label class="form-label" for="api-token-edit-custom-abilities">
+            Permisos personalizados extra separados por coma
+          </label>
+
+          <span
+            class="form-group__error text-danger"
+            id="error-api-token-edit-custom-abilities"
+            data-field-error
+            data-error-for="custom_abilities"
+            aria-live="polite"
+          ></span>
+
+          <span
+            class="form-group__counter"
+            id="api-token-edit-custom-abilities-counter"
+            data-character-counter-for="custom_abilities"
+            aria-live="polite"
+          ></span>
+        </div>
+
+        <button type="submit" class="button__submit btn btn-primary admin-api-submit">
+          <span class="button__submit__text">Guardar cambios</span>
+        </button>
+      </fieldset>
+    </form>
+  </article>
+</section>

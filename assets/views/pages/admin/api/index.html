@@ -1,0 +1,313 @@
+{%
+$tokens = $tokens ?? [];
+$users = $users ?? [];
+$abilityPresets = $abilityPresets ?? [];
+$defaultAbilities = $defaultAbilities ?? ['projects:read'];
+$stats = $stats ?? [];
+$currentUser = $currentUser ?? auth();
+
+$totalTokens = (int) ($stats['total'] ?? 0);
+$activeTokens = (int) ($stats['active'] ?? 0);
+$revokedTokens = (int) ($stats['revoked'] ?? 0);
+$expiredTokens = (int) ($stats['expired'] ?? 0);
+$currentUserId = $currentUser ? ($currentUser->id ?? null) : null;
+$expiresMin = date('Y-m-d\TH:i');
+%}
+
+<section class="admin-api-page" aria-labelledby="admin-api-title" data-admin-api-tokens>
+  <header class="admin-dashboard__hero admin-api-page__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Seguridad y acceso externo</p>
+      <h2 id="admin-api-title">API y Tokens</h2>
+      <span>
+        Gestiona tokens Bearer para consumir las APIs del sitio.
+        El token completo se muestra una sola vez al crearlo.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="#crear-token" class="admin-button admin-button--primary">Nuevo token</a>
+    </div>
+  </header>
+
+  <section class="admin-stats admin-api-stats" aria-label="Resumen de tokens API">
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Total</span>
+        <strong data-admin-count data-value="{{ ($totalTokens) }}">0</strong>
+        <small>Tokens registrados</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⚿</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Activos</span>
+        <strong data-admin-count data-value="{{ ($activeTokens) }}">0</strong>
+        <small>Disponibles para autenticación</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+    </article>
+
+    <article class="admin-stat-card admin-stat-card--alert">
+      <div class="admin-stat-card__content">
+        <span>Expirados</span>
+        <strong data-admin-count data-value="{{ ($expiredTokens) }}">0</strong>
+        <small>Fuera de vigencia</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">!</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Revocados</span>
+        <strong data-admin-count data-value="{{ ($revokedTokens) }}">0</strong>
+        <small>Bloqueados manualmente</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">×</span>
+    </article>
+  </section>
+
+  <section class="admin-api-grid">
+    <article class="admin-panel admin-api-form-panel" id="crear-token">
+      <header class="admin-panel__header">
+        <div>
+          <p>Registro</p>
+          <h3>Crear token</h3>
+        </div>
+      </header>
+
+      <form
+        class="form form--default admin-api-form"
+        method="post"
+        action="@url/admin/api-tokens"
+        data-ajax-form
+        data-form-handler="ajax"
+        data-validation="apiTokenCreate"
+        data-send-as="urlencoded"
+        data-csrf="true"
+        data-csrf-field="_token"
+        data-reset-on-success="true"
+        data-character-counter="true"
+        data-loading-text="Creando token..."
+        data-success-message="Token creado correctamente."
+        data-error-message="No se pudo crear el token."
+        data-api-token-create-form
+        novalidate
+        aria-labelledby="create-token-legend"
+      >
+        @csrf('admin-api-token-create')
+
+        <fieldset class="form__fieldset">
+          <legend id="create-token-legend">Datos del token</legend>
+
+          <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+          <div class="admin-token-result" data-api-token-result hidden>
+            <div class="admin-token-result__header">
+              <span>Token creado</span>
+              <strong>Cópialo ahora. No se volverá a mostrar.</strong>
+            </div>
+
+            <code class="admin-token-result__code" data-api-token-plain></code>
+
+            <div class="admin-token-result__actions">
+              <button class="admin-token-copy" type="button" data-api-token-copy>
+                Copiar token
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group" data-field="tokenable_id">
+            <select
+              name="tokenable_id"
+              id="api-token-user"
+              class="form-control"
+              required
+              data-label="usuario propietario"
+              aria-describedby="error-api-token-user"
+            >
+              <option value="">Selecciona propietario</option>
+
+              {% foreach ($users as $user): %}
+              {%
+                $userId = $user['id'] ?? '';
+                $userName = $user['name'] ?? 'Usuario';
+                $userEmail = $user['email'] ?? '';
+              %}
+
+              {% if ((string) $userId === (string) $currentUserId): %}
+              <option value="{{{ ($userId) }}}" selected>
+                {{{ ($userName) }}}
+                {% if ($userEmail): %}
+                · {{{ ($userEmail) }}}
+                {% endif; %}
+              </option>
+              {% else: %}
+              <option value="{{{ ($userId) }}}">
+                {{{ ($userName) }}}
+                {% if ($userEmail): %}
+                · {{{ ($userEmail) }}}
+                {% endif; %}
+              </option>
+              {% endif; %}
+              {% endforeach; %}
+            </select>
+
+            <label class="form-label" for="api-token-user">Propietario</label>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-api-token-user"
+              data-field-error
+              data-error-for="tokenable_id"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <div class="form-group has-character-counter" data-field="name">
+            <input
+              name="name"
+              id="api-token-name"
+              type="text"
+              class="form-control"
+              placeholder=" "
+              required
+              minlength="3"
+              maxlength="120"
+              autocomplete="off"
+              data-label="nombre del token"
+              data-normalize="spaces"
+              data-no-links="true"
+              data-no-emails="true"
+              data-character-counter="true"
+              aria-describedby="error-api-token-name api-token-name-counter"
+            >
+
+            <label class="form-label" for="api-token-name">Nombre del token</label>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-api-token-name"
+              data-field-error
+              data-error-for="name"
+              aria-live="polite"
+            ></span>
+
+            <span
+              class="form-group__counter"
+              id="api-token-name-counter"
+              data-character-counter-for="name"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <div class="form-group" data-field="expires_at">
+            <input
+              name="expires_at"
+              id="api-token-expires-at"
+              type="datetime-local"
+              class="form-control"
+              placeholder=" "
+              min="{{{ ($expiresMin) }}}"
+              data-label="fecha de expiración"
+              aria-describedby="error-api-token-expires-at"
+            >
+
+            <label class="form-label" for="api-token-expires-at">Expira en</label>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-api-token-expires-at"
+              data-field-error
+              data-error-for="expires_at"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <div class="admin-api-permissions" data-field="abilities" data-field-group="abilities">
+            <div class="admin-api-permissions__heading">
+              <h4>Permisos</h4>
+              <p>
+                Selecciona solo lo necesario. Por seguridad, evita usar acceso total salvo que sea indispensable.
+              </p>
+            </div>
+
+            <div class="admin-api-permissions__grid">
+              {% foreach ($abilityPresets as $ability => $label): %}
+              {%
+                $isDefault = in_array($ability, $defaultAbilities, true);
+              %}
+
+              <label class="admin-api-check">
+                {% if ($isDefault): %}
+                <input type="checkbox" name="abilities[]" value="{{{ ($ability) }}}" checked>
+                {% else: %}
+                <input type="checkbox" name="abilities[]" value="{{{ ($ability) }}}">
+                {% endif; %}
+
+                <span>
+                  <strong>{{{ ($label) }}}</strong>
+                  <small>{{{ ($ability) }}}</small>
+                </span>
+              </label>
+              {% endforeach; %}
+            </div>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-api-token-abilities"
+              data-field-error
+              data-error-for="abilities"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <div
+            class="form-group form-group--textarea has-character-counter has-character-counter--textarea"
+            data-field="custom_abilities"
+          >
+            <textarea
+              name="custom_abilities"
+              id="api-token-custom-abilities"
+              class="form-control"
+              placeholder=" "
+              maxlength="500"
+              data-label="permisos personalizados"
+              data-normalize="trim"
+              data-no-links="true"
+              data-character-counter="true"
+              aria-describedby="error-api-token-custom-abilities api-token-custom-abilities-counter"
+            ></textarea>
+
+            <label class="form-label" for="api-token-custom-abilities">
+              Permisos personalizados extra separados por coma
+            </label>
+
+            <span
+              class="form-group__error text-danger"
+              id="error-api-token-custom-abilities"
+              data-field-error
+              data-error-for="custom_abilities"
+              aria-live="polite"
+            ></span>
+
+            <span
+              class="form-group__counter"
+              id="api-token-custom-abilities-counter"
+              data-character-counter-for="custom_abilities"
+              aria-live="polite"
+            ></span>
+          </div>
+
+          <button type="submit" class="button__submit btn btn-primary admin-api-submit">
+            <span class="button__submit__text">Crear token</span>
+          </button>
+        </fieldset>
+      </form>
+    </article>
+  </section>
+
+  <!-- Conserva aquí tu tabla/listado actual de tokens.
+       Solo asegúrate de que las acciones usen las formas de abajo. -->
+</section>

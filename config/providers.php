@@ -15,6 +15,7 @@ return [
         App\Providers\RuleServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\AppServiceProvider::class,
+        App\Providers\ApiAuthServiceProvider::class,
     ],
     'cli'=>[
         Whis\Providers\DatabaseDriverServiceProvider::class,

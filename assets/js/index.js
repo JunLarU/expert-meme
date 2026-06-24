@@ -32,7 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavbar();
   initFooter();
 
-  const projectEntrySlider = document.querySelector("[data-project-entry-slider]");
+  const projectEntrySlider = document.querySelector(
+    "[data-project-entry-slider]",
+  );
   const splideElement = document.querySelector(".splide");
 
   let splideOptions = {};
@@ -68,5 +70,17 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjectsMap();
 
   initLatestReveal();
-  
+
+  initAdminApiTokens();
+   try {
+    const response = await siteApi("/projects", {
+      query: {
+        limit: 6,
+      },
+    });
+
+    console.log(response.projects);
+  } catch (error) {
+    console.error(error.message, error.data);
+  }
 });

@@ -1,0 +1,492 @@
+// ==========================================================
+// Admin API Tokens - L+E Ingeniería
+// Complementa admin dashboard + forms.scss.
+// Requiere que forms.scss ya esté importado antes o en app.scss.
+// ==========================================================
+
+.admin-api-page {
+  width: min(100%, 140rem);
+  margin: 0 auto;
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+
+  .form,
+  .form--default {
+    max-width: none;
+    margin-top: 0;
+  }
+
+  .form__fieldset {
+    padding: 1.8rem;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    margin-top: 0;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .form-control {
+    background-color: #f6f7f9;
+    border-color: rgba($color-dark, 0.08);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus,
+  .form-control:focus {
+    border-color: rgba($color-logo-red, 0.45);
+    box-shadow: 0 0 0 0.35rem rgba($color-logo-red, 0.08);
+    background-color: $color-white;
+  }
+
+  .button__submit,
+  .btn.btn-primary {
+    max-width: none;
+    min-height: 4.8rem;
+    background-color: $color-logo-red;
+    color: $color-white;
+    font-family: $font-montserrat;
+    font-weight: 850;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    &:hover,
+    &:focus {
+      background-color: $color-dark;
+      color: $color-white;
+    }
+  }
+}
+
+.admin-api-page__hero {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: -10rem;
+    top: -10rem;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 50%;
+    background: rgba($color-logo-red, 0.06);
+    pointer-events: none;
+  }
+}
+
+.admin-api-stats {
+  .admin-stat-card:nth-child(2)::before {
+    background-color: #15803d;
+  }
+
+  .admin-stat-card:nth-child(3)::before {
+    background-color: #b66a00;
+  }
+
+  .admin-stat-card:nth-child(4)::before {
+    background-color: rgba($color-dark, 0.55);
+  }
+}
+
+.admin-api-grid {
+  display: grid;
+  gap: 1.8rem;
+  margin-bottom: 1.8rem;
+
+  @include desktop {
+    grid-template-columns: minmax(0, 1.25fr) minmax(32rem, 0.75fr);
+    align-items: start;
+  }
+}
+
+.admin-api-form-panel,
+.admin-api-edit-panel {
+  .admin-panel__header {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.admin-api-help-panel {
+  position: relative;
+
+  .admin-panel__header {
+    border-bottom: 0.1rem solid rgba($color-dark, 0.08);
+  }
+}
+
+.admin-api-help {
+  display: grid;
+  gap: 1.2rem;
+  padding: 1.8rem;
+
+  p {
+    margin: 0;
+    color: rgba($color-dark, 0.64);
+    font-size: 1.4rem;
+    line-height: 1.6;
+  }
+
+  pre {
+    margin: 0;
+    overflow-x: auto;
+    padding: 1.4rem;
+    border-radius: 1.2rem;
+    background-color: $color-dark;
+    color: $color-light;
+    font-size: 1.2rem;
+    line-height: 1.5;
+  }
+}
+
+.admin-token-result {
+  display: grid;
+  gap: 1rem;
+  padding: 1.4rem;
+  border: 0.1rem solid rgba(21, 128, 61, 0.22);
+  border-radius: 1.4rem;
+  background-color: rgba(21, 128, 61, 0.08);
+
+  &[hidden] {
+    display: none;
+  }
+
+  div {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  span {
+    color: #166534;
+    font-family: $font-montserrat;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  strong {
+    color: $color-dark;
+    font-size: 1.35rem;
+    font-weight: 850;
+  }
+
+  code {
+    display: block;
+    overflow-x: auto;
+    padding: 1.1rem 1.2rem;
+    border-radius: 1rem;
+    background-color: $color-white;
+    color: $color-dark;
+    border: 0.1rem solid rgba($color-dark, 0.08);
+    font-size: 1.22rem;
+    white-space: nowrap;
+  }
+}
+
+.admin-token-copy,
+.admin-api-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.8rem;
+  padding: 0.75rem 1rem;
+  border: 0;
+  border-radius: 999px;
+  background-color: rgba($color-logo-red, 0.1);
+  color: $color-logo-red;
+  font-family: $font-montserrat;
+  font-size: 1.15rem;
+  font-weight: 850;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+
+  &:hover,
+  &:focus {
+    background-color: $color-logo-red;
+    color: $color-white;
+    transform: translateY(-0.15rem);
+    outline: none;
+  }
+}
+
+.admin-token-copy {
+  width: max-content;
+  background-color: #166534;
+  color: $color-white;
+
+  &:hover,
+  &:focus {
+    background-color: $color-dark;
+  }
+}
+
+.admin-api-permissions {
+  display: grid;
+  gap: 1rem;
+  padding: 1.3rem;
+  border: 0.1rem solid rgba($color-dark, 0.08);
+  border-radius: 1.2rem;
+  background-color: #f8f8f8;
+
+  h4,
+  p {
+    margin: 0;
+  }
+
+  h4 {
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: 1.45rem;
+    font-weight: 850;
+  }
+
+  p {
+    color: rgba($color-dark, 0.58);
+    font-size: 1.25rem;
+    line-height: 1.45;
+  }
+
+  code {
+    color: $color-logo-red;
+    font-weight: 850;
+  }
+}
+
+.admin-api-permissions__grid {
+  display: grid;
+  gap: 0.8rem;
+
+  @include tablet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.admin-api-check {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.8rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 0.1rem solid rgba($color-dark, 0.08);
+  border-radius: 1rem;
+  background-color: $color-white;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+
+  &:hover,
+  &:focus-within {
+    border-color: rgba($color-logo-red, 0.28);
+    background-color: rgba($color-logo-red, 0.035);
+    transform: translateY(-0.1rem);
+  }
+
+  input {
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-top: 0.1rem;
+    accent-color: $color-logo-red;
+  }
+
+  span {
+    min-width: 0;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  strong {
+    color: $color-dark;
+    font-size: 1.24rem;
+    font-weight: 850;
+    line-height: 1.2;
+  }
+
+  small {
+    color: rgba($color-dark, 0.5);
+    font-size: 1.08rem;
+    font-weight: 800;
+    word-break: break-word;
+  }
+}
+
+.admin-api-table-panel {
+  margin-bottom: 2rem;
+}
+
+.admin-api-table {
+  td {
+    vertical-align: top;
+  }
+
+  td small {
+    word-break: break-word;
+  }
+}
+
+.admin-api-abilities {
+  display: -webkit-box;
+  max-width: 30rem;
+  overflow: hidden;
+  color: rgba($color-dark, 0.68);
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.35;
+}
+
+.admin-api-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+
+  form {
+    margin: 0;
+  }
+}
+
+.admin-api-action {
+  min-height: 3.2rem;
+  padding-inline: 0.85rem;
+  font-size: 1.08rem;
+
+  &--warning {
+    background-color: rgba(180, 83, 9, 0.1);
+    color: #92400e;
+
+    &:hover,
+    &:focus {
+      background-color: #92400e;
+      color: $color-white;
+    }
+  }
+
+  &--danger {
+    background-color: rgba($color-logo-red, 0.1);
+    color: $color-logo-red;
+
+    &:hover,
+    &:focus {
+      background-color: $color-logo-red;
+      color: $color-white;
+    }
+  }
+
+  &--block {
+    width: 100%;
+    min-height: 4.4rem;
+  }
+}
+
+.admin-api-detail-grid {
+  display: grid;
+  gap: 1.8rem;
+
+  @include desktop {
+    grid-template-columns: minmax(0, 1fr) minmax(32rem, 0.65fr);
+  }
+}
+
+.admin-api-details {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0.6rem 0;
+
+  div {
+    display: grid;
+    gap: 0.4rem;
+    padding: 1.35rem 1.8rem;
+    border-bottom: 0.1rem solid rgba($color-dark, 0.07);
+  }
+
+  dt {
+    color: rgba($color-dark, 0.54);
+    font-family: $font-montserrat;
+    font-size: 1.08rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    color: $color-dark;
+    font-size: 1.38rem;
+    font-weight: 800;
+    line-height: 1.35;
+
+    small {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgba($color-dark, 0.5);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+  }
+}
+
+.admin-api-ability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  padding: 1.8rem;
+
+  span {
+    display: inline-flex;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    background-color: rgba($color-logo-red, 0.09);
+    color: $color-logo-red;
+    font-size: 1.14rem;
+    font-weight: 850;
+  }
+}
+
+.admin-api-danger-zone {
+  display: grid;
+  gap: 1rem;
+  padding: 1.8rem;
+  border-top: 0.1rem solid rgba($color-dark, 0.08);
+
+  form {
+    margin: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-api-page {
+    .form__fieldset {
+      padding: 1.4rem;
+    }
+  }
+
+  .admin-token-copy {
+    width: 100%;
+  }
+
+  .admin-api-actions {
+    align-items: stretch;
+    flex-direction: column;
+
+    a,
+    form,
+    button {
+      width: 100%;
+    }
+  }
+}

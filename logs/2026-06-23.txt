@@ -1,0 +1,87 @@
+	2026-06-23 00:58:09: Error by 192.168.68.68
+Uncaught exception: 'Error' with message 'Class "App\Controllers\Admin\ApiTokenController" not found'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#2 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 72
+
+
+	2026-06-23 00:58:57: Error by 192.168.68.68
+Uncaught exception: 'Error' with message 'Class "App\Controllers\Admin\ApiTokenController" not found'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#2 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 72
+
+
+	2026-06-23 00:59:16: Error by 192.168.68.68
+Uncaught exception: 'Error' with message 'Class "App\Controllers\ApiTokenController" not found'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#2 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 72
+
+
+	2026-06-23 01:00:49: Error by 192.168.68.68
+Uncaught exception: 'Error' with message 'Call to a member function issue() on null'
+Stack trace: #0 [internal function]: App\Controllers\Api\ApiTokenController->store(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#4 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\app\Controllers\Api\ApiTokenController.php' on line 107
+
+
+	2026-06-23 16:57:52: Error by 192.168.68.59
+Uncaught exception: 'Error' with message 'Call to a member function issue() on null'
+Stack trace: #0 [internal function]: App\Controllers\Api\ApiTokenController->store(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#4 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\app\Controllers\Api\ApiTokenController.php' on line 107
+
+
+	2026-06-23 16:59:13: Error by 192.168.68.59
+Uncaught exception: 'Error' with message 'Call to a member function issue() on null'
+Stack trace: #0 [internal function]: App\Controllers\Api\ApiTokenController->store(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#4 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\app\Controllers\Api\ApiTokenController.php' on line 107
+
+
+	2026-06-23 23:13:04: PDOException by 192.168.100.98
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S22]: Column not found: 1054 Unknown column 'api_tokens.last_used_ip' in 'field list''
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Controllers\Api\ApiTokenController.php(387): Whis\Database\Drivers\PdoDriver->statement('SELECT\n        ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Api\ApiTokenController.php(38): App\Controllers\Api\ApiTokenController->tokenRows()
+#3 [internal function]: App\Controllers\Api\ApiTokenController->index()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+

@@ -1,0 +1,125 @@
+{%
+$token = $token ?? [];
+$abilityPresets = $abilityPresets ?? [];
+
+$tokenId = $token['id'] ?? 0;
+$tokenName = $token['name'] ?? 'API Token';
+$tokenPrefix = $token['token_prefix'] ?? '—';
+$owner = $token['user_label'] ?? 'Usuario';
+$ownerEmail = $token['user_email'] ?? '';
+$abilities = $token['abilities_array'] ?? [];
+$statusLabel = $token['status_label'] ?? 'Activo';
+$statusClass = $token['status_class'] ?? 'admin-badge--success';
+$createdAt = $token['created_at_label'] ?? '—';
+$updatedAt = $token['updated_at_label'] ?? '—';
+$expiresAt = $token['expires_at_label'] ?? 'Sin expiración';
+$lastUsedAt = $token['last_used_at_label'] ?? 'Nunca usado';
+$revokedAt = $token['revoked_at_label'] ?? 'No revocado';
+$isRevoked = ($token['status_key'] ?? '') === 'revoked';
+%}
+
+<section class="admin-api-page" aria-labelledby="api-token-detail-title" data-admin-api-tokens>
+  <header class="admin-dashboard__hero admin-api-page__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Detalle de acceso</p>
+      <h2 id="api-token-detail-title">{{{ ($tokenName) }}}</h2>
+      <span>
+        Consulta los metadatos del token. El valor completo no puede volver a mostrarse por seguridad.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin/api-tokens" class="admin-button admin-button--secondary">Volver</a>
+      <a href="@url/admin/api-tokens/{{ ($tokenId) }}/editar" class="admin-button admin-button--primary">Editar</a>
+    </div>
+  </header>
+
+  <section class="admin-api-detail-grid">
+    <article class="admin-panel admin-api-detail-card">
+      <header class="admin-panel__header">
+        <div>
+          <p>Token</p>
+          <h3>Información principal</h3>
+        </div>
+        <span class="admin-badge {{ ($statusClass) }}">{{{ ($statusLabel) }}}</span>
+      </header>
+
+      <dl class="admin-api-details">
+        <div>
+          <dt>Prefijo visible</dt>
+          <dd><code>{{{ ($tokenPrefix) }}}••••••</code></dd>
+        </div>
+        <div>
+          <dt>Propietario</dt>
+          <dd>
+            {{{ ($owner) }}}
+            {% if ($ownerEmail): %}
+            <small>{{{ ($ownerEmail) }}}</small>
+            {% endif; %}
+          </dd>
+        </div>
+        <div>
+          <dt>Creado</dt>
+          <dd>{{{ ($createdAt) }}}</dd>
+        </div>
+        <div>
+          <dt>Actualizado</dt>
+          <dd>{{{ ($updatedAt) }}}</dd>
+        </div>
+        <div>
+          <dt>Último uso</dt>
+          <dd>{{{ ($lastUsedAt) }}}</dd>
+        </div>
+        <div>
+          <dt>Expiración</dt>
+          <dd>{{{ ($expiresAt) }}}</dd>
+        </div>
+        <div>
+          <dt>Revocación</dt>
+          <dd>{{{ ($revokedAt) }}}</dd>
+        </div>
+      </dl>
+    </article>
+
+    <article class="admin-panel admin-api-detail-card">
+      <header class="admin-panel__header">
+        <div>
+          <p>Permisos</p>
+          <h3>Abilities</h3>
+        </div>
+      </header>
+
+      <div class="admin-api-ability-list">
+        {% foreach ($abilities as $ability): %}
+        <span>{{{ ($ability) }}}</span>
+        {% endforeach; %}
+
+        {% if (empty($abilities)): %}
+        <span>Sin permisos registrados</span>
+        {% endif; %}
+      </div>
+
+      <div class="admin-api-danger-zone">
+        {% if (!$isRevoked): %}
+        <form method="post" action="@url/admin/api-tokens/{{ ($tokenId) }}/revocar" data-ajax-form
+          data-validation="none" data-send-as="urlencoded" data-csrf="true" data-csrf-field="_token"
+          data-reset-on-success="false"
+          data-api-token-confirm="¿Revocar este token? Esta acción bloqueará su uso inmediatamente.">
+          @csrf('admin-api-token-revoke')
+          <button type="submit" class="admin-button admin-button--secondary">Revocar token</button>
+        </form>
+        {% endif; %}
+
+        <form method="post" action="@url/admin/api-tokens/{{ ($tokenId) }}/eliminar" data-ajax-form
+          data-validation="none" data-send-as="urlencoded" data-csrf="true" data-csrf-field="_token"
+          data-reset-on-success="false"
+          data-api-token-confirm="¿Eliminar definitivamente este token? Esta acción no se puede deshacer.">
+          @csrf('admin-api-token-delete')
+          <button type="submit" class="admin-api-action admin-api-action--danger admin-api-action--block">
+            Eliminar definitivamente
+          </button>
+        </form>
+      </div>
+    </article>
+  </section>
+</section>

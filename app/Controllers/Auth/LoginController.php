@@ -64,7 +64,7 @@ class LoginController extends Controller
             return Response::json([
                 'ok'       => true,
                 'message'  => 'Sesión iniciada correctamente.',
-                'redirect' => '/',
+                'redirect' => '/admin',
             ]);
         }
 

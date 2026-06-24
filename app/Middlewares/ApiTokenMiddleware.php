@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Middlewares;
 
 use Closure;
@@ -13,9 +12,10 @@ class ApiTokenMiddleware implements Middleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $context = app(ApiTokenGuard::class)->authenticate($request);
+        $guard = app(ApiTokenGuard::class);
+        $context = $guard->authenticate($request);
 
-        if (!$context) {
+        if (! $context) {
             return Response::json([
                 'ok'      => false,
                 'message' => 'Token de API ausente, inválido, expirado o revocado.',
@@ -26,10 +26,20 @@ class ApiTokenMiddleware implements Middleware
 
         Auth::setApiContext($context);
 
+        // Opcional: rate limiting por token (ejemplo con Redis o almacenamiento en sesión)
+        // $this->applyRateLimit($context->token);
+
         try {
             return $next($request);
         } finally {
             Auth::forgetApiContext();
         }
+    }
+
+    private function applyRateLimit(array $token): void
+    {
+        // Ejemplo simple: limitar a 100 peticiones por minuto por token
+        // Implementación con un almacén de caché (Redis, o incluso sesión)
+        // Aquí puedes usar un servicio de rate limit propio.
     }
 }

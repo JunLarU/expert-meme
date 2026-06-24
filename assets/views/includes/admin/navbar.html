@@ -1,0 +1,129 @@
+{%
+$adminUser = $user ?? auth();
+
+$adminName = 'Administrador';
+$adminRole = 'admin';
+
+if ($adminUser) {
+$adminName = $adminUser->name ?? 'Administrador';
+$adminRole = $adminUser->role ?? 'admin';
+}
+%}
+
+<aside class="admin-sidebar" data-admin-sidebar aria-label="Navegación administrativa">
+    <div class="admin-sidebar__brand">
+        <a href="@url/admin" class="admin-sidebar__logo" aria-label="Ir al dashboard administrativo">
+            <span class="admin-sidebar__logo-mark">L+E</span>
+
+            <span class="admin-sidebar__logo-text">
+                <strong>Admin</strong>
+                <small>Panel interno</small>
+            </span>
+        </a>
+    </div>
+
+    <nav class="admin-sidebar__nav" aria-label="Menú administrativo">
+        <a class="admin-sidebar__link active" href="@url/admin" aria-current="page">
+            <span class="admin-sidebar__icon" aria-hidden="true">⌂</span>
+            <span class="admin-sidebar__text">Dashboard</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/jumbotron">
+            <span class="admin-sidebar__icon" aria-hidden="true">▣</span>
+            <span class="admin-sidebar__text">Jumbotron</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/proyectos">
+            <span class="admin-sidebar__icon" aria-hidden="true">▤</span>
+            <span class="admin-sidebar__text">Proyectos</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/mapa">
+            <span class="admin-sidebar__icon" aria-hidden="true">⌖</span>
+            <span class="admin-sidebar__text">Mapa</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/clientes">
+            <span class="admin-sidebar__icon" aria-hidden="true">◈</span>
+            <span class="admin-sidebar__text">Clientes</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/mensajes">
+            <span class="admin-sidebar__icon" aria-hidden="true">✉</span>
+            <span class="admin-sidebar__text">Mensajes</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/auditoria">
+            <span class="admin-sidebar__icon" aria-hidden="true">☰</span>
+            <span class="admin-sidebar__text">Auditoría</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/usuarios">
+            <span class="admin-sidebar__icon" aria-hidden="true">◉</span>
+            <span class="admin-sidebar__text">Usuarios</span>
+        </a>
+    </nav>
+
+    <div class="admin-sidebar__footer">
+        <a class="admin-sidebar__site-link" href="@url">
+            <span aria-hidden="true">←</span>
+            <span>Volver al sitio</span>
+        </a>
+    </div>
+</aside>
+
+<header class="admin-topbar" data-admin-topbar>
+    <button class="admin-topbar__toggle" type="button" data-admin-sidebar-toggle
+        aria-label="Abrir o cerrar menú administrativo" aria-controls="admin-main" aria-expanded="true">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="admin-topbar__title">
+        <p>Panel administrativo</p>
+        <h1>@pageName</h1>
+    </div>
+
+    <form class="admin-topbar__search" role="search" action="@url/admin/buscar" method="get">
+        <label class="admin-topbar__search-label" for="admin-global-search">Buscar</label>
+
+        <input id="admin-global-search" name="q" type="search" placeholder="Buscar proyectos, clientes, mensajes..."
+            autocomplete="off" data-admin-search>
+
+        <button type="submit" aria-label="Buscar">🔎</button>
+    </form>
+
+    <div class="admin-topbar__user" data-admin-user-menu-wrapper>
+        <button class="admin-topbar__user-button" type="button" data-admin-user-menu-toggle
+            aria-label="Abrir menú de usuario" aria-controls="admin-user-menu" aria-expanded="false">
+            <span class="admin-avatar" data-admin-initials data-admin-name="{{{ ($adminName) }}}"
+                aria-hidden="true"></span>
+
+            <span class="admin-topbar__user-text">
+                <strong>{{{ ($adminName) }}}</strong>
+                <small>{{{ ($adminRole) }}}</small>
+            </span>
+        </button>
+
+        <div id="admin-user-menu" class="admin-user-card" data-admin-user-menu hidden>
+            <div class="admin-user-card__header">
+                <span class="admin-avatar admin-avatar--sm" data-admin-initials data-admin-name="{{{ ($adminName) }}}"
+                    aria-hidden="true"></span>
+
+                <div>
+                    <strong>{{{ ($adminName) }}}</strong>
+                    <small>{{{ ($adminRole) }}}</small>
+                </div>
+            </div>
+
+            <a class="admin-user-card__link" href="@url/admin/perfil">
+                Ver perfil
+            </a>
+
+            <a class="admin-user-card__logout" href="@url/logout">
+                Cerrar sesión
+            </a>
+        </div>
+    </div>
+</header>

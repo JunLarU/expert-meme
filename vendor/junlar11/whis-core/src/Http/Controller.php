@@ -13,10 +13,23 @@ class Controller
 
     public function setMiddlewares(array $middlewares): self
     {
-        $this->middlewares = array_map(
-            fn ($middleware) => new $middleware(),
-            $middlewares
-        );
+        $this->middlewares = array_map(function ($middleware) {
+            /*
+             * Permite:
+             * - AuthMiddleware::class
+             * - new ApiAbilityMiddleware('projects:read')
+             * - cualquier middleware ya instanciado
+             */
+            if (is_object($middleware)) {
+                return $middleware;
+            }
+
+            if (is_string($middleware) && class_exists($middleware)) {
+                return new $middleware();
+            }
+
+            return $middleware;
+        }, $middlewares);
 
         return $this;
     }
@@ -49,9 +62,25 @@ class Controller
 
     protected function jsonError(
         string $message = 'Ocurrió un error.',
-        array $errors = [],
+        array|int $errors = [],
         int $status = 400
     ): Response {
+        /*
+         * Compatibilidad con:
+         *
+         * $this->jsonError('No autorizado.', 401);
+         *
+         * y también:
+         *
+         * $this->jsonError('Datos inválidos.', [
+         *     'name' => 'El nombre es obligatorio.',
+         * ], 422);
+         */
+        if (is_int($errors)) {
+            $status = $errors;
+            $errors = [];
+        }
+
         return Response::json([
             'ok'      => false,
             'message' => $message,
@@ -73,18 +102,27 @@ class Controller
 
     protected function getInputData(): array
     {
-        $contentType = (string) ($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '');
+        $contentType = (string) (
+            $_SERVER['CONTENT_TYPE']
+            ?? $_SERVER['HTTP_CONTENT_TYPE']
+            ?? ''
+        );
 
         if (stripos($contentType, 'application/json') !== false) {
-            $raw  = file_get_contents('php://input');
-            $json = json_decode($raw ?: '', true);
+            $raw = file_get_contents('php://input');
+
+            if (!is_string($raw) || trim($raw) === '') {
+                return [];
+            }
+
+            $json = json_decode($raw, true);
 
             return is_array($json) ? $json : [];
         }
 
         return array_merge(
-            is_array($_GET) ? $_GET : [],
-            is_array($_POST) ? $_POST : []
+            is_array($_GET ?? null) ? $_GET : [],
+            is_array($_POST ?? null) ? $_POST : []
         );
     }
 }

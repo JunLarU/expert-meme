@@ -210,6 +210,7 @@ module.exports = (env, argv) => {
 
     entry: {
       app: "./assets/js/index.js",
+      admin: "./assets/js/admin/index.js",
     },
 
     output: {
@@ -569,13 +570,18 @@ module.exports = (env, argv) => {
             "assets/views/compiled/",
           );
 
+        const isLayout = normalizedHtmlFile.includes("/layouts/");
+        const isAdminLayout = normalizedHtmlFile.endsWith(
+          "/layouts/admin/layout.html",
+        );
+
         return new HtmlWebpackPlugin({
-          inject: normalizedHtmlFile.includes("/layouts/"),
+          inject: isLayout,
           template: htmlFile,
           filename: compiledFilename,
 
-          // Importante:
-          // Solo el HTML usa @url porque luego pasa por StencilEngine.
+          chunks: isAdminLayout ? ["admin"] : ["app"],
+
           publicPath: HTML_PUBLIC_PATH,
 
           minify: isProduction

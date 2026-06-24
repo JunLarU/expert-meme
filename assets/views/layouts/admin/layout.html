@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>@AppName | @pageName</title>
+
+  <link rel="icon" type="image/png" href="@url/images/ICON.png">
+  <link rel="apple-touch-icon" href="@url/images/ICON.png">
+</head>
+
+<body class="admin-layout">
+  <div class="admin-shell" data-admin-shell>
+    {% include includes/admin/navbar.html %}
+
+    <main class="admin-main" id="admin-main">
+      @content
+    </main>
+  </div>
+</body>
+
+</html>
