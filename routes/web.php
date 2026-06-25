@@ -6,7 +6,7 @@ use App\Controllers\Admin\Jumbotron;
 use App\Controllers\Admin\Messages;
 use App\Controllers\Admin\Projects;
 use App\Controllers\Admin\Users;
-use App\Controllers\Api\ApiTokenController;
+use App\Controllers\Admin\OfficeWorkshops as AdminOfficeWorkshops;
 use App\Controllers\Home;
 use App\Controllers\Proyectos;
 use App\Middlewares\AuthMiddleware;
@@ -25,6 +25,7 @@ CONTROLLER(Home::class, '', [
         'contacto'              => 'contacto',
         'site-api/projects'     => 'projectsJson',
         'site-api/map/projects' => 'projectsMapJson',
+        'site-api/map/office-workshops' => 'officeWorkshopsMapJson',
     ],
     'post' => [
         'contact/send' => 'contactSend',
@@ -92,6 +93,16 @@ GROUP('/admin', function () {
 
     POST('/perfil/actualizar', [Users::class, 'updateProfile']);
     POST('/perfil/password', [Users::class, 'updatePassword']);
+
+    GET('/oficinas-talleres', [AdminOfficeWorkshops::class, 'index']);
+    GET('/oficinas-talleres/crear', [AdminOfficeWorkshops::class, 'create']);
+    GET('/oficinas-talleres/{id:\d+}', [AdminOfficeWorkshops::class, 'edit']);
+    GET('/oficinas-talleres/{id:\d+}/editar', [AdminOfficeWorkshops::class, 'edit']);
+    GET('/oficinas-talleres/{id:\d+}/eliminar', [AdminOfficeWorkshops::class, 'delete']);
+
+    POST('/oficinas-talleres', [AdminOfficeWorkshops::class, 'store']);
+    POST('/oficinas-talleres/{id:\d+}/actualizar', [AdminOfficeWorkshops::class, 'update']);
+    POST('/oficinas-talleres/{id:\d+}/eliminar', [AdminOfficeWorkshops::class, 'destroy']);
     /*
     |--------------------------------------------------------------------------
     | Admin: API Tokens

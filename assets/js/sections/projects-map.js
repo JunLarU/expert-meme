@@ -226,41 +226,117 @@ function latLngToMapPoint(lat, lng) {
  *              su entry; para oficinas/talleres, lo que quieras (contacto, etc.)
  * ========================================================================== */
 
-const DEFAULT_MARKERS_ENDPOINT = "/site-api/map/projects";
+const DEFAULT_PROJECT_MARKERS_ENDPOINT = "/site-api/map/projects";
+const DEFAULT_OFFICE_WORKSHOP_MARKERS_ENDPOINT =
+  "/site-api/map/office-workshops";
 
 let PROJECT_MARKERS = [];
-let markersRequest = null;
+const markersRequests = new WeakMap();
 
 async function fetchProjectMarkers(map) {
-  if (markersRequest) return markersRequest;
+  if (markersRequests.has(map)) {
+    return markersRequests.get(map);
+  }
 
-  const endpoint =
-    map.dataset.markersEndpoint ||
+  const request = fetchAllMapMarkers(map)
+    .then((markers) => markers.map(normalizeProjectMarker).filter(Boolean))
+    .then(dedupeMarkers);
+
+  markersRequests.set(map, request);
+
+  return request;
+}
+
+async function fetchAllMapMarkers(map) {
+  const endpoints = getMapMarkerEndpoints(map);
+
+  const responses = await Promise.allSettled(
+    endpoints.map((endpoint) => fetchMarkersEndpoint(endpoint)),
+  );
+
+  const markers = [];
+
+  responses.forEach((result, index) => {
+    if (result.status === "fulfilled") {
+      markers.push(...result.value);
+      return;
+    }
+
+    console.warn(
+      `No se pudieron cargar pines desde ${endpoints[index]}:`,
+      result.reason,
+    );
+  });
+
+  if (!markers.length) {
+    throw new Error("No se pudieron cargar pines del mapa.");
+  }
+
+  return markers;
+}
+
+function getMapMarkerEndpoints(map) {
+  const vectorEndpoint =
     map.querySelector("[data-projects-map-vector]")?.dataset.markersEndpoint ||
-    DEFAULT_MARKERS_ENDPOINT;
+    "";
 
-  markersRequest = fetch(endpoint, {
+  const projectEndpoint =
+    map.dataset.markersEndpoint ||
+    vectorEndpoint ||
+    DEFAULT_PROJECT_MARKERS_ENDPOINT;
+
+  const officeWorkshopEndpoint =
+    map.dataset.officeWorkshopsEndpoint ||
+    map.querySelector("[data-projects-map-vector]")?.dataset
+      .officeWorkshopsEndpoint ||
+    DEFAULT_OFFICE_WORKSHOP_MARKERS_ENDPOINT;
+
+  return Array.from(
+    new Set(
+      [projectEndpoint, officeWorkshopEndpoint]
+        .map((endpoint) => String(endpoint || "").trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+async function fetchMarkersEndpoint(endpoint) {
+  const response = await fetch(endpoint, {
     method: "GET",
     headers: {
       Accept: "application/json",
       "X-Requested-With": "XMLHttpRequest",
     },
     credentials: "same-origin",
-  })
-    .then(async (response) => {
-      const data = await response.json().catch(() => null);
+  });
 
-      if (!response.ok || !data?.ok) {
-        throw new Error(data?.message || "No se pudieron cargar los pines.");
-      }
+  const data = await response.json().catch(() => null);
 
-      return Array.isArray(data.markers) ? data.markers : [];
-    })
-    .then((markers) => markers.map(normalizeProjectMarker).filter(Boolean));
+  if (!response.ok || !data?.ok) {
+    throw new Error(data?.message || "No se pudieron cargar los pines.");
+  }
 
-  return markersRequest;
+  return Array.isArray(data.markers) ? data.markers : [];
 }
 
+function dedupeMarkers(markers) {
+  const used = new Set();
+
+  return markers.filter((marker) => {
+    const key = [
+      marker.source || marker.type || "marker",
+      marker.type || "unknown",
+      marker.id || `${marker.lat},${marker.lng},${marker.title}`,
+    ].join(":");
+
+    if (used.has(key)) {
+      return false;
+    }
+
+    used.add(key);
+    return true;
+  });
+}
 function normalizeProjectMarker(marker = {}) {
   const lat = Number(marker.lat);
   const lng = Number(marker.lng);
@@ -275,18 +351,26 @@ function normalizeProjectMarker(marker = {}) {
 
   return {
     id: Number(marker.id || 0),
+    source: String(marker.source || (type === "project" ? "projects" : "office_workshops")),
     lat,
     lng,
     type,
     state: String(marker.state || ""),
     title: String(marker.title || "Proyecto"),
-    kind: String(marker.kind || "Proyecto"),
+    kind: String(marker.kind || TYPE_LABEL[type] || "Proyecto"),
     location: String(marker.location || ""),
     year: String(marker.year || ""),
     summary: String(marker.summary || ""),
     href: String(marker.href || ""),
     image: String(marker.image || ""),
-    imageAlt: String(marker.imageAlt || marker.image_alt || marker.title || ""),
+    imageAlt: String(
+      marker.imageAlt || marker.image_alt || marker.title || "",
+    ),
+
+    phone: String(marker.phone || ""),
+    email: String(marker.email || ""),
+    whatsapp: String(marker.whatsapp || ""),
+    openingHours: String(marker.openingHours || marker.opening_hours || ""),
   };
 }
 

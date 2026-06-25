@@ -1,3 +1,7 @@
+{%
+$officeWorkshops = $officeWorkshops ?? [];
+$officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
+%}
 <section class="about-hero contact-hero lazy-bg" data-background-src="/images/JTRON.jpg"
     aria-labelledby="contact-hero-title">
     <div class="about-hero__overlay">
@@ -12,13 +16,13 @@
             </p>
 
             <div class="contact-hero__actions" aria-label="Acciones principales de contacto">
-                <a href="#contacto" data-smooth-scroll class="button__primary button__primary--light about-hero__button">
+                <a href="#contacto" data-smooth-scroll
+                    class="button__primary button__primary--light about-hero__button">
                     Enviar mensaje <span aria-hidden="true">→</span>
                 </a>
 
                 <a href="https://www.google.com/maps/place/LE+Ingenieria/@20.5754962,-100.4135475,17z/data=!3m1!4b1!4m6!3m5!1s0x85d345c9cc1b21b3:0xe0ad1516d2061a8!8m2!3d20.5754962!4d-100.4109726!16s%2Fg%2F11v3_41szh?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D"
-                    target="_blank" rel="noopener noreferrer"
-                    class="contact-hero__secondary">
+                    target="_blank" rel="noopener noreferrer" class="contact-hero__secondary">
                     Ver ubicación
                 </a>
             </div>
@@ -46,7 +50,8 @@
             <article class="contact-info-card">
                 <div class="contact-info-card__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M12 2.25c-3.38 0-6.12 2.74-6.12 6.12 0 4.59 6.12 13.38 6.12 13.38s6.12-8.79 6.12-13.38c0-3.38-2.74-6.12-6.12-6.12Zm0 8.72a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z" />
+                        <path
+                            d="M12 2.25c-3.38 0-6.12 2.74-6.12 6.12 0 4.59 6.12 13.38 6.12 13.38s6.12-8.79 6.12-13.38c0-3.38-2.74-6.12-6.12-6.12Zm0 8.72a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2Z" />
                     </svg>
                 </div>
 
@@ -61,7 +66,8 @@
             <article class="contact-info-card">
                 <div class="contact-info-card__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M4 5h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2Zm0 3.2v8.8h16V8.2l-7.35 5.15a1.1 1.1 0 0 1-1.3 0L4 8.2Zm1.2-1.2L12 11.75 18.8 7H5.2Z" />
+                        <path
+                            d="M4 5h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2Zm0 3.2v8.8h16V8.2l-7.35 5.15a1.1 1.1 0 0 1-1.3 0L4 8.2Zm1.2-1.2L12 11.75 18.8 7H5.2Z" />
                     </svg>
                 </div>
 
@@ -79,7 +85,8 @@
             <article class="contact-info-card">
                 <div class="contact-info-card__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.69-.36 1.05-.24 1.16.38 2.4.59 3.67.59.57 0 1.02.45 1.02 1.02V20c0 .57-.45 1.02-1.02 1.02C10.67 21.02 2.98 13.33 2.98 3.87c0-.57.45-1.02 1.02-1.02h3.47c.57 0 1.02.45 1.02 1.02 0 1.27.2 2.51.59 3.67.11.36.03.76-.25 1.05l-2.21 2.2Z" />
+                        <path
+                            d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.69-.36 1.05-.24 1.16.38 2.4.59 3.67.59.57 0 1.02.45 1.02 1.02V20c0 .57-.45 1.02-1.02 1.02C10.67 21.02 2.98 13.33 2.98 3.87c0-.57.45-1.02 1.02-1.02h3.47c.57 0 1.02.45 1.02 1.02 0 1.27.2 2.51.59 3.67.11.36.03.76-.25 1.05l-2.21 2.2Z" />
                     </svg>
                 </div>
 
@@ -97,7 +104,8 @@
             <article class="contact-info-card">
                 <div class="contact-info-card__icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" focusable="false">
-                        <path d="M12 2.25A9.75 9.75 0 1 0 12 21.75 9.75 9.75 0 0 0 12 2.25Zm.75 10.05 3.63 2.16-.76 1.25-4.37-2.61V6.75h1.5v5.55Z" />
+                        <path
+                            d="M12 2.25A9.75 9.75 0 1 0 12 21.75 9.75 9.75 0 0 0 12 2.25Zm.75 10.05 3.63 2.16-.76 1.25-4.37-2.61V6.75h1.5v5.55Z" />
                     </svg>
                 </div>
 
@@ -110,6 +118,8 @@
             </article>
         </section>
 
+
+
         <section class="contact-page__main" aria-label="Formulario y ubicación de L+E Ingeniería">
             <div class="contact-page__form-card">
                 <div class="contact-page__form-header">
@@ -121,12 +131,11 @@
                 </div>
 
                 <form class="contact-page__form form form--default" id="contactPageForm" action="/contact/send"
-                    method="post" data-ajax-form data-validation="contact" data-send-as="urlencoded"
-                    data-csrf="true" data-csrf-field="_token" data-reset-on-success="true"
-                    data-character-counter="true"
+                    method="post" data-ajax-form data-validation="contact" data-send-as="urlencoded" data-csrf="true"
+                    data-csrf-field="_token" data-reset-on-success="true" data-character-counter="true"
                     data-success-message="Tu mensaje fue enviado correctamente."
-                    data-error-message="No se pudo enviar el mensaje. Intenta nuevamente."
-                    novalidate aria-labelledby="contact-form-title">
+                    data-error-message="No se pudo enviar el mensaje. Intenta nuevamente." novalidate
+                    aria-labelledby="contact-form-title">
                     @csrf('contact-send')
 
                     <fieldset class="form__fieldset contact-page__fieldset">
@@ -151,8 +160,8 @@
 
                             <div class="form-group contact-page__field" data-field="email">
                                 <input value="{{old('email')}}" type="email" id="contact-page-email" name="email"
-                                    class="form-control" placeholder=" " autocomplete="email" inputmode="email"
-                                    required maxlength="150" data-label="correo electrónico" data-normalize="trim"
+                                    class="form-control" placeholder=" " autocomplete="email" inputmode="email" required
+                                    maxlength="150" data-label="correo electrónico" data-normalize="trim"
                                     data-character-counter="true" aria-describedby="error-contact-page-email">
 
                                 <label class="form-label" for="contact-page-email">Correo electrónico</label>
@@ -189,21 +198,23 @@
                                 <label class="form-label" for="contact-page-asunto">Asunto</label>
 
                                 <span class="form-group__error text-danger" id="error-contact-page-asunto"
-                                    data-field-error data-error-for="asunto" aria-live="polite">{{error('asunto')}}</span>
+                                    data-field-error data-error-for="asunto"
+                                    aria-live="polite">{{error('asunto')}}</span>
                             </div>
 
                             <div class="form-group form-group--textarea contact-page__field contact-page__field--full"
                                 data-field="message">
-                                <textarea id="contact-page-message" name="message" class="form-control"
-                                    placeholder=" " required minlength="10" maxlength="3000" data-label="mensaje"
-                                    data-normalize="trim" data-no-links="true" data-no-phones="true"
-                                    data-no-emails="true" data-character-counter="true"
+                                <textarea id="contact-page-message" name="message" class="form-control" placeholder=" "
+                                    required minlength="10" maxlength="3000" data-label="mensaje" data-normalize="trim"
+                                    data-no-links="true" data-no-phones="true" data-no-emails="true"
+                                    data-character-counter="true"
                                     aria-describedby="error-contact-page-message">{{old('message')}}</textarea>
 
                                 <label class="form-label" for="contact-page-message">Mensaje</label>
 
                                 <span class="form-group__error text-danger" id="error-contact-page-message"
-                                    data-field-error data-error-for="message" aria-live="polite">{{error('message')}}</span>
+                                    data-field-error data-error-for="message"
+                                    aria-live="polite">{{error('message')}}</span>
                             </div>
                         </div>
 
@@ -225,8 +236,7 @@
                     </div>
 
                     <div class="contact-page__map">
-                        <iframe
-                            title="Mapa de ubicación de L+E Ingeniería en Santiago de Querétaro"
+                        <iframe title="Mapa de ubicación de L+E Ingeniería en Santiago de Querétaro"
                             src="https://www.google.com/maps?q=LE%20Ingenieria%20Hacienda%20Chichimequillas%20113%20Int%204%20Jardines%20de%20la%20Hacienda%2076180%20Santiago%20de%20Quer%C3%A9taro%20Qro&output=embed"
                             width="100%" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                             allowfullscreen>
@@ -276,18 +286,18 @@
 
                         <div class="services-quote__socials contact-page__socials"
                             aria-label="Redes sociales de L+E Ingeniería">
-                            <a class="services-quote__social services-quote__social--facebook" href="#"
-                                target="_blank" rel="noopener noreferrer" aria-label="Facebook de L+E Ingeniería">
+                            <a class="services-quote__social services-quote__social--facebook" href="#" target="_blank"
+                                rel="noopener noreferrer" aria-label="Facebook de L+E Ingeniería">
                                 Facebook
                             </a>
 
-                            <a class="services-quote__social services-quote__social--instagram" href="#"
-                                target="_blank" rel="noopener noreferrer" aria-label="Instagram de L+E Ingeniería">
+                            <a class="services-quote__social services-quote__social--instagram" href="#" target="_blank"
+                                rel="noopener noreferrer" aria-label="Instagram de L+E Ingeniería">
                                 Instagram
                             </a>
 
-                            <a class="services-quote__social services-quote__social--linkedin" href="#"
-                                target="_blank" rel="noopener noreferrer" aria-label="LinkedIn de L+E Ingeniería">
+                            <a class="services-quote__social services-quote__social--linkedin" href="#" target="_blank"
+                                rel="noopener noreferrer" aria-label="LinkedIn de L+E Ingeniería">
                                 LinkedIn
                             </a>
 
@@ -300,6 +310,154 @@
                     </div>
                 </div>
             </aside>
+        </section>
+        <section class="contact-page__locations" aria-labelledby="contact-locations-title">
+            <div class="contact-page__locations-header">
+                <div class="section-heading section-heading--center contact-page__locations-heading">
+                    <p>Presencia operativa</p>
+                    <h2 id="contact-locations-title">Oficinas y talleres de L+E Ingeniería</h2>
+                </div>
+
+                <p>
+                    Consulta nuestras ubicaciones registradas para atención, coordinación técnica,
+                    fabricación, montaje y seguimiento de proyectos.
+                </p>
+            </div>
+
+            {% if (!empty($officeWorkshops)): %}
+            <div class="contact-page__locations-grid" role="list">
+                {% foreach ($officeWorkshops as $officeWorkshopIndex => $officeWorkshop): %}
+                {%
+                $owType = trim((string) ($officeWorkshop['type'] ?? 'office'));
+                $owTypeLabel = $owType === 'workshop' ? 'Taller' : 'Oficina';
+                $owTitle = trim((string) ($officeWorkshop['title'] ?? $owTypeLabel));
+                $owSummary = trim((string) ($officeWorkshop['summary'] ?? ''));
+                $owDescription = trim((string) ($officeWorkshop['description'] ?? ''));
+                $owAddress = trim((string) ($officeWorkshop['address'] ?? ''));
+                $owCity = trim((string) ($officeWorkshop['city'] ?? ''));
+                $owState = trim((string) ($officeWorkshop['state'] ?? ''));
+                $owCountry = trim((string) ($officeWorkshop['country'] ?? 'México'));
+                $owPostalCode = trim((string) ($officeWorkshop['postal_code'] ?? ''));
+                $owPhone = trim((string) ($officeWorkshop['phone'] ?? ''));
+                $owEmail = trim((string) ($officeWorkshop['email'] ?? ''));
+                $owWhatsapp = trim((string) ($officeWorkshop['whatsapp'] ?? ''));
+                $owOpeningHours = trim((string) ($officeWorkshop['opening_hours'] ?? ''));
+                $owMapsUrl = trim((string) ($officeWorkshop['google_maps_url'] ?? ''));
+                $owImage = trim((string) ($officeWorkshop['map_image_url'] ?? ''));
+                $owImageAlt = trim((string) ($officeWorkshop['map_image_alt'] ?? $owTitle));
+
+                $owLocationParts = array_filter([$owAddress, $owCity, $owState, $owCountry]);
+                $owLocation = trim((string) ($officeWorkshop['map_location'] ?? ''));
+
+                if ($owLocation === '') {
+                $owLocation = implode(', ', $owLocationParts);
+                }
+
+                $owWhatsappHref = '';
+
+                if ($owWhatsapp !== '') {
+                if (preg_match('#^https?://#i', $owWhatsapp)) {
+                $owWhatsappHref = $owWhatsapp;
+                } else {
+                $owWhatsappDigits = preg_replace('/\D+/', '', $owWhatsapp);
+
+                if ($owWhatsappDigits !== '') {
+                $owWhatsappHref = 'https://wa.me/' . $owWhatsappDigits;
+                }
+                }
+                }
+                %}
+
+                <article
+                    class="contact-location-card contact-location-card--{{{ ($owType) }}}{{{ ($owImage !== '' ? ' contact-location-card--with-media' : '') }}}"
+                    role="listitem">
+                    {% if ($owImage !== ''): %}
+                    <figure class="contact-location-card__media">
+                        <img class="lazy-image" data-src="{{{ ($owImage) }}}" alt="{{{ ($owImageAlt) }}}" loading="lazy"
+                            decoding="async" width="900" height="620">
+                    </figure>
+                    {% endif; %}
+
+                    <div class="contact-location-card__body">
+                        <div class="contact-location-card__top">
+                            <span class="contact-location-card__type contact-location-card__type--{{{ ($owType) }}}">
+                                {{{ ($owTypeLabel) }}}
+                            </span>
+
+                            <span class="contact-location-card__number">
+                                {{{ (str_pad((string) ($officeWorkshopIndex + 1), 2, '0', STR_PAD_LEFT)) }}}
+                            </span>
+                        </div>
+
+                        <h3>{{{ ($owTitle) }}}</h3>
+
+                        {% if ($owSummary !== ''): %}
+                        <p class="contact-location-card__summary">{{{ ($owSummary) }}}</p>
+                        {% elseif ($owDescription !== ''): %}
+                        <p class="contact-location-card__summary">{{{ ($owDescription) }}}</p>
+                        {% endif; %}
+
+                        <dl class="contact-location-card__data">
+                            {% if ($owLocation !== ''): %}
+                            <div>
+                                <dt>Ubicación</dt>
+                                <dd>{{{ ($owLocation) }}}</dd>
+                            </div>
+                            {% endif; %}
+
+                            {% if ($owPostalCode !== ''): %}
+                            <div>
+                                <dt>C. P.</dt>
+                                <dd>{{{ ($owPostalCode) }}}</dd>
+                            </div>
+                            {% endif; %}
+
+                            {% if ($owOpeningHours !== ''): %}
+                            <div>
+                                <dt>Horario</dt>
+                                <dd>{{{ ($owOpeningHours) }}}</dd>
+                            </div>
+                            {% endif; %}
+                        </dl>
+
+                        <div class="contact-location-card__actions" aria-label="Acciones para {{{ ($owTitle) }}}">
+                            {% if ($owMapsUrl !== ''): %}
+                            <a href="{{{ ($owMapsUrl) }}}" target="_blank" rel="noopener noreferrer">
+                                Ver mapa <span aria-hidden="true">→</span>
+                            </a>
+                            {% endif; %}
+
+                            {% if ($owPhone !== ''): %}
+                            <a href="tel:{{{ (preg_replace('/\s+/', '', $owPhone)) }}}">
+                                Llamar
+                            </a>
+                            {% endif; %}
+
+                            {% if ($owEmail !== ''): %}
+                            <a href="mailto:{{{ ($owEmail) }}}">
+                                Correo
+                            </a>
+                            {% endif; %}
+
+                            {% if ($owWhatsappHref !== ''): %}
+                            <a href="{{{ ($owWhatsappHref) }}}" target="_blank" rel="noopener noreferrer">
+                                WhatsApp
+                            </a>
+                            {% endif; %}
+                        </div>
+                    </div>
+                </article>
+                {% endforeach; %}
+            </div>
+            {% else: %}
+            <article class="contact-page__locations-empty">
+                <span aria-hidden="true">⌖</span>
+                <h3>Próximamente nuevas ubicaciones</h3>
+                <p>
+                    Las oficinas y talleres publicados desde el panel administrativo aparecerán aquí automáticamente.
+                </p>
+            </article>
+            {% endif; %}
         </section>
     </div>
 </main>

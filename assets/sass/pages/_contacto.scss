@@ -722,3 +722,361 @@
     transform: none;
   }
 }
+
+// ==========================================================
+// Presencia operativa — Oficinas y talleres (rediseño)
+// Reemplaza desde el bloque "// Oficinas y talleres en contacto"
+// hasta el final del archivo _contact.scss.
+//
+// Bases conservadas: acento por tipo (office=azul, workshop=verde,
+// default=rojo logo), badge de tipo, número de índice, ficha de
+// datos y botones de acción. El markup actual NO necesita cambios.
+//
+// Cambios clave: tarjetas verticales consistentes (banner arriba
+// + cuerpo abajo), grid responsivo real (1/2/3 columnas), barra de
+// acento superior, ficha de datos tipo spec-sheet y theming unificado
+// con color-mix() a partir de --contact-location-accent.
+// ==========================================================
+
+.contact-page {
+  &__locations {
+    width: min(100%, 120rem);
+    margin-inline: auto;
+    margin-top: clamp(4rem, 7vw, 7rem);
+  }
+
+  &__locations-header {
+    display: grid;
+    gap: 0.8rem;
+    width: min(100%, 70rem);
+    margin: 0 auto clamp(2.4rem, 4vw, 3.6rem);
+    text-align: center;
+
+    .section-heading {
+      p {
+        font-size: 1.1rem;
+        letter-spacing: 0.16rem;
+      }
+
+      h2 {
+        font-size: clamp(2.2rem, 3.2vw, 3.1rem);
+        line-height: 1.1;
+      }
+    }
+
+    > p {
+      width: min(100%, 60rem);
+      margin: 0 auto;
+      color: rgba($color-dark, 0.6);
+      font-size: clamp(1.36rem, 1.6vw, 1.55rem);
+      line-height: 1.65;
+      text-wrap: pretty;
+    }
+  }
+
+  &__locations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr));
+    justify-content: center;
+    gap: clamp(1.8rem, 2.6vw, 2.6rem);
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  &__locations-empty {
+    width: min(100%, 56rem);
+    margin: 0 auto;
+    padding: clamp(2.4rem, 4vw, 3.2rem);
+
+    border: 0.15rem dashed rgba($color-logo-red, 0.28);
+    border-radius: 1.4rem;
+    background-color: rgba($color-white, 0.7);
+    color: rgba($color-dark, 0.66);
+    text-align: center;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 4.4rem;
+      height: 4.4rem;
+      margin-bottom: 1rem;
+
+      border-radius: 1rem;
+      background-color: rgba($color-logo-red, 0.1);
+      color: $color-logo-red;
+      font-size: 2rem;
+    }
+
+    h3 {
+      margin: 0 0 0.5rem;
+      color: $color-dark;
+      font-family: $font-montserrat;
+      font-size: clamp(1.9rem, 2.4vw, 2.3rem);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    p {
+      max-width: 40rem;
+      margin: 0 auto;
+      font-size: 1.4rem;
+      line-height: 1.6;
+    }
+  }
+}
+
+.contact-location-card {
+  // El modificador --office / --workshop fija el acento.
+  // Por defecto, rojo de marca.
+  --contact-location-accent: #{$color-logo-red};
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  max-width: 52rem;
+  margin-inline: auto;
+
+  border: 0.1rem solid rgba($color-dark, 0.08);
+  border-radius: 1.4rem;
+  background-color: $color-white;
+  box-shadow:
+    0 1rem 2.4rem rgba($color-black, 0.06),
+    0 0.2rem 0.6rem rgba($color-black, 0.04);
+
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+
+  // Barra de acento superior (cubre el borde del banner)
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: 4;
+    height: 0.4rem;
+    background-color: var(--contact-location-accent);
+  }
+
+  &--office {
+    --contact-location-accent: #1368a9;
+  }
+
+  &--workshop {
+    --contact-location-accent: #00a878;
+  }
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-0.4rem);
+    border-color: color-mix(in srgb, var(--contact-location-accent) 40%, transparent);
+    box-shadow:
+      0 1.8rem 4rem rgba($color-black, 0.12),
+      0 0.4rem 1rem rgba($color-black, 0.06);
+
+    .contact-location-card__media img {
+      transform: scale(1.05);
+    }
+  }
+
+  // ----- Banner superior (cuando hay imagen) -----
+  &__media {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background-color: rgba($color-dark, 0.06);
+    border-bottom: 0.1rem solid rgba($color-dark, 0.06);
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 320ms ease;
+    }
+  }
+
+  // ----- Cuerpo -----
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+    min-width: 0;
+    padding: clamp(1.8rem, 2.6vw, 2.4rem);
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__type {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.5rem 0.95rem;
+
+    border-radius: 0.6rem;
+    background-color: color-mix(in srgb, var(--contact-location-accent) 12%, transparent);
+    color: var(--contact-location-accent);
+
+    font-family: $font-montserrat;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  &__number {
+    color: color-mix(in srgb, var(--contact-location-accent) 30%, transparent);
+    font-family: $font-montserrat;
+    font-size: 2.4rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  h3 {
+    margin: 0;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(1.9rem, 2.1vw, 2.3rem);
+    font-weight: 800;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  &__summary {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+
+    color: rgba($color-dark, 0.62);
+    font-family: $font-open-sans;
+    font-size: 1.4rem;
+    line-height: 1.55;
+
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+
+  // ----- Ficha de datos (spec-sheet) -----
+  &__data {
+    display: grid;
+    gap: 0;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    overflow: hidden;
+
+    border: 0.1rem solid rgba($color-dark, 0.08);
+    border-radius: 0.9rem;
+    background-color: rgba($color-dark, 0.015);
+
+    div {
+      display: grid;
+      grid-template-columns: minmax(8rem, auto) 1fr;
+      gap: 0.3rem 1.2rem;
+      align-items: baseline;
+      padding: 0.85rem 1.1rem;
+
+      & + div {
+        border-top: 0.1rem solid rgba($color-dark, 0.07);
+      }
+    }
+
+    dt {
+      color: rgba($color-dark, 0.45);
+      font-family: $font-montserrat;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    dd {
+      margin: 0;
+      color: rgba($color-dark, 0.82);
+      font-family: $font-open-sans;
+      font-size: 1.32rem;
+      line-height: 1.45;
+    }
+  }
+
+  // ----- Acciones -----
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
+
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+
+      min-height: 3.4rem;
+      padding: 0.66rem 1.1rem;
+
+      border: 0.1rem solid rgba($color-dark, 0.12);
+      border-radius: 0.7rem;
+      background-color: $color-white;
+      color: var(--contact-location-accent);
+
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+
+      transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        color 160ms ease,
+        transform 160ms ease;
+
+      &:hover,
+      &:focus {
+        background-color: var(--contact-location-accent);
+        border-color: var(--contact-location-accent);
+        color: $color-white;
+        transform: translateY(-0.15rem);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .contact-page__locations {
+    margin-top: clamp(3rem, 8vw, 4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-location-card,
+  .contact-location-card__media img,
+  .contact-location-card__actions a {
+    transition: none !important;
+  }
+
+  .contact-location-card:hover,
+  .contact-location-card:focus-within,
+  .contact-location-card__actions a:hover,
+  .contact-location-card__actions a:focus {
+    transform: none;
+  }
+}

@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\Client;
 use App\Models\HomeJumbotronSlide;
 use App\Models\Message;
+use App\Models\OfficeWorkshop;
 use App\Models\Project;
 use Whis\Http\Controller;
 use Whis\Http\Request;
@@ -214,14 +215,46 @@ class Home extends Controller
     {
         return Response::json([
             'ok'      => true,
-            'message' => 'Pines cargados correctamente.',
+            'message' => 'Pines de proyectos cargados correctamente.',
             'markers' => Project::mapMarkers(),
+        ]);
+    }
+
+    public function officeWorkshopsMapJson()
+    {
+        return Response::json([
+            'ok'      => true,
+            'message' => 'Pines de oficinas y talleres cargados correctamente.',
+            'markers' => OfficeWorkshop::mapMarkers(),
         ]);
     }
 
     public function contacto()
     {
-        return view('pages/main/contacto', 'Contacto');
+        return view('pages/main/contacto', 'Contacto', [
+            'officeWorkshops' => $this->contactOfficeWorkshops(),
+        ]);
+    }
+
+    private function contactOfficeWorkshops(): array
+    {
+        try {
+            if (method_exists(OfficeWorkshop::class, 'publicItems')) {
+                $items = OfficeWorkshop::publicItems();
+            } else {
+                $items = OfficeWorkshop::published();
+            }
+        } catch (\Throwable $th) {
+            return [];
+        }
+
+        return array_values(array_filter($items, function (array $item): bool {
+            if (! empty($item['deleted_at'])) {
+                return false;
+            }
+
+            return ($item['status'] ?? '') === OfficeWorkshop::STATUS_PUBLISHED;
+        }));
     }
 
     public function store()

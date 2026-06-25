@@ -461,8 +461,17 @@ function rememberOriginalVideoData(videoElement) {
   }
 
   const data = {
-    src: videoElement.dataset.src || "",
-    poster: videoElement.dataset.poster || "",
+    src:
+      videoElement.dataset.src ||
+      videoElement.getAttribute("src") ||
+      videoElement.currentSrc ||
+      "",
+
+    poster:
+      videoElement.dataset.poster ||
+      videoElement.getAttribute("poster") ||
+      "",
+
     sources: Array.from(videoElement.querySelectorAll("source")).map(
       (source) => ({
         element: source,
@@ -471,6 +480,7 @@ function rememberOriginalVideoData(videoElement) {
         media: source.getAttribute("media") || "",
       }),
     ),
+
     tracks: Array.from(videoElement.querySelectorAll("track")).map((track) => ({
       element: track,
       src: track.dataset.src || track.getAttribute("src") || "",
@@ -481,7 +491,6 @@ function rememberOriginalVideoData(videoElement) {
 
   return data;
 }
-
 /**
  * Inyecta estilos CSS necesarios para videos lazy
  */

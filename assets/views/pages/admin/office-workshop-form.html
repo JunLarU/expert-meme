@@ -1,0 +1,356 @@
+{%
+$mode = $mode ?? 'create';
+$item = $item ?? [];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($item['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/oficinas-talleres/' . $id . '/actualizar'
+: '/admin/oficinas-talleres';
+
+$pageTitle = $isEdit ? 'Editar oficina o taller' : 'Nueva oficina o taller';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear registro';
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+
+$type = $item['type'] ?? 'office';
+$status = $item['status'] ?? 'draft';
+$title = $item['title'] ?? '';
+$slug = $item['slug'] ?? '';
+$summary = $item['summary'] ?? '';
+$description = $item['description'] ?? '';
+
+$address = $item['address'] ?? '';
+$city = $item['city'] ?? '';
+$state = $item['state'] ?? '';
+$postalCode = $item['postal_code'] ?? '';
+
+$contactName = $item['contact_name'] ?? '';
+$phone = $item['phone'] ?? '';
+$email = $item['email'] ?? '';
+$whatsapp = $item['whatsapp'] ?? '';
+$openingHours = $item['opening_hours'] ?? '';
+$googleMapsUrl = $item['google_maps_url'] ?? '';
+
+$showOnMap = (int) ($item['show_on_map'] ?? 1);
+$mapLat = $item['map_lat'] ?? '';
+$mapLng = $item['map_lng'] ?? '';
+$mapImageUrl = $item['map_image_url'] ?? '';
+$sortOrder = (int) ($item['sort_order'] ?? 0);
+
+$mexicanStates = [
+'Aguascalientes',
+'Baja California',
+'Baja California Sur',
+'Campeche',
+'Chiapas',
+'Chihuahua',
+'Ciudad de México',
+'Coahuila',
+'Colima',
+'Durango',
+'Estado de México',
+'Guanajuato',
+'Guerrero',
+'Hidalgo',
+'Jalisco',
+'Michoacán',
+'Morelos',
+'Nayarit',
+'Nuevo León',
+'Oaxaca',
+'Puebla',
+'Querétaro',
+'Quintana Roo',
+'San Luis Potosí',
+'Sinaloa',
+'Sonora',
+'Tabasco',
+'Tamaulipas',
+'Tlaxcala',
+'Veracruz',
+'Yucatán',
+'Zacatecas',
+];
+%}
+
+<section class="admin-dashboard admin-projects-page admin-office-workshops-page" aria-labelledby="admin-office-workshop-form-title">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Mapa</p>
+      <h2 id="admin-office-workshop-form-title">{{{ ($pageTitle) }}}</h2>
+      <span>
+        Registra una ubicación propia de L+E Ingeniería. A diferencia de los proyectos,
+        este registro no genera entry pública ni aparece en el portafolio: solo alimenta el mapa.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin/oficinas-talleres" class="admin-button admin-button--secondary">Volver</a>
+    </div>
+  </header>
+
+  <article class="admin-panel admin-jumbotron-form-panel admin-project-form-panel">
+    <header class="admin-panel__header">
+      <div>
+        <p>Formulario sencillo</p>
+        <h3>{{{ ($pageTitle) }}}</h3>
+      </div>
+    </header>
+
+    <form class="form form--default admin-jumbotron-form admin-project-form" action="@url{{{ ($formAction) }}}"
+      method="post" enctype="multipart/form-data" data-ajax-form data-validation="none" data-send-as="formdata"
+      data-csrf="true" data-csrf-field="_token" data-reset-on-success="false" data-loading-text="{{{ ($loadingText) }}}"
+      novalidate>
+      @csrf
+
+      <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+      <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+      <input type="hidden" name="sort_order" value="{{ ($sortOrder) }}">
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Información principal</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group form-group--select" data-field="type">
+            <select id="office-workshop-type" name="type" class="form-control" required data-label="tipo de registro">
+              {% if ($type === 'office'): %}
+              <option value="office" selected>Oficina</option>
+              {% else: %}
+              <option value="office">Oficina</option>
+              {% endif; %}
+
+              {% if ($type === 'workshop'): %}
+              <option value="workshop" selected>Taller</option>
+              {% else: %}
+              <option value="workshop">Taller</option>
+              {% endif; %}
+            </select>
+            <label class="form-label" for="office-workshop-type">Tipo *</label>
+            <span class="form-group__help">Define el color y etiqueta del pin en el mapa.</span>
+            <span class="form-group__error" data-field-error data-error-for="type"></span>
+          </div>
+
+          <div class="form-group form-group--select" data-field="status">
+            <select id="office-workshop-status" name="status" class="form-control" required data-label="visibilidad">
+              {% if ($status === 'draft'): %}
+              <option value="draft" selected>Borrador</option>
+              {% else: %}
+              <option value="draft">Borrador</option>
+              {% endif; %}
+
+              {% if ($status === 'published'): %}
+              <option value="published" selected>Publicado</option>
+              {% else: %}
+              <option value="published">Publicado</option>
+              {% endif; %}
+
+              {% if ($status === 'hidden'): %}
+              <option value="hidden" selected>Oculto</option>
+              {% else: %}
+              <option value="hidden">Oculto</option>
+              {% endif; %}
+            </select>
+            <label class="form-label" for="office-workshop-status">Visibilidad *</label>
+            <span class="form-group__help">Publicado puede mostrarse en mapa si tiene coordenadas.</span>
+            <span class="form-group__error" data-field-error data-error-for="status"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="title">
+            <input type="text" id="office-workshop-title" name="title" class="form-control" value="{{{ ($title) }}}"
+              placeholder=" " required maxlength="255" data-label="nombre">
+            <label class="form-label" for="office-workshop-title">Nombre *</label>
+            <span class="form-group__help">Ejemplo: Oficina Querétaro, Taller de fabricación, Patio de maniobras.</span>
+            <span class="form-group__error" data-field-error data-error-for="title"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="summary">
+            <textarea id="office-workshop-summary" name="summary" class="form-control" placeholder=" " required maxlength="700"
+              data-label="resumen corto">{{{ ($summary) }}}</textarea>
+            <label class="form-label" for="office-workshop-summary">Resumen corto *</label>
+            <span class="form-group__help">Se muestra en la tarjeta del pin y en el panel del estado.</span>
+            <span class="form-group__error" data-field-error data-error-for="summary"></span>
+          </div>
+
+          <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
+            <textarea id="office-workshop-description" name="description" class="form-control" placeholder=" " maxlength="2000"
+              data-label="descripción">{{{ ($description) }}}</textarea>
+            <label class="form-label" for="office-workshop-description">Descripción interna</label>
+            <span class="form-group__help">Opcional. No es necesaria para el pin si el resumen ya está claro.</span>
+            <span class="form-group__error" data-field-error data-error-for="description"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Ubicación y mapa</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group admin-form-grid__full" data-field="address">
+            <input type="text" id="office-workshop-address" name="address" class="form-control" value="{{{ ($address) }}}"
+              placeholder=" " maxlength="500" data-label="dirección">
+            <label class="form-label" for="office-workshop-address">Dirección</label>
+            <span class="form-group__help">Calle, número, colonia o referencia.</span>
+            <span class="form-group__error" data-field-error data-error-for="address"></span>
+          </div>
+
+          <div class="form-group" data-field="city">
+            <input type="text" id="office-workshop-city" name="city" class="form-control" value="{{{ ($city) }}}"
+              placeholder=" " required maxlength="160" data-label="municipio o ciudad">
+            <label class="form-label" for="office-workshop-city">Municipio / ciudad *</label>
+            <span class="form-group__error" data-field-error data-error-for="city"></span>
+          </div>
+
+          <div class="form-group form-group--select" data-field="state">
+            <select id="office-workshop-state" name="state" class="form-control" required data-label="estado">
+              <option value="">Selecciona un estado</option>
+              {% foreach ($mexicanStates as $stateOption): %}
+                {% if ($state === $stateOption): %}
+                <option value="{{{ ($stateOption) }}}" selected>{{{ ($stateOption) }}}</option>
+                {% else: %}
+                <option value="{{{ ($stateOption) }}}">{{{ ($stateOption) }}}</option>
+                {% endif; %}
+              {% endforeach; %}
+            </select>
+            <label class="form-label" for="office-workshop-state">Estado *</label>
+            <span class="form-group__error" data-field-error data-error-for="state"></span>
+          </div>
+
+          <div class="form-group" data-field="postal_code">
+            <input type="text" id="office-workshop-postal-code" name="postal_code" class="form-control" value="{{{ ($postalCode) }}}"
+              placeholder=" " maxlength="20" data-label="código postal">
+            <label class="form-label" for="office-workshop-postal-code">Código postal</label>
+            <span class="form-group__error" data-field-error data-error-for="postal_code"></span>
+          </div>
+
+          <div class="form-group" data-field="map_lat">
+            <input type="number" id="office-workshop-map-lat" name="map_lat" class="form-control" value="{{{ ($mapLat) }}}"
+              placeholder=" " step="0.00000001" min="-90" max="90" data-label="latitud">
+            <label class="form-label" for="office-workshop-map-lat">Latitud para pin *</label>
+            <span class="form-group__help">Ejemplo: 20.588793.</span>
+            <span class="form-group__error" data-field-error data-error-for="map_lat"></span>
+          </div>
+
+          <div class="form-group" data-field="map_lng">
+            <input type="number" id="office-workshop-map-lng" name="map_lng" class="form-control" value="{{{ ($mapLng) }}}"
+              placeholder=" " step="0.00000001" min="-180" max="180" data-label="longitud">
+            <label class="form-label" for="office-workshop-map-lng">Longitud para pin *</label>
+            <span class="form-group__help">Ejemplo: -100.389888.</span>
+            <span class="form-group__error" data-field-error data-error-for="map_lng"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="google_maps_url">
+            <input type="url" id="office-workshop-google-maps-url" name="google_maps_url" class="form-control" value="{{{ ($googleMapsUrl) }}}"
+              placeholder=" " maxlength="800" data-label="enlace de Google Maps">
+            <label class="form-label" for="office-workshop-google-maps-url">Enlace de Google Maps</label>
+            <span class="form-group__help">Opcional. Si lo dejas vacío, se genera con latitud y longitud.</span>
+            <span class="form-group__error" data-field-error data-error-for="google_maps_url"></span>
+          </div>
+
+          <div class="form-group form-group--checkbox admin-form-grid__full" data-field="show_on_map">
+            <label class="form-checkbox">
+              {% if ($showOnMap === 1): %}
+              <input type="checkbox" name="show_on_map" value="1" checked>
+              {% else: %}
+              <input type="checkbox" name="show_on_map" value="1">
+              {% endif; %}
+              <span>Mostrar como pin en el mapa</span>
+            </label>
+            <span class="form-group__help">Debe estar publicado y tener coordenadas para aparecer públicamente.</span>
+            <span class="form-group__error" data-field-error data-error-for="show_on_map"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Contacto</legend>
+
+        <div class="admin-form-grid">
+          <div class="form-group" data-field="contact_name">
+            <input type="text" id="office-workshop-contact-name" name="contact_name" class="form-control" value="{{{ ($contactName) }}}"
+              placeholder=" " maxlength="180" data-label="contacto">
+            <label class="form-label" for="office-workshop-contact-name">Contacto</label>
+            <span class="form-group__error" data-field-error data-error-for="contact_name"></span>
+          </div>
+
+          <div class="form-group" data-field="phone">
+            <input type="tel" id="office-workshop-phone" name="phone" class="form-control" value="{{{ ($phone) }}}"
+              placeholder=" " maxlength="60" data-label="teléfono">
+            <label class="form-label" for="office-workshop-phone">Teléfono</label>
+            <span class="form-group__error" data-field-error data-error-for="phone"></span>
+          </div>
+
+          <div class="form-group" data-field="email">
+            <input type="email" id="office-workshop-email" name="email" class="form-control" value="{{{ ($email) }}}"
+              placeholder=" " maxlength="180" data-label="correo">
+            <label class="form-label" for="office-workshop-email">Correo</label>
+            <span class="form-group__error" data-field-error data-error-for="email"></span>
+          </div>
+
+          <div class="form-group" data-field="whatsapp">
+            <input type="tel" id="office-workshop-whatsapp" name="whatsapp" class="form-control" value="{{{ ($whatsapp) }}}"
+              placeholder=" " maxlength="60" data-label="WhatsApp">
+            <label class="form-label" for="office-workshop-whatsapp">WhatsApp</label>
+            <span class="form-group__error" data-field-error data-error-for="whatsapp"></span>
+          </div>
+
+          <div class="form-group admin-form-grid__full" data-field="opening_hours">
+            <input type="text" id="office-workshop-opening-hours" name="opening_hours" class="form-control" value="{{{ ($openingHours) }}}"
+              placeholder=" " maxlength="255" data-label="horario">
+            <label class="form-label" for="office-workshop-opening-hours">Horario</label>
+            <span class="form-group__help">Ejemplo: Lunes a viernes, 8:00 a 18:00 h.</span>
+            <span class="form-group__error" data-field-error data-error-for="opening_hours"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+        <legend>Imagen del pin</legend>
+
+        <div class="admin-form-grid">
+          {% if (!empty($mapImageUrl)): %}
+          <div class="form-group admin-form-grid__full">
+            <label class="form-label">Imagen actual</label>
+            <div class="admin-table__actions" style="margin-top: 1rem;">
+              <a href="{{{ ($mapImageUrl) }}}" target="_blank" rel="noopener noreferrer" class="admin-button admin-button--xs admin-button--secondary">
+                Ver imagen actual
+              </a>
+            </div>
+          </div>
+          {% endif; %}
+
+          <div class="form-group form-group--file admin-form-grid__full" data-field="map_image_file">
+            <label class="form-label" for="office-workshop-map-image-file">
+              {% if (!empty($mapImageUrl)): %}
+              Cambiar imagen del pin
+              {% else: %}
+              Imagen del pin
+              {% endif; %}
+            </label>
+            <input type="file" id="office-workshop-map-image-file" name="map_image_file" class="form-control"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+              data-min-files="0" data-max-files="1" data-max-file-size="8mb" data-max-total-size="8mb"
+              data-file-types=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
+              data-message-file-size="La imagen debe pesar máximo 8 MB."
+              data-message-file-total-size="La imagen debe pesar máximo 8 MB."
+              data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP."
+              data-label="imagen del pin">
+            <span class="form-group__help">Se usa en la tarjeta del mapa. Si la cambias, se elimina la anterior.</span>
+            <span class="form-group__error" data-field-error data-error-for="map_image_file"></span>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="admin-jumbotron-form__actions">
+        <button type="submit" class="admin-button admin-button--primary">
+          {{{ ($submitText) }}}
+        </button>
+
+        <a href="@url/admin/oficinas-talleres" class="admin-button admin-button--secondary">
+          Cancelar
+        </a>
+      </div>
+    </form>
+  </article>
+</section>

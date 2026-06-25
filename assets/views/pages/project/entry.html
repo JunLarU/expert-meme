@@ -379,7 +379,7 @@ $galleryCountLabel = str_pad((string) max(1, $galleryCount), 2, '0', STR_PAD_LEF
                                     {% if ($isVideo): %}
                                     {% if (!empty($posterUrl)): %}
                                     <video class="project-entry-slide__video lazy-video-interactive"
-                                        data-src="{{{ ($fileUrl) }}}" data-poster="{{{ ($posterUrl) }}}" controls
+                                        data-src="{{{ ($fileUrl) }}}" poster="{{{ ($posterUrl) }}}" controls
                                         playsinline preload="none" aria-label="{{{ ($ariaLabel) }}}"></video>
                                     {% else: %}
                                     <video class="project-entry-slide__video lazy-video-interactive"

@@ -595,6 +595,57 @@ CREATE TABLE IF NOT EXISTS audit_log_changes (
         REFERENCES audit_logs(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CREATE TABLE IF NOT EXISTS office_workshops (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    slug VARCHAR(180) NOT NULL UNIQUE,
+    type ENUM('office', 'workshop') NOT NULL DEFAULT 'office',
+    status ENUM('draft', 'published', 'hidden', 'archived') NOT NULL DEFAULT 'draft',
+
+    title VARCHAR(255) NOT NULL,
+    summary TEXT NULL,
+    description TEXT NULL,
+
+    address TEXT NULL,
+    city VARCHAR(160) NULL,
+    state VARCHAR(120) NULL,
+    country VARCHAR(80) NOT NULL DEFAULT 'México',
+    postal_code VARCHAR(20) NULL,
+
+    contact_name VARCHAR(180) NULL,
+    phone VARCHAR(60) NULL,
+    email VARCHAR(180) NULL,
+    whatsapp VARCHAR(60) NULL,
+    opening_hours VARCHAR(255) NULL,
+    google_maps_url TEXT NULL,
+
+    show_on_map TINYINT(1) NOT NULL DEFAULT 1,
+    map_lat DECIMAL(10,8) NULL,
+    map_lng DECIMAL(11,8) NULL,
+    map_title VARCHAR(255) NULL,
+    map_kind VARCHAR(120) NULL,
+    map_location VARCHAR(255) NULL,
+    map_summary TEXT NULL,
+    map_image_url TEXT NULL,
+    map_image_alt VARCHAR(255) NULL,
+
+    sort_order INT UNSIGNED NOT NULL DEFAULT 0,
+
+    created_by INT(11) NULL,
+    updated_by INT(11) NULL,
+    deleted_by INT(11) NULL,
+    deleted_at DATETIME NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_office_workshops_type (type),
+    INDEX idx_office_workshops_status (status),
+    INDEX idx_office_workshops_show_on_map (show_on_map),
+    INDEX idx_office_workshops_state (state),
+    INDEX idx_office_workshops_sort (sort_order, id),
+    INDEX idx_office_workshops_deleted_at (deleted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 SET FOREIGN_KEY_CHECKS = 1;

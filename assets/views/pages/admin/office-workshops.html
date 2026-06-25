@@ -1,0 +1,197 @@
+{%
+$items = $items ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$published = (int) ($stats['published'] ?? 0);
+$offices = (int) ($stats['offices'] ?? 0);
+$workshops = (int) ($stats['workshops'] ?? 0);
+$map = (int) ($stats['map'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-projects-page admin-office-workshops-page" aria-labelledby="admin-office-workshops-title">
+  <header class="admin-dashboard__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Mapa</p>
+      <h2 id="admin-office-workshops-title">Oficinas y talleres</h2>
+      <span>
+        Administra ubicaciones internas de L+E Ingeniería. Estos registros viven en su propia tabla
+        y alimentan los pines del mapa junto con los proyectos publicados.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+      <a href="@url/admin/oficinas-talleres/crear" class="admin-button admin-button--primary">Nuevo registro</a>
+    </div>
+  </header>
+
+  <section class="admin-stats" aria-label="Resumen de oficinas y talleres">
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Total</span>
+        <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+        <small>Registros</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Publicados</span>
+        <strong data-admin-count data-value="{{ ($published) }}">0</strong>
+        <small>Visibles en mapa</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Oficinas</span>
+        <strong data-admin-count data-value="{{ ($offices) }}">0</strong>
+        <small>Administrativas o comerciales</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⌂</span>
+    </article>
+
+    <article class="admin-stat-card">
+      <div class="admin-stat-card__content">
+        <span>Talleres</span>
+        <strong data-admin-count data-value="{{ ($workshops) }}">0</strong>
+        <small>Operación y fabricación</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">⚙</span>
+    </article>
+
+    <article class="admin-stat-card admin-stat-card--alert">
+      <div class="admin-stat-card__content">
+        <span>Mapa</span>
+        <strong data-admin-count data-value="{{ ($map) }}">0</strong>
+        <small>Pines activos</small>
+      </div>
+      <span class="admin-stat-card__icon" aria-hidden="true">●</span>
+    </article>
+  </section>
+
+  <article class="admin-panel admin-panel--wide">
+    <header class="admin-panel__header">
+      <div>
+        <p>Registros</p>
+        <h3>Listado de oficinas y talleres</h3>
+      </div>
+
+      <a href="@url/admin/oficinas-talleres/crear" class="admin-panel__link">
+        Crear registro <span aria-hidden="true">→</span>
+      </a>
+    </header>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" data-admin-filterable>
+        <thead>
+          <tr>
+            <th>Registro</th>
+            <th>Tipo</th>
+            <th>Ubicación</th>
+            <th>Estado</th>
+            <th>Mapa</th>
+            <th>Orden</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% foreach ($items as $item): %}
+          {%
+          $id = (int) ($item['id'] ?? 0);
+          $title = $item['title'] ?? 'Registro sin título';
+          $type = $item['type'] ?? 'office';
+          $status = $item['status'] ?? 'draft';
+          $location = $item['map_location'] ?? trim((string) (($item['city'] ?? '') . ', ' . ($item['state'] ?? '')), ' ,');
+          $sortOrder = $item['sort_order'] ?? 0;
+          $showMap = (int) ($item['show_on_map'] ?? 0) === 1;
+          $hasCoords = (($item['map_lat'] ?? null) !== null && ($item['map_lng'] ?? null) !== null);
+
+          $typeLabel = match ($type) {
+              'workshop' => 'Taller',
+              default => 'Oficina',
+          };
+
+          $statusLabel = match ($status) {
+              'published' => 'Publicado',
+              'hidden' => 'Oculto',
+              'archived' => 'Archivado',
+              default => 'Borrador',
+          };
+
+          $statusClass = match ($status) {
+              'published' => 'admin-badge--success',
+              'hidden', 'archived' => 'admin-badge--muted',
+              default => 'admin-badge--warning',
+          };
+          %}
+
+          <tr>
+            <td>
+              <strong>{{{ ($title) }}}</strong>
+              <small>{{{ ($item['summary'] ?? '') }}}</small>
+            </td>
+
+            <td>
+              <span class="admin-badge admin-badge--neutral">{{{ ($typeLabel) }}}</span>
+            </td>
+
+            <td>{{{ ($location ?: 'Sin ubicación') }}}</td>
+
+            <td>
+              <span class="admin-badge {{ ($statusClass) }}">{{{ ($statusLabel) }}}</span>
+            </td>
+
+            <td>
+              {% if ($showMap && $hasCoords): %}
+                <span class="admin-badge admin-badge--success">Pin activo</span>
+              {% elseif ($showMap): %}
+                <span class="admin-badge admin-badge--warning">Faltan coords</span>
+              {% else: %}
+                <span class="admin-badge admin-badge--muted">Oculto</span>
+              {% endif; %}
+            </td>
+
+            <td>{{{ ($sortOrder) }}}</td>
+
+            <td>
+              <div class="admin-table__actions">
+                <a href="@url/admin/oficinas-talleres/{{ ($id) }}/editar" class="admin-button admin-button--xs admin-button--secondary">
+                  Editar
+                </a>
+
+                {% if (!empty($item['google_maps_url'])): %}
+                <a href="{{{ ($item['google_maps_url']) }}}" target="_blank" rel="noopener noreferrer" class="admin-button admin-button--xs admin-button--secondary">
+                  Maps
+                </a>
+                {% endif; %}
+
+                <a
+                  href="@url/admin/oficinas-talleres/{{ ($id) }}/eliminar"
+                  class="admin-button admin-button--xs admin-button--danger"
+                  onclick="return confirm('¿Eliminar este registro? También se borrará su imagen del servidor.');"
+                >
+                  Eliminar
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% endforeach; %}
+
+          {% if (empty($items)): %}
+          <tr>
+            <td colspan="7">
+              <strong>No hay oficinas o talleres registrados todavía.</strong>
+              <small>Crea el primer registro para mostrarlo como pin en el mapa.</small>
+            </td>
+          </tr>
+          {% endif; %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
