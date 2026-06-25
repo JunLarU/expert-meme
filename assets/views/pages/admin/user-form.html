@@ -1,0 +1,174 @@
+{%
+$mode = $mode ?? 'create';
+
+$formUser = $adminUser ?? [];
+
+if (is_object($formUser) && method_exists($formUser, 'toArray')) {
+    $formUser = $formUser->toArray();
+}
+
+if (!is_array($formUser)) {
+    $formUser = [];
+}
+
+$isEdit = $mode === 'edit';
+$id = (int) ($formUser['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/usuarios/' . $id . '/actualizar'
+: '/admin/usuarios';
+
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear usuario';
+$pageTitle = $isEdit ? 'Editar usuario' : 'Nuevo usuario';
+
+$name = $formUser['name'] ?? '';
+$email = $formUser['email'] ?? '';
+$role = $formUser['role'] ?? 'manager';
+%}
+
+<section class="admin-dashboard admin-users-page" aria-labelledby="admin-user-form-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Usuarios</p>
+            <h2 id="admin-user-form-title">{{{ ($pageTitle) }}}</h2>
+            <span>
+                Define el acceso interno al panel administrativo. Solo los usuarios Admin pueden
+                administrar otras cuentas.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/usuarios" class="admin-button admin-button--secondary">Volver</a>
+        </div>
+    </header>
+
+    <article class="admin-panel admin-jumbotron-form-panel admin-user-form-panel">
+        <header class="admin-panel__header">
+            <div>
+                <p>Formulario</p>
+                <h3>{{{ ($pageTitle) }}}</h3>
+            </div>
+        </header>
+
+        <form class="form form--default admin-jumbotron-form admin-user-form" action="@url{{{ ($formAction) }}}"
+            method="post" data-ajax-form data-validation="html" data-send-as="urlencoded"
+            data-csrf="true" data-csrf-field="_token" data-reset-on-success="false"
+            data-loading-text="{{{ ($loadingText) }}}" novalidate>
+            @csrf
+
+            <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Datos de acceso</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group admin-form-grid__full" data-field="name">
+                        <input type="text" id="user-name" name="name" class="form-control"
+                            value="{{{ ($name) }}}" placeholder=" " required maxlength="255"
+                            data-label="nombre del usuario" autocomplete="name">
+                        <label class="form-label" for="user-name">Nombre *</label>
+                        <span class="form-group__error" data-field-error data-error-for="name"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="email">
+                        <input type="email" id="user-email" name="email" class="form-control"
+                            value="{{{ ($email) }}}" placeholder=" " required maxlength="255"
+                            data-label="correo electrónico" autocomplete="email">
+                        <label class="form-label" for="user-email">Correo electrónico *</label>
+                        <span class="form-group__error" data-field-error data-error-for="email"></span>
+                    </div>
+
+                    <div class="form-group form-group--select admin-form-grid__full" data-field="role">
+                        <select id="user-role" name="role" class="form-control" required data-label="rol">
+                            {% if ($role === 'admin'): %}
+                            <option value="admin" selected>Admin</option>
+                            {% else: %}
+                            <option value="admin">Admin</option>
+                            {% endif; %}
+
+                            {% if ($role === 'manager'): %}
+                            <option value="manager" selected>Manager</option>
+                            {% else: %}
+                            <option value="manager">Manager</option>
+                            {% endif; %}
+                        </select>
+
+                        <label class="form-label" for="user-role">Rol *</label>
+                        <span class="form-group__help">
+                            Admin puede gestionar usuarios. Manager solo administra contenido.
+                        </span>
+                        <span class="form-group__error" data-field-error data-error-for="role"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Contraseña</legend>
+
+                {% if ($isEdit): %}
+                <p class="admin-form-note">
+                    Deja estos campos vacíos si no quieres cambiar la contraseña.
+                </p>
+                {% endif; %}
+
+                <div class="admin-form-grid">
+                    <div class="form-group" data-field="password">
+                        {% if ($isEdit): %}
+                        <input type="password" id="user-password" name="password" class="form-control"
+                            placeholder=" " minlength="8" data-label="contraseña"
+                            autocomplete="new-password">
+                        {% else: %}
+                        <input type="password" id="user-password" name="password" class="form-control"
+                            placeholder=" " minlength="8" data-label="contraseña"
+                            autocomplete="new-password" required>
+                        {% endif; %}
+
+                        <label class="form-label" for="user-password">
+                            {% if ($isEdit): %}
+                            Nueva contraseña
+                            {% else: %}
+                            Contraseña *
+                            {% endif; %}
+                        </label>
+
+                        <span class="form-group__help">Mínimo 8 caracteres.</span>
+                        <span class="form-group__error" data-field-error data-error-for="password"></span>
+                    </div>
+
+                    <div class="form-group" data-field="confirm_password">
+                        {% if ($isEdit): %}
+                        <input type="password" id="user-confirm-password" name="confirm_password"
+                            class="form-control" placeholder=" " minlength="8"
+                            data-label="confirmación de contraseña" autocomplete="new-password">
+                        {% else: %}
+                        <input type="password" id="user-confirm-password" name="confirm_password"
+                            class="form-control" placeholder=" " minlength="8"
+                            data-label="confirmación de contraseña" autocomplete="new-password" required>
+                        {% endif; %}
+
+                        <label class="form-label" for="user-confirm-password">
+                            {% if ($isEdit): %}
+                            Confirmar contraseña
+                            {% else: %}
+                            Confirmar contraseña *
+                            {% endif; %}
+                        </label>
+
+                        <span class="form-group__error" data-field-error data-error-for="confirm_password"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="admin-jumbotron-form__actions">
+                <button type="submit" class="admin-button admin-button--primary button__submit">
+                    <span class="button__submit__text">{{{ ($submitText) }}}</span>
+                </button>
+
+                <a href="@url/admin/usuarios" class="admin-button admin-button--secondary">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </article>
+</section>

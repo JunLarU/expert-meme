@@ -3,7 +3,9 @@
 use App\Controllers\Admin\Clients;
 use App\Controllers\Admin\Dashboard;
 use App\Controllers\Admin\Jumbotron;
+use App\Controllers\Admin\Messages;
 use App\Controllers\Admin\Projects;
+use App\Controllers\Admin\Users;
 use App\Controllers\Api\ApiTokenController;
 use App\Controllers\Home;
 use App\Controllers\Proyectos;
@@ -16,22 +18,20 @@ Auth::Routes();
 
 CONTROLLER(Home::class, '', [
     'get'  => [
-        ''          => 'home',
-        'nosotros'  => 'nosotros',
-        'proyectos' => 'proyectos',
-        'servicios' => 'servicios',
-        'contacto'  => 'contacto',
+        ''                      => 'home',
+        'nosotros'              => 'nosotros',
+        'proyectos'             => 'proyectos',
+        'servicios'             => 'servicios',
+        'contacto'              => 'contacto',
+        'site-api/projects'     => 'projectsJson',
+        'site-api/map/projects' => 'projectsMapJson',
     ],
     'post' => [
         'contact/send' => 'contactSend',
     ],
 
 ]);
-CONTROLLER(Proyectos::class, 'proyecto', [
-    'get' => [
-        '{id:.+}' => 'entry',
-    ],
-]);
+GET('/proyecto/{id}', [Proyectos::class, 'entry']);
 
 GROUP('/admin', function () {
     GET('', [Dashboard::class, 'index']);
@@ -65,6 +65,33 @@ GROUP('/admin', function () {
     POST('/proyectos', [Projects::class, 'store']);
     POST('/proyectos/{id:\d+}/actualizar', [Projects::class, 'update']);
     POST('/proyectos/{id:\d+}/eliminar', [Projects::class, 'destroy']);
+
+    GET('/mensajes', [Messages::class, 'index']);
+    GET('/mensajes/{id:\d+}', [Messages::class, 'show']);
+    GET('/mensajes/{id:\d+}/eliminar', [Messages::class, 'delete']);
+
+    POST('/mensajes/{id:\d+}/actualizar', [Messages::class, 'update']);
+    POST('/mensajes/{id:\d+}/leer', [Messages::class, 'markRead']);
+    POST('/mensajes/{id:\d+}/seguimiento', [Messages::class, 'markInProgress']);
+    POST('/mensajes/{id:\d+}/respondido', [Messages::class, 'markAnswered']);
+    POST('/mensajes/{id:\d+}/archivar', [Messages::class, 'archive']);
+    POST('/mensajes/{id:\d+}/spam', [Messages::class, 'spam']);
+    POST('/mensajes/{id:\d+}/eliminar', [Messages::class, 'destroy']);
+
+    GET('/usuarios', [Users::class, 'index']);
+    GET('/usuarios/crear', [Users::class, 'create']);
+    GET('/usuarios/{id:\d+}', [Users::class, 'edit']);
+    GET('/usuarios/{id:\d+}/editar', [Users::class, 'edit']);
+    GET('/usuarios/{id:\d+}/eliminar', [Users::class, 'delete']);
+
+    POST('/usuarios', [Users::class, 'store']);
+    POST('/usuarios/{id:\d+}/actualizar', [Users::class, 'update']);
+    POST('/usuarios/{id:\d+}/eliminar', [Users::class, 'destroy']);
+
+    GET('/perfil', [Users::class, 'profile']);
+
+    POST('/perfil/actualizar', [Users::class, 'updateProfile']);
+    POST('/perfil/password', [Users::class, 'updatePassword']);
     /*
     |--------------------------------------------------------------------------
     | Admin: API Tokens
@@ -80,15 +107,6 @@ GROUP('/admin', function () {
     | - eliminación
     |
     */
-
-    GET('/api-tokens', [ApiTokenController::class, 'index']);
-    GET('/api-tokens/{id:\d+}', [ApiTokenController::class, 'show']);
-    GET('/api-tokens/{id:\d+}/editar', [ApiTokenController::class, 'edit']);
-
-    POST('/api-tokens', [ApiTokenController::class, 'store']);
-    POST('/api-tokens/{id:\d+}/actualizar', [ApiTokenController::class, 'update']);
-    POST('/api-tokens/{id:\d+}/revocar', [ApiTokenController::class, 'revoke']);
-    POST('/api-tokens/{id:\d+}/eliminar', [ApiTokenController::class, 'destroy']);
 }, [AuthMiddleware::class]);
 
 // GROUP('/site-api', function () {

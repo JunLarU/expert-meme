@@ -199,3 +199,346 @@ Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine
 Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php' on line 547
 
 
+	2026-06-24 15:20:38: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.projects' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(130): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM p...', Array)
+#2 E:\F22_LMASE-V2\app\Models\Project.php(241): Whis\Database\Model::find(2)
+#3 E:\F22_LMASE-V2\app\Controllers\Admin\Projects.php(96): App\Models\Project::findArray(2)
+#4 [internal function]: App\Controllers\Admin\Projects->edit(2)
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, 2)
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#8 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#11 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#12 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#13 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:20:42: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Admin\Dashboard.php(37): Whis\Database\Model::where('status', 'published', 'sort_order')
+#3 [internal function]: App\Controllers\Admin\Dashboard->index()
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:20:45: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:20:49: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:20:53: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:20:56: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:00: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:04: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:07: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:11: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:15: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:18: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:22: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:26: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:29: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 15:21:33: PDOException by 192.168.68.54
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42S02]: Base table or view not found: 1146 Table 'lmasedb12345890.home_jumbotron_slides' doesn't exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Model.php(181): Whis\Database\Drivers\PdoDriver->statement('SELECT * FROM h...', Array)
+#2 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(70): Whis\Database\Model::where('page', 'home', 'sort_order')
+#3 E:\F22_LMASE-V2\app\Models\HomeJumbotronSlide.php(75): App\Models\HomeJumbotronSlide::byPage('home')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(15): App\Models\HomeJumbotronSlide::published('home')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-24 17:52:35: Error by 192.168.68.54
+Uncaught exception: 'Error' with message 'Class "App\Controllers\Admin\Users" not found'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#1 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#2 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 72
+
+
+	2026-06-24 18:02:42: Error by 192.168.68.54
+Uncaught exception: 'Error' with message 'Cannot use object of type App\Models\User as array'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(92): include()
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/admin/use...', Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/admin/use...', Array, 'layouts/admin/l...', 'Nuevo usuario')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/admin/use...', Array, 'layouts/admin/l...', 'Nuevo usuario')
+#5 E:\F22_LMASE-V2\app\Controllers\Admin\Users.php(33): view('pages/admin/use...', 'Nuevo usuario', Array, 'layouts/admin/l...')
+#6 [internal function]: App\Controllers\Admin\Users->create()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#12 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#13 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#14 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#15 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\admin\user-form.php' on line 2
+
+
+	2026-06-24 18:06:00: Error by 192.168.68.54
+Uncaught exception: 'Error' with message 'Cannot use object of type App\Models\User as array'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(92): include()
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/admin/use...', Array)
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/admin/use...', Array, 'layouts/admin/l...', 'Editar usuario')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/admin/use...', Array, 'layouts/admin/l...', 'Editar usuario')
+#5 E:\F22_LMASE-V2\app\Controllers\Admin\Users.php(54): view('pages/admin/use...', 'Editar usuario', Array, 'layouts/admin/l...')
+#6 [internal function]: App\Controllers\Admin\Users->edit(1)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, 1)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(103): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\app\Middlewares\AuthMiddleware.php(17): Whis\Routing\Router->{closure:Whis\Routing\Router::runMiddlewares():102}(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(100): App\Middlewares\AuthMiddleware->handle(Object(Whis\Http\Request), Object(Closure))
+#12 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#13 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#14 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#15 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\admin\user-form.php' on line 2
+
+
+	2026-06-24 18:13:28: TypeError by 192.168.68.54
+Uncaught exception: 'TypeError' with message 'Whis\Routing\Router::runMiddlewares(): Return value must be of type Whis\Http\Response, null returned'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#2 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#3 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 97
+
+
+	2026-06-24 18:13:36: TypeError by 192.168.68.54
+Uncaught exception: 'TypeError' with message 'Whis\Routing\Router::runMiddlewares(): Return value must be of type Whis\Http\Response, null returned'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#2 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#3 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php' on line 97
+
+

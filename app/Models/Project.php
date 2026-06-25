@@ -175,8 +175,8 @@ class Project extends Model
         $params = [self::STATUS_PUBLISHED];
 
         if ($excludeId !== null && $excludeId > 0) {
-            $sql .= " AND id <> ?";
-            $params[] = $excludeId;
+            $sql      .= " AND id <> ?";
+            $params[]  = $excludeId;
         }
 
         $sql .= " ORDER BY COALESCE(project_year, 0) DESC, created_at DESC, id DESC LIMIT {$limit}";
@@ -294,7 +294,7 @@ class Project extends Model
             return true;
         }
 
-        $set = implode(", ", array_map(fn($column) => "{$column} = ?", $columns));
+        $set      = implode(", ", array_map(fn($column) => "{$column} = ?", $columns));
         $values[] = $id;
 
         static::getDatabaseDriver()->statement(
@@ -328,5 +328,99 @@ class Project extends Model
         }
 
         return $max + 1;
+    }
+
+    public static function forProjectsPagePaginated(int $limit = 9, int $offset = 0): array
+    {
+        $instance = new static();
+
+        $limit  = max(1, min(36, $limit));
+        $offset = max(0, $offset);
+
+        return static::getDatabaseDriver()->statement(
+            "SELECT * FROM {$instance->table}
+         WHERE status = ?
+           AND show_in_projects = 1
+           AND deleted_at IS NULL
+         ORDER BY sort_order ASC, COALESCE(project_year, 0) DESC, id DESC
+         LIMIT {$limit} OFFSET {$offset}",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
+    }
+
+    public static function countForProjectsPage(): int
+    {
+        $instance = new static();
+
+        $rows = static::getDatabaseDriver()->statement(
+            "SELECT COUNT(*) AS total
+         FROM {$instance->table}
+         WHERE status = ?
+           AND show_in_projects = 1
+           AND deleted_at IS NULL",
+            [self::STATUS_PUBLISHED]
+        ) ?: [];
+
+        return (int) ($rows[0]['total'] ?? 0);
+    }
+
+    public static function toProjectCard(array $project, int $position = 1): array
+    {
+        $title = trim((string) ($project['title'] ?? 'Proyecto'));
+
+        $href = trim((string) ($project['href'] ?? ''));
+
+        if ($href === '') {
+            $slug = trim((string) ($project['slug'] ?? ''));
+
+            $href = $slug !== ''
+                ? '/proyecto/' . $slug
+                : '/proyecto/' . (int) ($project['id'] ?? 0);
+        }
+
+        $image = trim((string) (
+            ($project['cover_image_url'] ?? '')
+                ?: ($project['hero_background_url'] ?? '')
+                ?: ($project['map_image_url'] ?? '')
+        ));
+
+        if ($image === '') {
+            $image = '/images/JTRON.jpg';
+        }
+
+        $category = trim((string) (
+            ($project['category_badge'] ?? '')
+                ?: ($project['category'] ?? '')
+                ?: 'Proyecto'
+        ));
+
+        $service = trim((string) ($project['service'] ?? ''));
+
+        $tags = array_values(array_filter([
+            $category,
+            $service,
+        ]));
+
+        return [
+            'id'          => (int) ($project['id'] ?? 0),
+            'title'       => $title,
+            'href'        => $href,
+            'image'       => $image,
+            'image_alt'   => (string) (($project['cover_image_alt'] ?? '') ?: $title),
+            'category'    => $category,
+            'service'     => $service,
+            'tags'        => $tags,
+            'location'    => (string) (
+                ($project['location_display'] ?? '')
+                    ?: trim((string) (($project['city'] ?? '') . ', ' . ($project['state'] ?? '')), ' ,')
+            ),
+            'year'        => (string) ($project['project_year'] ?? ''),
+            'brief'       => (string) (
+                ($project['brief'] ?? '')
+                    ?: ($project['summary'] ?? '')
+            ),
+            'number'      => str_pad((string) $position, 2, '0', STR_PAD_LEFT),
+            'is_featured' => $position === 1,
+        ];
     }
 }

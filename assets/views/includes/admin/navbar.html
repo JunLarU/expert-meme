@@ -1,12 +1,77 @@
 {%
-$adminUser = $user ?? auth();
+$topbarUser = $user ?? auth();
 
-$adminName = 'Administrador';
-$adminRole = 'admin';
+$topbarName = 'Administrador';
+$topbarRole = '';
 
-if ($adminUser) {
-$adminName = $adminUser->name ?? 'Administrador';
-$adminRole = $adminUser->role ?? 'admin';
+if ($topbarUser) {
+if (is_array($topbarUser)) {
+$topbarName = $topbarUser['name'] ?? 'Administrador';
+$topbarRole = $topbarUser['role'] ?? '';
+}
+
+if (is_object($topbarUser)) {
+if (method_exists($topbarUser, 'toArray')) {
+$topbarData = $topbarUser->toArray();
+
+if (is_array($topbarData)) {
+$topbarName = $topbarData['name'] ?? $topbarName;
+$topbarRole = $topbarData['role'] ?? $topbarRole;
+}
+}
+
+if ($topbarRole === '') {
+try {
+$topbarRole = $topbarUser->role ?? '';
+} catch (\Throwable $th) {
+$topbarRole = '';
+}
+}
+
+if ($topbarName === 'Administrador') {
+try {
+$topbarName = $topbarUser->name ?? 'Administrador';
+} catch (\Throwable $th) {
+$topbarName = 'Administrador';
+}
+}
+}
+}
+
+$topbarRole = strtolower(trim((string) $topbarRole));
+
+$topbarRoleLabel = match ($topbarRole) {
+'admin' => 'Admin',
+'manager' => 'Manager',
+default => 'Usuario',
+};
+
+$topbarIsAdmin = $topbarRole === 'admin';
+
+
+%}
+
+{%
+$topbarInitials = 'AD';
+
+$topbarNameParts = preg_split('/\s+/', trim((string) $topbarName));
+$topbarNameParts = is_array($topbarNameParts)
+? array_values(array_filter($topbarNameParts))
+: [];
+
+if (!empty($topbarNameParts)) {
+$topbarFirstPart = $topbarNameParts[0];
+$topbarLastPart = count($topbarNameParts) > 1
+? $topbarNameParts[count($topbarNameParts) - 1]
+: '';
+
+if ($topbarLastPart !== '') {
+$topbarInitials = substr($topbarFirstPart, 0, 1) . substr($topbarLastPart, 0, 1);
+} else {
+$topbarInitials = substr($topbarFirstPart, 0, 2);
+}
+
+$topbarInitials = strtoupper($topbarInitials);
 }
 %}
 
@@ -23,7 +88,7 @@ $adminRole = $adminUser->role ?? 'admin';
     </div>
 
     <nav class="admin-sidebar__nav" aria-label="Menú administrativo">
-        <a class="admin-sidebar__link active" href="@url/admin" aria-current="page">
+        <a class="admin-sidebar__link" href="@url/admin" aria-current="page">
             <span class="admin-sidebar__icon" aria-hidden="true">⌂</span>
             <span class="admin-sidebar__text">Dashboard</span>
         </a>
@@ -38,30 +103,22 @@ $adminRole = $adminUser->role ?? 'admin';
             <span class="admin-sidebar__text">Proyectos</span>
         </a>
 
-        <a class="admin-sidebar__link" href="@url/admin/mapa">
-            <span class="admin-sidebar__icon" aria-hidden="true">⌖</span>
-            <span class="admin-sidebar__text">Mapa</span>
-        </a>
-
-        <a class="admin-sidebar__link" href="@url/admin/clientes">
-            <span class="admin-sidebar__icon" aria-hidden="true">◈</span>
-            <span class="admin-sidebar__text">Clientes</span>
-        </a>
-
         <a class="admin-sidebar__link" href="@url/admin/mensajes">
             <span class="admin-sidebar__icon" aria-hidden="true">✉</span>
             <span class="admin-sidebar__text">Mensajes</span>
         </a>
 
-        <a class="admin-sidebar__link" href="@url/admin/auditoria">
-            <span class="admin-sidebar__icon" aria-hidden="true">☰</span>
-            <span class="admin-sidebar__text">Auditoría</span>
+        {% if ($topbarIsAdmin): %}
+        <a class="admin-sidebar__link" href="@url/admin/clientes">
+            <span class="admin-sidebar__icon" aria-hidden="true">◈</span>
+            <span class="admin-sidebar__text">Clientes</span>
         </a>
 
         <a class="admin-sidebar__link" href="@url/admin/usuarios">
             <span class="admin-sidebar__icon" aria-hidden="true">◉</span>
             <span class="admin-sidebar__text">Usuarios</span>
         </a>
+        {% endif; %}
     </nav>
 
     <div class="admin-sidebar__footer">
@@ -97,23 +154,23 @@ $adminRole = $adminUser->role ?? 'admin';
     <div class="admin-topbar__user" data-admin-user-menu-wrapper>
         <button class="admin-topbar__user-button" type="button" data-admin-user-menu-toggle
             aria-label="Abrir menú de usuario" aria-controls="admin-user-menu" aria-expanded="false">
-            <span class="admin-avatar" data-admin-initials data-admin-name="{{{ ($adminName) }}}"
-                aria-hidden="true"></span>
+            <span class="admin-avatar" data-admin-initials data-admin-name="{{{ ($topbarName) }}}"
+                aria-hidden="true">{{{ ($topbarInitials) }}}</span>
 
             <span class="admin-topbar__user-text">
-                <strong>{{{ ($adminName) }}}</strong>
-                <small>{{{ ($adminRole) }}}</small>
+                <strong>{{{ ($topbarName) }}}</strong>
+                <small>{{{ ($topbarRoleLabel) }}}</small>
             </span>
         </button>
 
         <div id="admin-user-menu" class="admin-user-card" data-admin-user-menu hidden>
             <div class="admin-user-card__header">
-                <span class="admin-avatar admin-avatar--sm" data-admin-initials data-admin-name="{{{ ($adminName) }}}"
-                    aria-hidden="true"></span>
+                <span class="admin-avatar admin-avatar--sm" data-admin-initials data-admin-name="{{{ ($topbarName) }}}"
+                    aria-hidden="true">{{{ ($topbarInitials) }}}</span>
 
                 <div>
-                    <strong>{{{ ($adminName) }}}</strong>
-                    <small>{{{ ($adminRole) }}}</small>
+                    <strong>{{{ ($topbarName) }}}</strong>
+                    <small>{{{ ($topbarRoleLabel) }}}</small>
                 </div>
             </div>
 

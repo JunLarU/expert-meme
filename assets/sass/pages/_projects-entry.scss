@@ -610,13 +610,14 @@
   &__grid {
     display: grid;
     gap: 1.5rem;
+    justify-content: center;
 
     @include tablet {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 35rem));
     }
 
     @include desktop {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(25rem, 35rem));
     }
   }
 

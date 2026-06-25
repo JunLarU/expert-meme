@@ -1,0 +1,159 @@
+{%
+$users = $users ?? [];
+$stats = $stats ?? [];
+$currentUserId = (int) ($currentUserId ?? 0);
+
+$total = (int) ($stats['total'] ?? 0);
+$admins = (int) ($stats['admin'] ?? 0);
+$managers = (int) ($stats['manager'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-users-page" aria-labelledby="admin-users-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Accesos internos</p>
+            <h2 id="admin-users-title">Usuarios</h2>
+            <span>
+                Administra las cuentas internas del panel. Solo un usuario Admin puede crear,
+                editar o eliminar cuentas Admin y Manager.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+            <a href="@url/admin/usuarios/crear" class="admin-button admin-button--primary">Nuevo usuario</a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de usuarios">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Total</span>
+                <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+                <small>Cuentas internas</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◎</span>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Admins</span>
+                <strong data-admin-count data-value="{{ ($admins) }}">0</strong>
+                <small>Control total</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">A</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Managers</span>
+                <strong data-admin-count data-value="{{ ($managers) }}">0</strong>
+                <small>Gestión de contenido</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">M</span>
+        </article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header">
+            <div>
+                <p>Registros</p>
+                <h3>Listado de usuarios</h3>
+            </div>
+
+            <a href="@url/admin/usuarios/crear" class="admin-panel__link">
+                Crear usuario <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Rol</th>
+                        <th>Creado</th>
+                        <th>Actualizado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% foreach ($users as $adminUser): %}
+                    {%
+                    $id = (int) ($adminUser['id'] ?? 0);
+                    $name = $adminUser['name'] ?? 'Usuario';
+                    $email = $adminUser['email'] ?? '';
+                    $role = $adminUser['role'] ?? 'manager';
+                    $createdAt = $adminUser['created_at'] ?? '';
+                    $updatedAt = $adminUser['updated_at'] ?? '';
+
+                    $createdLabel = $createdAt !== '' ? date('d-m-Y H:i', strtotime($createdAt)) : '—';
+                    $updatedLabel = $updatedAt !== '' ? date('d-m-Y H:i', strtotime($updatedAt)) : '—';
+
+                    $roleLabel = match ($role) {
+                        'admin' => 'Admin',
+                        'manager' => 'Manager',
+                        default => 'Usuario',
+                    };
+
+                    $roleClass = match ($role) {
+                        'admin' => 'admin-badge--warning',
+                        'manager' => 'admin-badge--success',
+                        default => 'admin-badge--muted',
+                    };
+                    %}
+
+                    <tr>
+                        <td>
+                            <strong>{{{ ($name) }}}</strong>
+                            <small>{{{ ($email) }}}</small>
+
+                            {% if ($id === $currentUserId): %}
+                            <small>Tu cuenta actual</small>
+                            {% endif; %}
+                        </td>
+
+                        <td>
+                            <span class="admin-badge {{ ($roleClass) }}">
+                                {{{ ($roleLabel) }}}
+                            </span>
+                        </td>
+
+                        <td>{{{ ($createdLabel) }}}</td>
+                        <td>{{{ ($updatedLabel) }}}</td>
+
+                        <td>
+                            <div class="admin-table__actions">
+                                <a href="@url/admin/usuarios/{{ ($id) }}/editar"
+                                    class="admin-button admin-button--xs admin-button--secondary">
+                                    Editar
+                                </a>
+
+                                {% if ($id !== $currentUserId): %}
+                                <a href="@url/admin/usuarios/{{ ($id) }}/eliminar"
+                                    class="admin-button admin-button--xs admin-button--danger"
+                                    onclick="return confirm('¿Eliminar definitivamente este usuario?');">
+                                    Eliminar
+                                </a>
+                                {% else: %}
+                                <span class="admin-badge admin-badge--muted">Protegido</span>
+                                {% endif; %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endforeach; %}
+
+                    {% if (empty($users)): %}
+                    <tr>
+                        <td colspan="5">
+                            <strong>No hay usuarios internos registrados.</strong>
+                            <small>Crea el primer usuario Admin o Manager.</small>
+                        </td>
+                    </tr>
+                    {% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

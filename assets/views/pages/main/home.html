@@ -368,159 +368,203 @@ $clients = $clients ?? [];
         </div>
     </div>
 </section>
-<section class="latest" id="novedades" aria-labelledby="latest-title">
+{%
+$jumbotronSlides = $jumbotronSlides ?? [];
+%}
+<section class="latest" id="proyectos-recientes" aria-labelledby="latest-title">
     <div class="latest__inner">
         <div class="latest__header">
             <div class="section-heading latest__heading">
                 <p>Proyectos recientes</p>
-                <h2 id="latest-title">Obras, avances y noticias de la empresa</h2>
+                <h2 id="latest-title">Obras y proyectos destacados de L+E Ingeniería</h2>
             </div>
 
-            <a href="/novedades" class="latest__view-all section-more-button" aria-label="Ver todas las novedades">
+            <a href="@url/proyectos" class="latest__view-all section-more-button" aria-label="Ver todos los proyectos">
                 Ver más
                 <span aria-hidden="true">→</span>
             </a>
         </div>
 
         <div class="latest__projects">
-            <!-- MÁS NUEVO / DESTACADO -->
-            <a class="latest__projects__item latest__projects__item--featured" href="/novedades/proyecto-1">
+            {% if (!empty($featuredProject)): %}
+            {%
+            $featuredTitle = trim((string) ($featuredProject['title'] ?? 'Proyecto destacado'));
+            $featuredHref = trim((string) ($featuredProject['href'] ?? ''));
+
+            if ($featuredHref === '') {
+            $featuredSlug = trim((string) ($featuredProject['slug'] ?? ''));
+
+            if ($featuredSlug !== '') {
+            $featuredHref = '/proyecto/' . $featuredSlug;
+            } else {
+            $featuredHref = '/proyecto/' . (int) ($featuredProject['id'] ?? 0);
+            }
+            }
+
+            $featuredImage = trim((string) (
+            $featuredProject['cover_image_url']
+            ?: ($featuredProject['hero_background_url'] ?? '')
+            ?: ($featuredProject['map_image_url'] ?? '')
+            ));
+
+            if ($featuredImage === '') {
+            $featuredImage = '/images/JTRON.jpg';
+            }
+
+            $featuredImageAlt = trim((string) ($featuredProject['cover_image_alt'] ?? $featuredTitle));
+            $featuredCategory = trim((string) ($featuredProject['category_badge'] ?: ($featuredProject['category'] ??
+            'Proyecto')));
+            $featuredService = trim((string) ($featuredProject['service'] ?? ''));
+            $featuredBrief = trim((string) ($featuredProject['brief'] ?: ($featuredProject['summary'] ?? '')));
+            $featuredCreatedAt = trim((string) ($featuredProject['created_at'] ?? ''));
+            $featuredDate = $featuredCreatedAt !== '' ? date('d-m-Y', strtotime($featuredCreatedAt)) : '';
+            %}
+
+            <a class="latest__projects__item latest__projects__item--featured" href="{{{ ($featuredHref) }}}">
                 <div class="latest__projects__item__image">
-                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Proyecto destacado" loading="lazy"
-                        decoding="async">
-                    <span class="entry__category entry__category--featured">Más reciente</span>
+                    <img class="lazy-image" data-src="{{{ ($featuredImage) }}}" alt="{{{ ($featuredImageAlt) }}}"
+                        loading="lazy" decoding="async">
+
+                    <span class="entry__category entry__category--featured">Destacado</span>
                 </div>
 
                 <div class="latest__projects__item__text">
                     <div class="entry__top">
                         <ul class="entry__tags" aria-label="Etiquetas">
                             <li class="entry__tag--featured">Destacado</li>
-                            <li>Proyecto integral</li>
-                            <li>Fabricación</li>
-                            <li>Montaje</li>
+
+                            {% if (!empty($featuredCategory)): %}
+                            <li>{{{ ($featuredCategory) }}}</li>
+                            {% endif; %}
+
+                            {% if (!empty($featuredService)): %}
+                            <li>{{{ ($featuredService) }}}</li>
+                            {% endif; %}
                         </ul>
 
                         <span class="entry__number">01</span>
                     </div>
 
-                    <h4>Proyecto integral de ingeniería, fabricación y montaje</h4>
+                    <h4>{{{ ($featuredTitle) }}}</h4>
 
                     <div class="entry__data">
-                        <p class="date">11-02-2026</p>
+                        {% if (!empty($featuredDate)): %}
+                        <p class="date">{{{ ($featuredDate) }}}</p>
+                        {% endif; %}
+
                         <p class="author">por L+E Ingeniería</p>
                     </div>
 
+                    {% if (!empty($featuredBrief)): %}
                     <p class="entry__brief">
-                        Participación integral en un proyecto de estructura de acero, desde la etapa técnica hasta la
-                        ejecución en campo. El alcance incluye coordinación con el cliente, fabricación, logística,
-                        montaje y control de calidad durante cada fase del proceso.
+                        {{{ ($featuredBrief) }}}
                     </p>
+                    {% endif; %}
 
-                    <span class="entry__read-more"> Leer más </span>
+                    <span class="entry__read-more">Leer más</span>
                 </div>
             </a>
+            {% endif; %}
 
-            <a class="latest__projects__item" href="/novedades/proyecto-2">
+            {% foreach ($latestProjects as $projectIndex => $project): %}
+            {%
+            $projectTitle = trim((string) ($project['title'] ?? 'Proyecto'));
+            $projectHref = trim((string) ($project['href'] ?? ''));
+
+            if ($projectHref === '') {
+            $projectSlug = trim((string) ($project['slug'] ?? ''));
+
+            if ($projectSlug !== '') {
+            $projectHref = '/proyecto/' . $projectSlug;
+            } else {
+            $projectHref = '/proyecto/' . (int) ($project['id'] ?? 0);
+            }
+            }
+
+            $projectImage = trim((string) (
+            $project['cover_image_url']
+            ?: ($project['hero_background_url'] ?? '')
+            ?: ($project['map_image_url'] ?? '')
+            ));
+
+            if ($projectImage === '') {
+            $projectImage = '/images/JTRON.jpg';
+            }
+
+            $projectImageAlt = trim((string) ($project['cover_image_alt'] ?? $projectTitle));
+            $projectCategory = trim((string) ($project['category_badge'] ?: ($project['category'] ?? 'Proyecto')));
+            $projectService = trim((string) ($project['service'] ?? ''));
+            $projectBrief = trim((string) ($project['brief'] ?: ($project['summary'] ?? '')));
+            $projectCreatedAt = trim((string) ($project['created_at'] ?? ''));
+            $projectDate = $projectCreatedAt !== '' ? date('d-m-Y', strtotime($projectCreatedAt)) : '';
+            $projectNumber = str_pad((string) ($projectIndex + 2), 2, '0', STR_PAD_LEFT);
+            %}
+
+            <a class="latest__projects__item" href="{{{ ($projectHref) }}}">
                 <div class="latest__projects__item__image">
-                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Proyecto industrial" loading="lazy"
-                        decoding="async">
+                    <img class="lazy-image" data-src="{{{ ($projectImage) }}}" alt="{{{ ($projectImageAlt) }}}"
+                        loading="lazy" decoding="async">
+
+                    {% if (!empty($projectCategory)): %}
+                    <span class="entry__category">{{{ ($projectCategory) }}}</span>
+                    {% else: %}
                     <span class="entry__category">Proyecto</span>
+                    {% endif; %}
                 </div>
 
                 <div class="latest__projects__item__text">
                     <div class="entry__top">
                         <ul class="entry__tags" aria-label="Etiquetas">
-                            <li>Estructura metálica</li>
-                            <li>Construcción</li>
+                            {% if (!empty($projectCategory)): %}
+                            <li>{{{ ($projectCategory) }}}</li>
+                            {% endif; %}
+
+                            {% if (!empty($projectService)): %}
+                            <li>{{{ ($projectService) }}}</li>
+                            {% endif; %}
                         </ul>
 
-                        <span class="entry__number">02</span>
+                        <span class="entry__number">{{{ ($projectNumber) }}}</span>
                     </div>
 
-                    <h4>Proyecto industrial en estructura de acero</h4>
+                    <h4>{{{ ($projectTitle) }}}</h4>
 
                     <div class="entry__data">
-                        <p class="date">08-02-2026</p>
-                        <p class="author">por Juan Larios</p>
-                    </div>
+                        {% if (!empty($projectDate)): %}
+                        <p class="date">{{{ ($projectDate) }}}</p>
+                        {% endif; %}
 
-                    <p class="entry__brief">
-                        Desarrollo y montaje de estructura metálica para nave industrial, integrando planeación,
-                        fabricación y supervisión de obra. El proyecto destaca por su coordinación técnica, control de
-                        calidad y cumplimiento de tiempos de ejecución.
-                    </p>
-
-                    <span class="entry__read-more"> Leer más </span>
-                </div>
-            </a>
-
-            <a class="latest__projects__item" href="/novedades/proyecto-3">
-                <div class="latest__projects__item__image">
-                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Avance de obra" loading="lazy"
-                        decoding="async">
-                    <span class="entry__category">Avance</span>
-                </div>
-
-                <div class="latest__projects__item__text">
-                    <div class="entry__top">
-                        <ul class="entry__tags" aria-label="Etiquetas">
-                            <li>Obra civil</li>
-                            <li>Supervisión</li>
-                        </ul>
-
-                        <span class="entry__number">03</span>
-                    </div>
-
-                    <h4>Avance de obra en proyecto comercial</h4>
-
-                    <div class="entry__data">
-                        <p class="date">04-02-2026</p>
                         <p class="author">por L+E Ingeniería</p>
                     </div>
 
+                    {% if (!empty($projectBrief)): %}
                     <p class="entry__brief">
-                        Seguimiento de actividades en sitio, revisión de procesos constructivos y coordinación entre
-                        áreas técnicas para asegurar una ejecución ordenada, segura y alineada con los requerimientos
-                        del cliente.
+                        {{{ ($projectBrief) }}}
                     </p>
+                    {% endif; %}
 
-                    <span class="entry__read-more"> Leer más </span>
+                    <span class="entry__read-more">Leer más</span>
                 </div>
             </a>
+            {% endforeach; %}
 
-            <a class="latest__projects__item" href="/novedades/proyecto-4">
-                <div class="latest__projects__item__image">
-                    <img class="lazy-image" data-src="/images/JTRON.jpg" alt="Diseño estructural" loading="lazy"
-                        decoding="async">
-                    <span class="entry__category">Diseño</span>
-                </div>
-
+            {% if (empty($featuredProject) && empty($latestProjects)): %}
+            <article class="latest__projects__item latest__projects__item--empty">
                 <div class="latest__projects__item__text">
                     <div class="entry__top">
                         <ul class="entry__tags" aria-label="Etiquetas">
-                            <li>Diseño estructural</li>
-                            <li>Acero</li>
+                            <li>Proyectos</li>
                         </ul>
-
-                        <span class="entry__number">04</span>
                     </div>
 
-                    <h4>Diseño estructural para ampliación industrial</h4>
-
-                    <div class="entry__data">
-                        <p class="date">31-01-2026</p>
-                        <p class="author">por L+E Ingeniería</p>
-                    </div>
+                    <h4>Próximamente nuevos proyectos</h4>
 
                     <p class="entry__brief">
-                        Diseño y revisión estructural para una ampliación industrial, considerando criterios de
-                        eficiencia, seguridad, constructibilidad y compatibilidad con la infraestructura existente del
-                        cliente.
+                        En esta sección aparecerán los proyectos publicados desde el panel administrativo.
                     </p>
-
-                    <span class="entry__read-more"> Leer más </span>
                 </div>
-            </a>
+            </article>
+            {% endif; %}
         </div>
     </div>
 </section>

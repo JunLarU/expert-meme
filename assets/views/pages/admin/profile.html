@@ -1,0 +1,213 @@
+{%
+$profileUser = $profileUser ?? [];
+
+if (is_object($profileUser) && method_exists($profileUser, 'toArray')) {
+    $profileUser = $profileUser->toArray();
+}
+
+if (!is_array($profileUser)) {
+    $profileUser = [];
+}
+
+$id = (int) ($profileUser['id'] ?? 0);
+$name = $profileUser['name'] ?? 'Administrador';
+$email = $profileUser['email'] ?? '';
+
+$initials = 'AD';
+
+$nameParts = preg_split('/\s+/', trim((string) $name));
+$nameParts = is_array($nameParts)
+    ? array_values(array_filter($nameParts))
+    : [];
+
+if (!empty($nameParts)) {
+    $firstPart = $nameParts[0];
+    $lastPart = count($nameParts) > 1
+        ? $nameParts[count($nameParts) - 1]
+        : '';
+
+    if ($lastPart !== '') {
+        $initials = substr($firstPart, 0, 1) . substr($lastPart, 0, 1);
+    } else {
+        $initials = substr($firstPart, 0, 2);
+    }
+
+    $initials = strtoupper($initials);
+}
+
+$createdAt = $profileUser['created_at'] ?? '';
+$updatedAt = $profileUser['updated_at'] ?? '';
+
+$createdLabel = $createdAt !== '' ? date('d-m-Y H:i', strtotime($createdAt)) : '—';
+$updatedLabel = $updatedAt !== '' ? date('d-m-Y H:i', strtotime($updatedAt)) : '—';
+%}
+
+<section class="admin-dashboard admin-profile-page" aria-labelledby="admin-profile-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Cuenta</p>
+            <h2 id="admin-profile-title">Mi perfil</h2>
+            <span>
+                Actualiza tu información personal y cambia tu contraseña de acceso al panel.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+        </div>
+    </header>
+
+    <section class="admin-dashboard__grid">
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Resumen</p>
+                    <h3>Tu cuenta</h3>
+                </div>
+            </header>
+
+            <div class="admin-mini-list">
+                <div class="admin-mini-item">
+                    <span class="admin-avatar admin-avatar--sm" data-admin-initials
+                        data-admin-name="{{{ ($name) }}}" aria-hidden="true">{{{ ($initials) }}}</span>
+
+                    <span>
+                        <strong>{{{ ($name) }}}</strong>
+                        <small>{{{ ($email) }}}</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">ID</span>
+                    <span>
+                        <strong>ID interno</strong>
+                        <small>{{ ($id) }}</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">C</span>
+                    <span>
+                        <strong>Creado</strong>
+                        <small>{{{ ($createdLabel) }}}</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">U</span>
+                    <span>
+                        <strong>Actualizado</strong>
+                        <small>{{{ ($updatedLabel) }}}</small>
+                    </span>
+                </div>
+            </div>
+        </article>
+
+        <article class="admin-panel admin-jumbotron-form-panel admin-profile-form-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Datos personales</p>
+                    <h3>Editar información</h3>
+                </div>
+            </header>
+
+            <form class="form form--default admin-jumbotron-form admin-profile-form"
+                action="@url/admin/perfil/actualizar" method="post"
+                data-ajax-form data-validation="html" data-send-as="urlencoded"
+                data-csrf="true" data-csrf-field="_token" data-reset-on-success="false"
+                data-loading-text="Guardando..." novalidate>
+                @csrf
+
+                <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+                <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                    <legend>Información de cuenta</legend>
+
+                    <div class="admin-form-grid">
+                        <div class="form-group admin-form-grid__full" data-field="name">
+                            <input type="text" id="profile-name" name="name" class="form-control"
+                                value="{{{ ($name) }}}" placeholder=" " required maxlength="255"
+                                data-label="nombre" autocomplete="name">
+                            <label class="form-label" for="profile-name">Nombre *</label>
+                            <span class="form-group__error" data-field-error data-error-for="name"></span>
+                        </div>
+
+                        <div class="form-group admin-form-grid__full" data-field="email">
+                            <input type="email" id="profile-email" name="email" class="form-control"
+                                value="{{{ ($email) }}}" placeholder=" " required maxlength="255"
+                                data-label="correo electrónico" autocomplete="email">
+                            <label class="form-label" for="profile-email">Correo electrónico *</label>
+                            <span class="form-group__error" data-field-error data-error-for="email"></span>
+                        </div>
+                    </div>
+
+                    <div class="admin-jumbotron-form__actions">
+                        <button type="submit" class="admin-button admin-button--primary button__submit">
+                            <span class="button__submit__text">Guardar perfil</span>
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </article>
+
+        <article class="admin-panel admin-jumbotron-form-panel admin-profile-form-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Seguridad</p>
+                    <h3>Cambiar contraseña</h3>
+                </div>
+            </header>
+
+            <form class="form form--default admin-jumbotron-form admin-profile-password-form"
+                action="@url/admin/perfil/password" method="post"
+                data-ajax-form data-validation="html" data-send-as="urlencoded"
+                data-csrf="true" data-csrf-field="_token" data-reset-on-success="true"
+                data-loading-text="Actualizando..." novalidate>
+                @csrf
+
+                <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+                <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                    <legend>Actualizar contraseña</legend>
+
+                    <p class="admin-form-note">
+                        Para proteger tu cuenta, escribe tu contraseña actual antes de definir una nueva.
+                    </p>
+
+                    <div class="admin-form-grid">
+                        <div class="form-group admin-form-grid__full" data-field="current_password">
+                            <input type="password" id="profile-current-password" name="current_password"
+                                class="form-control" placeholder=" " required minlength="8"
+                                data-label="contraseña actual" autocomplete="current-password">
+                            <label class="form-label" for="profile-current-password">Contraseña actual *</label>
+                            <span class="form-group__error" data-field-error data-error-for="current_password"></span>
+                        </div>
+
+                        <div class="form-group" data-field="password">
+                            <input type="password" id="profile-password" name="password"
+                                class="form-control" placeholder=" " required minlength="8"
+                                data-label="nueva contraseña" autocomplete="new-password">
+                            <label class="form-label" for="profile-password">Nueva contraseña *</label>
+                            <span class="form-group__help">Mínimo 8 caracteres.</span>
+                            <span class="form-group__error" data-field-error data-error-for="password"></span>
+                        </div>
+
+                        <div class="form-group" data-field="confirm_password">
+                            <input type="password" id="profile-confirm-password" name="confirm_password"
+                                class="form-control" placeholder=" " required minlength="8"
+                                data-label="confirmación de contraseña" autocomplete="new-password">
+                            <label class="form-label" for="profile-confirm-password">Confirmar contraseña *</label>
+                            <span class="form-group__error" data-field-error data-error-for="confirm_password"></span>
+                        </div>
+                    </div>
+
+                    <div class="admin-jumbotron-form__actions">
+                        <button type="submit" class="admin-button admin-button--primary button__submit">
+                            <span class="button__submit__text">Actualizar contraseña</span>
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </article>
+    </section>
+</section>

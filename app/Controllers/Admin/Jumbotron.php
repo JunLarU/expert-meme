@@ -5,7 +5,6 @@ use App\Models\HomeJumbotronSlide;
 use Whis\App;
 use Whis\Http\Controller;
 use Whis\Http\Request;
-use Whis\Storage\Storage;
 
 class Jumbotron extends Controller
 {
@@ -852,23 +851,14 @@ class Jumbotron extends Controller
         }
 
         try {
-            /*
-         * Si ya recibimos ruta absoluta real, borramos directo.
-         * Esto evita depender de cómo FileStorageDriver interprete paths relativos.
-         */
             if (is_file($path)) {
                 @unlink($path);
                 return;
             }
 
-            /*
-         * Fallback: si todavía llega como relativo, intentamos Storage::remove().
-         */
-            Storage::remove($path);
+            error_log('[Jumbotron cleanup] No existe el archivo: ' . $path);
         } catch (\Throwable $th) {
-            /*
-         * No rompemos el CRUD por limpieza secundaria.
-         */
+            error_log('[Jumbotron cleanup] Error eliminando archivo: ' . $th->getMessage());
         }
     }
 
@@ -880,14 +870,17 @@ class Jumbotron extends Controller
             return null;
         }
 
+        $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $value = rawurldecode($value);
         $value = str_replace('\\', '/', $value);
 
         /*
      * Puede venir como:
-     * - http://localhost/storage/uploads/projects/images/archivo.webp
-     * - /storage/uploads/projects/images/archivo.webp
-     * - storage/uploads/projects/images/archivo.webp
-     * - projects/images/archivo.webp
+     * - http://localhost/storage/uploads/jumbotron/images/archivo.webp
+     * - /storage/uploads/jumbotron/images/archivo.webp
+     * - storage/uploads/jumbotron/images/archivo.webp
+     * - jumbotron/images/archivo.webp
+     * - jumbotron/videos/archivo.mp4
      */
         $urlPath = parse_url($value, PHP_URL_PATH);
 
@@ -917,11 +910,11 @@ class Jumbotron extends Controller
         }
 
         /*
-     * Protección: este CRUD solo borra archivos de proyectos.
+     * Protección: este CRUD solo borra archivos del jumbotron.
      */
         if (
-            ! str_starts_with($relative, 'projects/images/')
-            && ! str_starts_with($relative, 'projects/videos/')
+            ! str_starts_with($relative, 'jumbotron/images/')
+            && ! str_starts_with($relative, 'jumbotron/videos/')
         ) {
             return null;
         }
@@ -939,10 +932,8 @@ class Jumbotron extends Controller
         $baseReal = rtrim(str_replace('\\', '/', $baseReal), '/');
 
         $candidate = $baseReal . '/' . $relative;
+        $candidate = str_replace('\\', '/', $candidate);
 
-        /*
-     * Validamos el directorio aunque el archivo ya no exista.
-     */
         $candidateDirectory     = dirname($candidate);
         $candidateDirectoryReal = realpath($candidateDirectory);
 

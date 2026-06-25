@@ -12,6 +12,41 @@ use Whis\Storage\Storage;
 class Projects extends Controller
 {
     private const MAX_GALLERY_MEDIA = 5;
+
+    private const MX_STATES = [
+        'Aguascalientes',
+        'Baja California',
+        'Baja California Sur',
+        'Campeche',
+        'Chiapas',
+        'Chihuahua',
+        'Ciudad de México',
+        'Coahuila',
+        'Colima',
+        'Durango',
+        'Estado de México',
+        'Guanajuato',
+        'Guerrero',
+        'Hidalgo',
+        'Jalisco',
+        'Michoacán',
+        'Morelos',
+        'Nayarit',
+        'Nuevo León',
+        'Oaxaca',
+        'Puebla',
+        'Querétaro',
+        'Quintana Roo',
+        'San Luis Potosí',
+        'Sinaloa',
+        'Sonora',
+        'Tabasco',
+        'Tamaulipas',
+        'Tlaxcala',
+        'Veracruz',
+        'Yucatán',
+        'Zacatecas',
+    ];
     public function index()
     {
         if (isGuest()) {
@@ -72,7 +107,6 @@ class Projects extends Controller
             'projectTags'  => ProjectTag::byProject($id, ProjectTag::TYPE_TAG),
         ], 'layouts/admin/layout');
     }
-
     public function store(Request $request)
     {
         if (isGuest()) {
@@ -98,6 +132,11 @@ class Projects extends Controller
         $storedFiles = [];
 
         try {
+            /*
+             * El formulario simplificado ya no sube portada/hero/pin por separado.
+             * La imagen principal se toma de la galería.
+             * Dejo applyPrimaryUploadedFiles para compatibilidad si existe un form viejo.
+             */
             $payload     = $this->applyPrimaryUploadedFiles($request, $payload);
             $storedFiles = $this->projectStoredFiles($payload);
 
@@ -112,8 +151,11 @@ class Projects extends Controller
             $projectId = (int) $created['id'];
 
             $this->syncProjectTags($request, $projectId);
-            $newMediaFiles = $this->storeGalleryFiles($request, $projectId);
-            $storedFiles   = array_merge($storedFiles, $newMediaFiles);
+
+            $galleryChanges = $this->syncGallerySlots($request, $projectId);
+            $storedFiles    = array_merge($storedFiles, $galleryChanges['stored']);
+
+            $this->applyMainGalleryMediaToProject($projectId);
 
             if ((int) ($payload['is_home_featured'] ?? 0) === 1) {
                 $this->ensureSingleHomeFeatured($projectId);
@@ -126,11 +168,10 @@ class Projects extends Controller
             $this->removeStoredFiles($storedFiles);
 
             return $this->jsonError('No se pudo crear el proyecto.', [
-                'title' => 'Revisa que el título o slug no estén duplicados.',
+                'title' => 'Revisa que el título no esté duplicado y que los archivos sean válidos.',
             ], 500);
         }
     }
-
     public function update(Request $request, int $id)
     {
         if (isGuest()) {
@@ -169,33 +210,23 @@ class Projects extends Controller
             $this->galleryStoredFiles(ProjectMedia::galleryByProject($id))
         );
 
-        $newFiles = [];
+        $newFiles               = [];
+        $createdOrReplacedFiles = [];
 
         try {
+            /*
+             * Compatibilidad con formularios anteriores.
+             * En el formulario simplificado, portada/hero/pin se derivan de la galería.
+             */
             $payload  = $this->applyPrimaryUploadedFiles($request, $payload, $current);
             $newFiles = $this->projectStoredFiles($payload);
 
             Project::updateById($id, $payload);
 
-            $this->updateExistingGalleryMedia($request, $id);
+            $galleryChanges         = $this->syncGallerySlots($request, $id);
+            $createdOrReplacedFiles = $galleryChanges['stored'];
 
-            $removedFiles = $this->deleteRequestedGalleryMedia($request, $id);
-
-            /*
-             * Los archivos de media nueva se suman al set de archivos finales.
-             */
-            $createdMediaFiles = $this->storeGalleryFiles($request, $id);
-            $newFiles          = array_merge(
-                $newFiles,
-                $this->galleryStoredFiles(ProjectMedia::galleryByProject($id))
-            );
-
-            /*
-             * Si el UPDATE fue correcto, eliminamos lo que dejó de estar referenciado:
-             * cover/hero/map reemplazados, removidos, o galerías marcadas para borrar.
-             */
-            $this->removeReplacedStoredFiles($oldFiles, $newFiles);
-            $this->removeStoredFiles($removedFiles);
+            $this->applyMainGalleryMediaToProject($id);
 
             if ((int) ($payload['is_home_featured'] ?? 0) === 1) {
                 $this->ensureSingleHomeFeatured($id);
@@ -203,17 +234,33 @@ class Projects extends Controller
 
             $this->syncProjectTags($request, $id);
 
+            $updatedProject = Project::findArray($id) ?: [];
+            $newFiles       = array_merge(
+                $this->projectStoredFiles($updatedProject),
+                $this->galleryStoredFiles(ProjectMedia::galleryByProject($id))
+            );
+
+            /*
+             * Borramos todo archivo anterior que ya no quedó referenciado
+             * por el proyecto ni por su galería.
+             */
+            $this->removeReplacedStoredFiles($oldFiles, $newFiles);
+
+            /*
+             * También borramos explícitamente archivos reemplazados/eliminados
+             * desde slots de galería. removeStoredFile() es idempotente.
+             */
+            $this->removeStoredFiles($galleryChanges['removed']);
+
             return $this->jsonSuccess('Proyecto actualizado correctamente.', [
                 'redirect' => '/admin/proyectos',
             ]);
         } catch (\Throwable $th) {
             /*
-             * Si se subieron archivos nuevos y falló el UPDATE, limpiamos los nuevos.
+             * Si se subieron archivos nuevos pero falló el UPDATE,
+             * limpiamos los nuevos para no dejar basura.
              */
-            $this->removeReplacedStoredFiles(
-                array_merge($newFiles, $createdMediaFiles ?? []),
-                $oldFiles
-            );
+            $this->removeStoredFiles($createdOrReplacedFiles);
 
             return $this->jsonError('No se pudo actualizar el proyecto.', [
                 'title' => 'Revisa que los datos sean válidos.',
@@ -292,116 +339,135 @@ class Projects extends Controller
             return $this->jsonError('No se pudo eliminar el proyecto.', [], 500);
         }
     }
-
     private function payload(Request $request, array $current = []): array
     {
         $input = $request->data();
 
         $title = $this->str($input, 'title', $current['title'] ?? '');
 
-        $coverImageUrl     = $this->nullable($input, 'cover_image_url', $current['cover_image_url'] ?? null);
-        $coverMobileUrl    = $this->nullable($input, 'cover_mobile_url', $current['cover_mobile_url'] ?? null);
-        $heroBackgroundUrl = $this->nullable($input, 'hero_background_url', $current['hero_background_url'] ?? null);
-        $mapImageUrl       = $this->nullable($input, 'map_image_url', $current['map_image_url'] ?? null);
+        $brief       = $this->nullable($input, 'brief', $current['brief'] ?? null);
+        $description = $this->nullable($input, 'description', $current['description'] ?? null);
+        $summary     = $brief ?: ($description ?: ($current['summary'] ?? null));
 
-        if ($this->bool($input, 'remove_cover_image')) {
-            $coverImageUrl = null;
+        if ($description === null) {
+            $description = $summary;
         }
 
-        if ($this->bool($input, 'remove_cover_mobile')) {
-            $coverMobileUrl = null;
+        $category   = $this->nullable($input, 'category', $current['category'] ?? null);
+        $service    = $this->nullable($input, 'service', $current['service'] ?? null);
+        $scopeLabel = $this->nullable($input, 'scope_label', $current['scope_label'] ?? null);
+
+        $city            = $this->nullable($input, 'city', $current['city'] ?? null);
+        $state           = $this->nullable($input, 'state', $current['state'] ?? null);
+        $country         = 'México';
+        $locationDetail  = $this->nullable($input, 'location_display', $current['location_display'] ?? null);
+        $locationDisplay = $this->composeLocation($locationDetail, $city, $state);
+
+        $projectYear = $this->intNullable($input, 'project_year', $current['project_year'] ?? null);
+
+        $mapLat    = $this->floatNullable($input, 'map_lat', $current['map_lat'] ?? null);
+        $mapLng    = $this->floatNullable($input, 'map_lng', $current['map_lng'] ?? null);
+        $showOnMap = ($mapLat !== null && $mapLng !== null) ? 1 : 0;
+
+        $googleMapsUrl = $this->urlNullable($input, 'google_maps_url', $current['result_button_url'] ?? null);
+
+        if ($googleMapsUrl === null && $mapLat !== null && $mapLng !== null) {
+            $googleMapsUrl = 'https://www.google.com/maps?q=' . rawurlencode($mapLat . ',' . $mapLng);
         }
 
-        if ($this->bool($input, 'remove_hero_background')) {
-            $heroBackgroundUrl = null;
-        }
-
-        if ($this->bool($input, 'remove_map_image')) {
-            $mapImageUrl = null;
-        }
+        $heroCopy       = $summary ?: $brief ?: $description;
+        $seoDescription = $brief ?: $summary ?: $description;
+        $mapKind        = $category ?: ($service ?: 'Proyecto');
 
         return [
             'slug'                => $this->str($input, 'slug', $current['slug'] ?? ''),
             'status'              => $this->str($input, 'status', $current['status'] ?? Project::STATUS_DRAFT),
             'title'               => $title,
-            'subtitle'            => $this->nullable($input, 'subtitle', $current['subtitle'] ?? null),
-            'brief'               => $this->nullable($input, 'brief', $current['brief'] ?? null),
-            'summary'             => $this->nullable($input, 'summary', $current['summary'] ?? null),
-            'description'         => $this->nullable($input, 'description', $current['description'] ?? null),
-            'category'            => $this->nullable($input, 'category', $current['category'] ?? null),
-            'category_badge'      => $this->nullable($input, 'category_badge', $current['category_badge'] ?? null),
-            'listing_number'      => $this->nullable($input, 'listing_number', $current['listing_number'] ?? null),
+            'subtitle'            => null,
+            'brief'               => $brief,
+            'summary'             => $summary,
+            'description'         => $description,
+            'category'            => $category,
+            'category_badge'      => $category,
+            'listing_number'      => $current['listing_number'] ?? null,
             'href'                => $current['href'] ?? null,
 
-            'cover_image_url'     => $coverImageUrl,
-            'cover_image_alt'     => $this->nullable($input, 'cover_image_alt', $current['cover_image_alt'] ?? null),
-            'cover_mobile_url'    => $coverMobileUrl,
+            'cover_image_url'     => $current['cover_image_url'] ?? null,
+            'cover_image_alt'     => $title ?: ($current['cover_image_alt'] ?? null),
+            'cover_mobile_url'    => $current['cover_mobile_url'] ?? null,
 
-            'hero_eyebrow'        => $this->nullable($input, 'hero_eyebrow', $current['hero_eyebrow'] ?? null),
-            'hero_title'          => $this->nullable($input, 'hero_title', $current['hero_title'] ?? null),
-            'hero_copy'           => $this->nullable($input, 'hero_copy', $current['hero_copy'] ?? null),
-            'hero_background_url' => $heroBackgroundUrl,
-            'hero_button_label'   => $this->nullable($input, 'hero_button_label', $current['hero_button_label'] ?? null),
-            'hero_button_url'     => $this->nullable($input, 'hero_button_url', $current['hero_button_url'] ?? null),
+            'hero_eyebrow'        => $category ?: 'Proyecto',
+            'hero_title'          => $title,
+            'hero_copy'           => $heroCopy,
+            'hero_background_url' => $current['hero_background_url'] ?? null,
+            'hero_button_label'   => 'Ver galería',
+            'hero_button_url'     => '#galeria',
 
-            'location_display'    => $this->nullable($input, 'location_display', $current['location_display'] ?? null),
-            'city'                => $this->nullable($input, 'city', $current['city'] ?? null),
-            'state'               => $this->nullable($input, 'state', $current['state'] ?? null),
-            'country'             => $this->str($input, 'country', $current['country'] ?? 'México'),
-            'project_year'        => $this->intNullable($input, 'project_year', $current['project_year'] ?? null),
+            'location_display'    => $locationDisplay,
+            'city'                => $city,
+            'state'               => $state,
+            'country'             => $country,
+            'project_year'        => $projectYear,
 
             'client_name'         => $this->nullable($input, 'client_name', $current['client_name'] ?? null),
-            'client_type'         => $this->nullable($input, 'client_type', $current['client_type'] ?? null),
-            'service'             => $this->nullable($input, 'service', $current['service'] ?? null),
-            'specialty'           => $this->nullable($input, 'specialty', $current['specialty'] ?? null),
-            'material_system'     => $this->nullable($input, 'material_system', $current['material_system'] ?? null),
+            'client_type'         => null,
+            'service'             => $service,
+            'specialty'           => null,
+            'material_system'     => null,
 
             'weight_label'        => $this->nullable($input, 'weight_label', $current['weight_label'] ?? null),
             'area_label'          => $this->nullable($input, 'area_label', $current['area_label'] ?? null),
             'duration_label'      => $this->nullable($input, 'duration_label', $current['duration_label'] ?? null),
-            'scope_label'         => $this->nullable($input, 'scope_label', $current['scope_label'] ?? null),
+            'scope_label'         => $scopeLabel,
 
-            'overview_eyebrow'    => $this->nullable($input, 'overview_eyebrow', $current['overview_eyebrow'] ?? null),
-            'overview_title'      => $this->nullable($input, 'overview_title', $current['overview_title'] ?? null),
-            'overview_body'       => $this->nullable($input, 'overview_body', $current['overview_body'] ?? null),
+            'overview_eyebrow'    => 'Portafolio',
+            'overview_title'      => $title,
+            'overview_body'       => $description ?: $summary,
 
-            'result_eyebrow'      => $this->nullable($input, 'result_eyebrow', $current['result_eyebrow'] ?? null),
-            'result_title'        => $this->nullable($input, 'result_title', $current['result_title'] ?? null),
-            'result_body'         => $this->nullable($input, 'result_body', $current['result_body'] ?? null),
-            'result_button_label' => $this->nullable($input, 'result_button_label', $current['result_button_label'] ?? null),
-            'result_button_url'   => $this->nullable($input, 'result_button_url', $current['result_button_url'] ?? null),
+            'result_eyebrow'      => null,
+            'result_title'        => null,
+            'result_body'         => null,
+            'result_button_label' => $googleMapsUrl ? 'Ver ubicación en Google Maps' : null,
+            'result_button_url'   => $googleMapsUrl,
 
             'is_featured'         => $this->bool($input, 'is_featured') ? 1 : 0,
             'is_newest'           => 0,
             'is_home_featured'    => $this->bool($input, 'is_home_featured') ? 1 : 0,
             'show_in_home'        => $this->bool($input, 'show_in_home') ? 1 : 0,
             'show_in_projects'    => $this->bool($input, 'show_in_projects') ? 1 : 0,
-            'show_on_map'         => $this->bool($input, 'show_on_map') ? 1 : 0,
+            'show_on_map'         => $showOnMap,
 
-            'map_type'            => $this->mapType($this->str($input, 'map_type', $current['map_type'] ?? Project::MAP_PROJECT)),
-            'map_lat'             => $this->floatNullable($input, 'map_lat', $current['map_lat'] ?? null),
-            'map_lng'             => $this->floatNullable($input, 'map_lng', $current['map_lng'] ?? null),
-            'map_state'           => $this->nullable($input, 'map_state', $current['map_state'] ?? null),
-            'map_title'           => $this->nullable($input, 'map_title', $current['map_title'] ?? null),
-            'map_kind'            => $this->nullable($input, 'map_kind', $current['map_kind'] ?? null),
-            'map_location'        => $this->nullable($input, 'map_location', $current['map_location'] ?? null),
-            'map_summary'         => $this->nullable($input, 'map_summary', $current['map_summary'] ?? null),
-            'map_image_url'       => $mapImageUrl,
-            'map_image_alt'       => $this->nullable($input, 'map_image_alt', $current['map_image_alt'] ?? null),
+            'map_type'            => Project::MAP_PROJECT,
+            'map_lat'             => $mapLat,
+            'map_lng'             => $mapLng,
+            'map_state'           => $state,
+            'map_title'           => $title,
+            'map_kind'            => $mapKind,
+            'map_location'        => $locationDisplay,
+            'map_summary'         => $brief ?: $summary,
+            'map_image_url'       => $current['map_image_url'] ?? null,
+            'map_image_alt'       => $title ?: ($current['map_image_alt'] ?? null),
 
             'sort_order'          => max(0, (int) $this->str($input, 'sort_order', $current['sort_order'] ?? Project::nextSortOrder())),
 
-            'seo_title'           => $this->nullable($input, 'seo_title', $current['seo_title'] ?? null),
-            'seo_description'     => $this->nullable($input, 'seo_description', $current['seo_description'] ?? null),
+            'seo_title'           => $title,
+            'seo_description'     => $seoDescription,
         ];
     }
-
     private function validatePayload(array $payload): array
     {
         $errors = [];
 
         if (trim((string) ($payload['title'] ?? '')) === '') {
-            $errors['title'] = 'El título del proyecto es obligatorio.';
+            $errors['title'] = 'El nombre del proyecto es obligatorio.';
+        }
+
+        if (mb_strlen((string) ($payload['title'] ?? '')) > 255) {
+            $errors['title'] = 'El nombre del proyecto no debe exceder 255 caracteres.';
+        }
+
+        if (trim((string) ($payload['brief'] ?? '')) === '') {
+            $errors['brief'] = 'El resumen corto es obligatorio.';
         }
 
         if (! in_array(($payload['status'] ?? ''), [
@@ -410,38 +476,43 @@ class Projects extends Controller
             Project::STATUS_HIDDEN,
             Project::STATUS_ARCHIVED,
         ], true)) {
-            $errors['status'] = 'El estado seleccionado no es válido.';
+            $errors['status'] = 'La visibilidad seleccionada no es válida.';
         }
 
-        if (! in_array(($payload['map_type'] ?? ''), [
-            Project::MAP_PROJECT,
-            Project::MAP_OFFICE,
-            Project::MAP_WORKSHOP,
-        ], true)) {
-            $errors['map_type'] = 'El tipo de pin del mapa no es válido.';
+        if (trim((string) ($payload['city'] ?? '')) === '') {
+            $errors['city'] = 'El municipio o ciudad es obligatorio.';
         }
 
-        if ((int) ($payload['show_on_map'] ?? 0) === 1) {
-            if ($payload['map_lat'] === null) {
-                $errors['map_lat'] = 'La latitud es obligatoria si el proyecto se mostrará en el mapa.';
-            }
+        if (trim((string) ($payload['state'] ?? '')) === '') {
+            $errors['state'] = 'Selecciona el estado de la República.';
+        } elseif (! in_array((string) $payload['state'], self::MX_STATES, true)) {
+            $errors['state'] = 'Selecciona un estado válido de la República Mexicana.';
+        }
 
-            if ($payload['map_lng'] === null) {
-                $errors['map_lng'] = 'La longitud es obligatoria si el proyecto se mostrará en el mapa.';
-            }
+        $hasLat = ($payload['map_lat'] ?? null) !== null;
+        $hasLng = ($payload['map_lng'] ?? null) !== null;
 
-            if (trim((string) ($payload['map_state'] ?: $payload['state'] ?? '')) === '') {
-                $errors['map_state'] = 'El estado del mapa es obligatorio para agrupar los pines.';
-            }
+        if ($hasLat xor $hasLng) {
+            $errors['map_lat'] = 'Para mostrar el proyecto en el mapa, captura latitud y longitud.';
+            $errors['map_lng'] = 'Para mostrar el proyecto en el mapa, captura latitud y longitud.';
+        }
+
+        $mapsUrl = trim((string) ($payload['result_button_url'] ?? ''));
+
+        if ($mapsUrl !== '' && ! $this->isHttpUrl($mapsUrl)) {
+            $errors['google_maps_url'] = 'El enlace de Google Maps debe iniciar con http:// o https://.';
         }
 
         return $errors;
     }
-
     private function validateUploadedFiles(Request $request, ?int $projectId = null): array
     {
         $errors = [];
 
+        /*
+         * Compatibilidad con campos antiguos. El nuevo formulario ya no usa
+         * portadas/hero/pin separados.
+         */
         foreach ([
             'cover_image_file'     => 'La portada',
             'cover_mobile_file'    => 'La portada móvil',
@@ -463,18 +534,11 @@ class Projects extends Controller
 
         $galleryFiles = $this->uploadedFiles($request, 'gallery_media_files');
         $posterFiles  = $this->uploadedFiles($request, 'gallery_poster_files');
-
-        if (count($galleryFiles) > self::MAX_GALLERY_MEDIA) {
-            $errors['gallery_media_files'] = 'Solo se permiten máximo 5 imágenes o videos por proyecto.';
-        }
+        $input        = $request->data();
 
         foreach ($galleryFiles as $index => $file) {
             if ((int) $index >= self::MAX_GALLERY_MEDIA) {
                 $errors['gallery_media_files'] = 'Solo se permiten máximo 5 imágenes o videos por proyecto.';
-                continue;
-            }
-
-            if (! $file) {
                 continue;
             }
 
@@ -491,10 +555,6 @@ class Projects extends Controller
                 continue;
             }
 
-            if (! $file) {
-                continue;
-            }
-
             $error = $this->validateImageFile($file, 'La miniatura del video');
 
             if ($error !== null) {
@@ -502,46 +562,65 @@ class Projects extends Controller
             }
         }
 
-        /*
-     * En edición, también evitamos que el usuario deje más de 5 entre:
-     * - archivos existentes que no marcó para eliminar
-     * - archivos nuevos que está subiendo
-     */
         if ($projectId !== null) {
-            $input = $request->data();
-
-            $removeIds = array_map(
-                'intval',
-                is_array($input['remove_media_ids'] ?? null)
-                    ? $input['remove_media_ids']
-                    : []
-            );
-
-            $removeLookup = array_flip($removeIds);
-
             $currentMedia = ProjectMedia::galleryByProject($projectId);
-
-            $remainingCurrent = 0;
+            $currentById  = [];
 
             foreach ($currentMedia as $media) {
                 $mediaId = (int) ($media['id'] ?? 0);
 
-                if ($mediaId <= 0) {
-                    continue;
+                if ($mediaId > 0) {
+                    $currentById[$mediaId] = $media;
                 }
-
-                if (isset($removeLookup[$mediaId])) {
-                    continue;
-                }
-
-                $remainingCurrent++;
             }
 
-            $finalTotal = $remainingCurrent + count($galleryFiles);
+            $existingIds = is_array($input['gallery_existing_ids'] ?? null)
+                ? $input['gallery_existing_ids']
+                : [];
+
+            $removeValues = is_array($input['gallery_remove'] ?? null)
+                ? $input['gallery_remove']
+                : [];
+
+            $usedCurrentIds = [];
+
+            foreach ($existingIds as $slot => $mediaId) {
+                $mediaId = (int) $mediaId;
+
+                if ($mediaId <= 0 || ! isset($currentById[$mediaId])) {
+                    continue;
+                }
+
+                $remove = in_array((string) ($removeValues[$slot] ?? '0'), ['1', 'true', 'on', 'yes'], true);
+
+                if (! $remove) {
+                    $usedCurrentIds[$mediaId] = true;
+                }
+            }
+
+            $newAdds = 0;
+
+            foreach ($galleryFiles as $slot => $file) {
+                $existingId = (int) ($existingIds[$slot] ?? 0);
+
+                /*
+                 * Si el slot tiene archivo existente, subir un archivo cuenta como reemplazo,
+                 * no como archivo extra.
+                 */
+                if ($existingId > 0 && isset($currentById[$existingId])) {
+                    continue;
+                }
+
+                $newAdds++;
+            }
+
+            $finalTotal = count($usedCurrentIds) + $newAdds;
 
             if ($finalTotal > self::MAX_GALLERY_MEDIA) {
-                $errors['gallery_media_files'] = 'El proyecto no puede tener más de 5 imágenes o videos en galería. Elimina archivos actuales o sube menos archivos nuevos.';
+                $errors['gallery_media_files'] = 'El proyecto no puede tener más de 5 imágenes o videos. Reemplaza archivos existentes o elimina alguno.';
             }
+        } elseif (count($galleryFiles) > self::MAX_GALLERY_MEDIA) {
+            $errors['gallery_media_files'] = 'Solo se permiten máximo 5 imágenes o videos por proyecto.';
         }
 
         return $errors;
@@ -595,17 +674,118 @@ class Projects extends Controller
 
         return $payload;
     }
-
-    private function storeGalleryFiles(Request $request, int $projectId): array
+    private function syncGallerySlots(Request $request, int $projectId): array
     {
         $input = $request->data();
 
         $files   = $this->uploadedFiles($request, 'gallery_media_files');
         $posters = $this->uploadedFiles($request, 'gallery_poster_files');
 
-        $stored = [];
+        $existingIds = is_array($input['gallery_existing_ids'] ?? null)
+            ? $input['gallery_existing_ids']
+            : [];
 
-        foreach ($files as $index => $file) {
+        $removeValues = is_array($input['gallery_remove'] ?? null)
+            ? $input['gallery_remove']
+            : [];
+
+        $currentById = [];
+
+        foreach (ProjectMedia::galleryByProject($projectId) as $media) {
+            $mediaId = (int) ($media['id'] ?? 0);
+
+            if ($mediaId > 0) {
+                $currentById[$mediaId] = $media;
+            }
+        }
+
+        $stored  = [];
+        $removed = [];
+
+        foreach (range(0, self::MAX_GALLERY_MEDIA - 1) as $index) {
+            $existingId = (int) ($existingIds[$index] ?? 0);
+            $current    = $existingId > 0 && isset($currentById[$existingId])
+                ? $currentById[$existingId]
+                : null;
+
+            $remove = in_array((string) ($removeValues[$index] ?? '0'), ['1', 'true', 'on', 'yes'], true);
+            $file   = $files[$index] ?? null;
+            $poster = $posters[$index] ?? null;
+
+            if ($current && $remove) {
+                $removed = array_merge($removed, $this->galleryStoredFiles([$current]));
+                ProjectMedia::deleteById($existingId);
+                continue;
+            }
+
+            $commonData = [
+                'title'       => $this->arrayValue($input, 'gallery_media_titles', $index),
+                'description' => $this->arrayValue($input, 'gallery_media_descriptions', $index),
+                'alt_text'    => $this->arrayValue($input, 'gallery_media_alt_texts', $index),
+                'aria_label'  => $this->arrayValue($input, 'gallery_media_aria_labels', $index),
+                'is_featured' => (int) $this->arrayBool($input, 'gallery_media_is_featured', $index),
+                'sort_order'  => (int) ($this->arrayValue($input, 'gallery_media_sort_orders', $index) ?: $index),
+                'updated_by'  => $this->userId(auth()),
+                'updated_at'  => date('Y-m-d H:i:s'),
+            ];
+
+            if ($current) {
+                $update = $commonData;
+
+                if ($file) {
+                    $mediaType = $this->mediaTypeOf($file);
+
+                    if ($mediaType === null) {
+                        continue;
+                    }
+
+                    $removed = array_merge($removed, $this->galleryStoredFiles([$current]));
+
+                    $directory = $mediaType === ProjectMedia::TYPE_VIDEO
+                        ? 'projects/videos'
+                        : 'projects/images';
+
+                    $fileUrl  = $file->store($directory, false, 'storage/uploads', true);
+                    $stored[] = $this->storedUploadPathFromUrl($fileUrl) ?: '';
+
+                    $posterUrl = null;
+
+                    if ($mediaType === ProjectMedia::TYPE_VIDEO) {
+                        if ($poster) {
+                            $posterUrl = $poster->store('projects/images', false, 'storage/uploads', true);
+                            $stored[]  = $this->storedUploadPathFromUrl($posterUrl) ?: '';
+                        } else {
+                            /*
+                             * Si reemplaza por video y no sube miniatura, conservamos
+                             * la miniatura anterior si existía.
+                             */
+                            $posterUrl = $current['poster_url'] ?? null;
+                        }
+                    }
+
+                    $update['media_type'] = $mediaType;
+                    $update['file_url']   = $fileUrl;
+                    $update['poster_url'] = $posterUrl;
+                    $update['mobile_url'] = null;
+                } elseif ($poster && ($current['media_type'] ?? null) === ProjectMedia::TYPE_VIDEO) {
+                    $removed = array_merge(
+                        $removed,
+                        $this->galleryStoredFiles([[
+                            'file_url'   => null,
+                            'mobile_url' => null,
+                            'poster_url' => $current['poster_url'] ?? null,
+                        ]])
+                    );
+
+                    $posterUrl            = $poster->store('projects/images', false, 'storage/uploads', true);
+                    $stored[]             = $this->storedUploadPathFromUrl($posterUrl) ?: '';
+                    $update['poster_url'] = $posterUrl;
+                }
+
+                ProjectMedia::updateById($existingId, $update);
+                continue;
+            }
+
             if (! $file) {
                 continue;
             }
@@ -625,8 +805,8 @@ class Projects extends Controller
 
             $posterUrl = null;
 
-            if ($mediaType === ProjectMedia::TYPE_VIDEO && isset($posters[$index]) && $posters[$index]) {
-                $posterUrl = $posters[$index]->store('projects/images', false, 'storage/uploads', true);
+            if ($mediaType === ProjectMedia::TYPE_VIDEO && $poster) {
+                $posterUrl = $poster->store('projects/images', false, 'storage/uploads', true);
                 $stored[]  = $this->storedUploadPathFromUrl($posterUrl) ?: '';
             }
 
@@ -634,20 +814,21 @@ class Projects extends Controller
                 'project_id'        => $projectId,
                 'media_type'        => $mediaType,
                 'display_area'      => ProjectMedia::AREA_GALLERY,
-                'title'             => $this->arrayValue($input, 'gallery_media_titles', $index),
-                'description'       => $this->arrayValue($input, 'gallery_media_descriptions', $index),
+                'title'             => $commonData['title'],
+                'description'       => $commonData['description'],
                 'file_url'          => $fileUrl,
+                'mobile_url'        => null,
                 'poster_url'        => $posterUrl,
-                'alt_text'          => $this->arrayValue($input, 'gallery_media_alt_texts', $index),
-                'aria_label'        => $this->arrayValue($input, 'gallery_media_aria_labels', $index),
+                'alt_text'          => $commonData['alt_text'],
+                'aria_label'        => $commonData['aria_label'],
                 'video_preload'     => 'none',
                 'video_controls'    => 1,
                 'video_autoplay'    => 0,
                 'video_muted'       => 0,
                 'video_loop'        => 0,
                 'video_playsinline' => 1,
-                'is_featured'       => (int) $this->arrayBool($input, 'gallery_media_is_featured', $index),
-                'sort_order'        => (int) ($this->arrayValue($input, 'gallery_media_sort_orders', $index) ?: 0),
+                'is_featured'       => $commonData['is_featured'],
+                'sort_order'        => $commonData['sort_order'],
                 'created_by'        => $this->userId(auth()),
                 'updated_by'        => $this->userId(auth()),
                 'created_at'        => date('Y-m-d H:i:s'),
@@ -655,76 +836,103 @@ class Projects extends Controller
             ]);
         }
 
-        return array_values(array_filter($stored));
+        return [
+            'stored'  => array_values(array_unique(array_filter($stored))),
+            'removed' => array_values(array_unique(array_filter($removed))),
+        ];
     }
 
-    private function updateExistingGalleryMedia(Request $request, int $projectId): void
+    private function applyMainGalleryMediaToProject(int $projectId): void
     {
-        $input = $request->data();
+        $project = Project::findArray($projectId);
 
-        $existing = $input['existing_media'] ?? [];
-
-        if (! is_array($existing)) {
+        if (! $project) {
             return;
         }
 
-        foreach ($existing as $mediaId => $data) {
-            $mediaId = (int) $mediaId;
+        $gallery = ProjectMedia::galleryByProject($projectId);
+        $main    = $this->pickMainGalleryMedia($gallery);
 
-            if ($mediaId <= 0 || ! is_array($data)) {
-                continue;
-            }
-
-            $current = ProjectMedia::findArray($mediaId);
-
-            if (! $current || (int) ($current['project_id'] ?? 0) !== $projectId) {
-                continue;
-            }
-
-            ProjectMedia::updateById($mediaId, [
-                'title'       => $this->nullable($data, 'title', $current['title'] ?? null),
-                'description' => $this->nullable($data, 'description', $current['description'] ?? null),
-                'alt_text'    => $this->nullable($data, 'alt_text', $current['alt_text'] ?? null),
-                'aria_label'  => $this->nullable($data, 'aria_label', $current['aria_label'] ?? null),
-                'is_featured' => $this->bool($data, 'is_featured') ? 1 : 0,
-                'sort_order'  => max(0, (int) $this->str($data, 'sort_order', $current['sort_order'] ?? 0)),
-                'updated_by'  => $this->userId(auth()),
-                'updated_at'  => date('Y-m-d H:i:s'),
+        if (! $main) {
+            Project::updateById($projectId, [
+                'cover_image_url'     => null,
+                'cover_mobile_url'    => null,
+                'hero_background_url' => null,
+                'map_image_url'       => null,
+                'updated_at'          => date('Y-m-d H:i:s'),
             ]);
-        }
-    }
 
-    private function deleteRequestedGalleryMedia(Request $request, int $projectId): array
-    {
-        $input = $request->data();
-
-        $ids = $input['remove_media_ids'] ?? [];
-
-        if (! is_array($ids)) {
-            return [];
+            return;
         }
 
-        $removedFiles = [];
+        $mainId = (int) ($main['id'] ?? 0);
 
-        foreach ($ids as $id) {
-            $mediaId = (int) $id;
+        foreach ($gallery as $media) {
+            $mediaId = (int) ($media['id'] ?? 0);
 
             if ($mediaId <= 0) {
                 continue;
             }
 
-            $media = ProjectMedia::findArray($mediaId);
-
-            if (! $media || (int) ($media['project_id'] ?? 0) !== $projectId) {
-                continue;
-            }
-
-            $removedFiles = array_merge($removedFiles, $this->galleryStoredFiles([$media]));
-
-            ProjectMedia::deleteById($mediaId);
+            ProjectMedia::updateById($mediaId, [
+                'is_featured' => $mediaId === $mainId ? 1 : 0,
+                'updated_at'  => date('Y-m-d H:i:s'),
+            ]);
         }
 
-        return $removedFiles;
+        $imageUrl = $this->imageUrlFromMedia($main);
+
+        if ($imageUrl === null) {
+            return;
+        }
+
+        $alt = trim((string) (($main['alt_text'] ?? '') ?: ($project['title'] ?? 'Proyecto')));
+
+        Project::updateById($projectId, [
+            'cover_image_url'     => $imageUrl,
+            'cover_image_alt'     => $alt,
+            'cover_mobile_url'    => $imageUrl,
+            'hero_background_url' => $imageUrl,
+            'map_image_url'       => $imageUrl,
+            'map_image_alt'       => $alt,
+            'updated_at'          => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    private function pickMainGalleryMedia(array $gallery): ?array
+    {
+        foreach ($gallery as $media) {
+            if ((int) ($media['is_featured'] ?? 0) === 1 && $this->imageUrlFromMedia($media) !== null) {
+                return $media;
+            }
+        }
+
+        foreach ($gallery as $media) {
+            if (($media['media_type'] ?? null) === ProjectMedia::TYPE_IMAGE && ! empty($media['file_url'])) {
+                return $media;
+            }
+        }
+
+        foreach ($gallery as $media) {
+            if ($this->imageUrlFromMedia($media) !== null) {
+                return $media;
+            }
+        }
+
+        return null;
+    }
+
+    private function imageUrlFromMedia(array $media): ?string
+    {
+        if (($media['media_type'] ?? null) === ProjectMedia::TYPE_IMAGE && ! empty($media['file_url'])) {
+            return (string) $media['file_url'];
+        }
+
+        if (($media['media_type'] ?? null) === ProjectMedia::TYPE_VIDEO && ! empty($media['poster_url'])) {
+            return (string) $media['poster_url'];
+        }
+
+        return null;
     }
 
     private function syncProjectTags(Request $request, int $projectId): void
@@ -1008,23 +1216,33 @@ class Projects extends Controller
             $this->removeStoredFile($oldFile);
         }
     }
-
     private function removeStoredFiles(array $files): void
     {
+        $files = array_values(array_unique(array_filter($files)));
+
         foreach ($files as $file) {
             $this->removeStoredFile($file);
         }
     }
-
     private function removeStoredFile(?string $path): void
     {
-        $path = trim((string) $path);
+        $path = trim(str_replace('\\', '/', (string) $path));
 
         if ($path === '') {
             return;
         }
 
         try {
+            /*
+             * DiskFileStorage::remove() borra con file_exists($path), por lo que
+             * necesita recibir una ruta física real. storedUploadPathFromUrl()
+             * ya devuelve esa ruta.
+             */
+            if (is_file($path)) {
+                @unlink($path);
+                return;
+            }
+
             Storage::remove($path);
         } catch (\Throwable $th) {
             /*
@@ -1032,7 +1250,6 @@ class Projects extends Controller
              */
         }
     }
-
     private function storedUploadPathFromUrl(mixed $url): ?string
     {
         $value = trim((string) ($url ?? ''));
@@ -1043,6 +1260,14 @@ class Projects extends Controller
 
         $value = str_replace('\\', '/', $value);
 
+        /*
+         * Puede venir como:
+         * - http://localhost/storage/uploads/projects/images/archivo.webp
+         * - /storage/uploads/projects/images/archivo.webp
+         * - storage/uploads/projects/images/archivo.webp
+         * - projects/images/archivo.webp
+         * - E:/proyecto/storage/uploads/projects/images/archivo.webp
+         */
         $urlPath = parse_url($value, PHP_URL_PATH);
 
         if (! is_string($urlPath) || trim($urlPath) === '') {
@@ -1054,11 +1279,12 @@ class Projects extends Controller
         $needle   = 'storage/uploads/';
         $position = strpos($urlPath, $needle);
 
-        if ($position === false) {
-            return null;
+        if ($position !== false) {
+            $relative = substr($urlPath, $position + strlen($needle));
+        } else {
+            $relative = $urlPath;
         }
 
-        $relative = substr($urlPath, $position + strlen($needle));
         $relative = trim(str_replace('\\', '/', $relative), '/');
 
         if ($relative === '') {
@@ -1089,24 +1315,82 @@ class Projects extends Controller
             return null;
         }
 
-        $baseReal           = rtrim(str_replace('\\', '/', $baseReal), '/');
-        $candidate          = $baseReal . '/' . $relative;
-        $candidateDirectory = realpath(dirname($candidate));
+        $baseReal  = rtrim(str_replace('\\', '/', $baseReal), '/');
+        $candidate = $baseReal . '/' . $relative;
 
-        if ($candidateDirectory === false) {
+        /*
+         * Validamos el directorio aunque el archivo ya no exista.
+         */
+        $candidateDirectory     = dirname($candidate);
+        $candidateDirectoryReal = realpath($candidateDirectory);
+
+        if ($candidateDirectoryReal === false) {
             return null;
         }
 
-        $candidateDirectory = rtrim(str_replace('\\', '/', $candidateDirectory), '/');
+        $candidateDirectoryReal = rtrim(str_replace('\\', '/', $candidateDirectoryReal), '/');
 
         if (
-            $candidateDirectory !== $baseReal
-            && ! str_starts_with($candidateDirectory, $baseReal . '/')
+            $candidateDirectoryReal !== $baseReal
+            && ! str_starts_with($candidateDirectoryReal, $baseReal . '/')
         ) {
             return null;
         }
 
-        return $relative;
+        return $candidate;
+    }
+
+    private function composeLocation(?string $detail, ?string $city, ?string $state): ?string
+    {
+        $parts = [];
+
+        foreach ([$detail, $city, $state] as $part) {
+            $part = trim((string) ($part ?? ''));
+
+            if ($part !== '' && ! in_array($part, $parts, true)) {
+                $parts[] = $part;
+            }
+        }
+
+        return empty($parts) ? null : implode(', ', $parts);
+    }
+
+    private function urlNullable(array $input, string $key, mixed $default = null): ?string
+    {
+        $value = $input[$key] ?? $default;
+
+        if (is_array($value)) {
+            return null;
+        }
+
+        $value = trim((string) ($value ?? ''));
+
+        if ($value === '') {
+            return null;
+        }
+
+        if (! preg_match('#^https?://#i', $value) && preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i', $value)) {
+            $value = 'https://' . $value;
+        }
+
+        return $value;
+    }
+
+    private function isHttpUrl(string $value): bool
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return false;
+        }
+
+        $scheme = strtolower((string) parse_url($value, PHP_URL_SCHEME));
+
+        if (! in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        return filter_var($value, FILTER_VALIDATE_URL) !== false;
     }
 
     private function str(array $input, string $key, mixed $default = ''): string

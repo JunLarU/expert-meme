@@ -1,371 +1,680 @@
 {%
-  $stats = $stats ?? [];
+$stats = $stats ?? [];
 
-  $jumbotronPublished = (int) ($stats['jumbotron_published'] ?? 0);
-  $projectsTotal = (int) ($stats['projects_total'] ?? 0);
-  $clientsActive = (int) ($stats['clients_active'] ?? 0);
-  $messagesNew = (int) ($stats['messages_new'] ?? 0);
+$jumbotronTotal = (int) ($stats['jumbotron_total'] ?? 0);
+$jumbotronPublished = (int) ($stats['jumbotron_published'] ?? 0);
+$jumbotronDraft = (int) ($stats['jumbotron_draft'] ?? 0);
+$jumbotronHidden = (int) ($stats['jumbotron_hidden'] ?? 0);
+$jumbotronActive = (int) ($stats['jumbotron_active'] ?? 0);
+$jumbotronExpired = (int) ($stats['jumbotron_expired'] ?? 0);
 
-  $mapProjects = (int) ($stats['map_projects'] ?? 0);
-  $mapOffices = (int) ($stats['map_offices'] ?? 0);
-  $mapWorkshops = (int) ($stats['map_workshops'] ?? 0);
+$projectsTotal = (int) ($stats['projects_total'] ?? 0);
+$projectsPublished = (int) ($stats['projects_published'] ?? 0);
+$projectsDraft = (int) ($stats['projects_draft'] ?? 0);
+$projectsHidden = (int) ($stats['projects_hidden'] ?? 0);
+$projectsArchived = (int) ($stats['projects_archived'] ?? 0);
+$projectsInPage = (int) ($stats['projects_in_page'] ?? 0);
+$projectsHome = (int) ($stats['projects_home'] ?? 0);
+$projectsHomeFeatured = (int) ($stats['projects_home_featured'] ?? 0);
+$projectsFeatured = (int) ($stats['projects_featured'] ?? 0);
+$projectsMap = (int) ($stats['projects_map'] ?? 0);
 
-  $recentProjects = $recentProjects ?? [];
-  $recentMessages = $recentMessages ?? [];
-  $jumbotronSlides = $jumbotronSlides ?? [];
-  $auditLogs = $auditLogs ?? [];
+$projectMediaTotal = (int) ($stats['project_media_total'] ?? 0);
+$projectMediaImages = (int) ($stats['project_media_images'] ?? 0);
+$projectMediaVideos = (int) ($stats['project_media_videos'] ?? 0);
+$projectTagsTotal = (int) ($stats['project_tags_total'] ?? 0);
+$projectFactsTotal = (int) ($stats['project_facts_total'] ?? 0);
+$projectScopeTotal = (int) ($stats['project_scope_total'] ?? 0);
+$projectResultsTotal = (int) ($stats['project_results_total'] ?? 0);
+
+$clientsTotal = (int) ($stats['clients_total'] ?? 0);
+$clientsActive = (int) ($stats['clients_active'] ?? 0);
+$clientsFeatured = (int) ($stats['clients_featured'] ?? 0);
+$clientsInactive = (int) ($stats['clients_inactive'] ?? 0);
+
+$messagesTotal = (int) ($stats['messages_total'] ?? 0);
+$messagesNew = (int) ($stats['messages_new'] ?? 0);
+$messagesRead = (int) ($stats['messages_read'] ?? 0);
+$messagesInProgress = (int) ($stats['messages_in_progress'] ?? 0);
+$messagesAnswered = (int) ($stats['messages_answered'] ?? 0);
+$messagesArchived = (int) ($stats['messages_archived'] ?? 0);
+$messagesSpam = (int) ($stats['messages_spam'] ?? 0);
+$messagesUrgent = (int) ($stats['messages_urgent'] ?? 0);
+
+$mapTotal = (int) ($stats['map_total'] ?? 0);
+$mapProjects = (int) ($stats['map_projects'] ?? 0);
+$mapOffices = (int) ($stats['map_offices'] ?? 0);
+$mapWorkshops = (int) ($stats['map_workshops'] ?? 0);
+$mapStatesCount = (int) ($stats['map_states'] ?? 0);
+
+$usersTotal = (int) ($stats['users_total'] ?? 0);
+$usersAdmin = (int) ($stats['users_admin'] ?? 0);
+$usersManager = (int) ($stats['users_manager'] ?? 0);
+
+$auditTotal = (int) ($stats['audit_total'] ?? 0);
+
+$recentProjects = $recentProjects ?? [];
+$recentMessages = $recentMessages ?? [];
+$jumbotronSlides = $jumbotronSlides ?? [];
+$auditLogs = $auditLogs ?? [];
+$mapStates = $mapStates ?? [];
+$users = $users ?? [];
 %}
 
 <section class="admin-dashboard" aria-labelledby="admin-dashboard-title">
-  <header class="admin-dashboard__hero">
-    <div>
-      <p class="admin-dashboard__eyebrow">Resumen general</p>
-
-      <h2 id="admin-dashboard-title">Dashboard</h2>
-
-      <span>
-        Vista rápida del contenido dinámico del sitio: jumbotron, proyectos, mapa,
-        clientes, mensajes y auditoría.
-      </span>
-    </div>
-
-    <div class="admin-dashboard__actions">
-      <a href="@url/admin/proyectos/crear" class="admin-button admin-button--primary">
-        Nuevo proyecto
-      </a>
-
-      <a href="@url/admin/jumbotron/crear" class="admin-button admin-button--secondary">
-        Nuevo slide
-      </a>
-    </div>
-  </header>
-
-  <section class="admin-stats" aria-label="Estadísticas principales del sitio">
-    <article class="admin-stat-card">
-      <div class="admin-stat-card__content">
-        <span>Slides publicados</span>
-        <strong data-admin-count data-value="{{ ($jumbotronPublished) }}">0</strong>
-        <small>Jumbotron principal</small>
-      </div>
-      <span class="admin-stat-card__icon" aria-hidden="true">▣</span>
-    </article>
-
-    <article class="admin-stat-card">
-      <div class="admin-stat-card__content">
-        <span>Proyectos</span>
-        <strong data-admin-count data-value="{{ ($projectsTotal) }}">0</strong>
-        <small>Portafolio registrado</small>
-      </div>
-      <span class="admin-stat-card__icon" aria-hidden="true">▤</span>
-    </article>
-
-    <article class="admin-stat-card">
-      <div class="admin-stat-card__content">
-        <span>Clientes</span>
-        <strong data-admin-count data-value="{{ ($clientsActive) }}">0</strong>
-        <small>Activos en el sitio</small>
-      </div>
-      <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
-    </article>
-
-    <article class="admin-stat-card admin-stat-card--alert">
-      <div class="admin-stat-card__content">
-        <span>Mensajes nuevos</span>
-        <strong data-admin-count data-value="{{ ($messagesNew) }}">0</strong>
-        <small>Pendientes de atención</small>
-      </div>
-      <span class="admin-stat-card__icon" aria-hidden="true">✉</span>
-    </article>
-  </section>
-
-  <section class="admin-dashboard__grid">
-    <article class="admin-panel admin-panel--wide">
-      <header class="admin-panel__header">
+    <header class="admin-dashboard__hero">
         <div>
-          <p>Portafolio</p>
-          <h3>Proyectos recientes</h3>
-        </div>
+            <p class="admin-dashboard__eyebrow">Resumen general</p>
 
-        <a href="@url/admin/proyectos" class="admin-panel__link">
-          Ver todos <span aria-hidden="true">→</span>
-        </a>
-      </header>
-
-      <div class="admin-table-wrap">
-        <table class="admin-table" data-admin-filterable>
-          <thead>
-            <tr>
-              <th>Proyecto</th>
-              <th>Ubicación</th>
-              <th>Año</th>
-              <th>Estado</th>
-              <th>Mapa</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {% foreach ($recentProjects as $project): %}
-              {%
-                $projectTitle = $project['title'] ?? 'Sin título';
-                $projectSlug = $project['slug'] ?? '';
-                $projectLocation = $project['location_display'] ?? 'Sin ubicación';
-                $projectYear = $project['project_year'] ?? '—';
-                $projectStatus = $project['status'] ?? 'draft';
-                $projectMap = !empty($project['show_on_map']);
-
-                $statusLabel = match ($projectStatus) {
-                    'published' => 'Publicado',
-                    'hidden' => 'Oculto',
-                    'archived' => 'Archivado',
-                    default => 'Borrador',
-                };
-
-                $statusClass = match ($projectStatus) {
-                    'published' => 'admin-badge--success',
-                    'hidden', 'archived' => 'admin-badge--muted',
-                    default => 'admin-badge--warning',
-                };
-              %}
-
-              <tr>
-                <td>
-                  <strong>{{{ ($projectTitle) }}}</strong>
-                  <small>@url/proyecto/{{{ ($projectSlug) }}}</small>
-                </td>
-                <td>{{{ ($projectLocation) }}}</td>
-                <td>{{{ ($projectYear) }}}</td>
-                <td>
-                  <span class="admin-badge {{ ($statusClass) }}">
-                    {{{ ($statusLabel) }}}
-                  </span>
-                </td>
-                <td>
-                  {% if ($projectMap): %}
-                    <span class="admin-badge admin-badge--neutral">Visible</span>
-                  {% else: %}
-                    <span class="admin-badge admin-badge--muted">Oculto</span>
-                  {% endif; %}
-                </td>
-              </tr>
-            {% endforeach; %}
-
-            {% if (empty($recentProjects)): %}
-              <tr>
-                <td colspan="5">
-                  <strong>No hay proyectos registrados todavía.</strong>
-                  <small>Crea tu primer proyecto desde el panel administrativo.</small>
-                </td>
-              </tr>
-            {% endif; %}
-          </tbody>
-        </table>
-      </div>
-    </article>
-
-    <article class="admin-panel">
-      <header class="admin-panel__header">
-        <div>
-          <p>Mensajes</p>
-          <h3>Contacto reciente</h3>
-        </div>
-
-        <a href="@url/admin/mensajes" class="admin-panel__link">
-          Ver <span aria-hidden="true">→</span>
-        </a>
-      </header>
-
-      <div class="admin-message-list" data-admin-filterable>
-        {% foreach ($recentMessages as $message): %}
-          {%
-            $messageName = $message['name'] ?? 'Contacto';
-            $messageSubject = $message['subject'] ?? ($message['service'] ?? 'Mensaje de contacto');
-            $messageText = $message['message'] ?? '';
-            $messageStatus = $message['status'] ?? 'new';
-
-            $dotClass = match ($messageStatus) {
-                'answered' => 'admin-dot--done',
-                'in_progress' => 'admin-dot--progress',
-                default => 'admin-dot--new',
-            };
-          %}
-
-          <article class="admin-message">
-            <span
-              class="admin-avatar admin-avatar--sm"
-              data-admin-initials
-              data-admin-name="{{{ ($messageName) }}}"
-            ></span>
-
-            <div class="admin-message__content">
-              <strong>{{{ ($messageName) }}}</strong>
-              <small>{{{ ($messageSubject) }}}</small>
-              <p>{{{ ($messageText) }}}</p>
-            </div>
-
-            <span class="admin-dot {{ ($dotClass) }}" aria-hidden="true"></span>
-          </article>
-        {% endforeach; %}
-
-        {% if (empty($recentMessages)): %}
-          <article class="admin-message">
-            <div class="admin-message__content">
-              <strong>No hay mensajes recientes.</strong>
-              <p>Los mensajes del formulario de contacto aparecerán aquí.</p>
-            </div>
-          </article>
-        {% endif; %}
-      </div>
-    </article>
-
-    <article class="admin-panel">
-      <header class="admin-panel__header">
-        <div>
-          <p>Jumbotron</p>
-          <h3>Slides activos</h3>
-        </div>
-
-        <a href="@url/admin/jumbotron" class="admin-panel__link">
-          Editar <span aria-hidden="true">→</span>
-        </a>
-      </header>
-
-      <div class="admin-mini-list" data-admin-filterable>
-        {% foreach ($jumbotronSlides as $index => $slide): %}
-          {%
-            $slideId = $slide['id'] ?? 0;
-            $slideTitle = $slide['title'] ?? 'Slide sin título';
-            $backgroundType = $slide['background_type'] ?? 'none';
-            $hasButton = !empty($slide['button_label']);
-            $slideNumber = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
-          %}
-
-          <a href="@url/admin/jumbotron/{{ ($slideId) }}" class="admin-mini-item">
-            <span class="admin-mini-item__icon">{{{ ($slideNumber) }}}</span>
+            <h2 id="admin-dashboard-title">Dashboard</h2>
 
             <span>
-              <strong>{{{ ($slideTitle) }}}</strong>
-              <small>
-                Fondo: {{{ ($backgroundType) }}}
-                {% if ($hasButton): %}
-                  · CTA activo
-                {% else: %}
-                  · Sin CTA
+                Vista rápida de jumbotron, proyectos, multimedia, clientes, mensajes,
+                mapa, usuarios internos y auditoría.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/proyectos/crear" class="admin-button admin-button--primary">
+                Nuevo proyecto
+            </a>
+
+            <a href="@url/admin/jumbotron/crear" class="admin-button admin-button--secondary">
+                Nuevo slide
+            </a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Estadísticas principales del sitio">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Slides activos</span>
+                <strong data-admin-count data-value="{{ ($jumbotronActive) }}">0</strong>
+                <small>{{ ($jumbotronTotal) }} slides registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">▣</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Proyectos publicados</span>
+                <strong data-admin-count data-value="{{ ($projectsPublished) }}">0</strong>
+                <small>{{ ($projectsTotal) }} proyectos registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">▤</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Clientes activos</span>
+                <strong data-admin-count data-value="{{ ($clientsActive) }}">0</strong>
+                <small>{{ ($clientsTotal) }} clientes registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Mensajes nuevos</span>
+                <strong data-admin-count data-value="{{ ($messagesNew) }}">0</strong>
+                <small>{{ ($messagesTotal) }} mensajes totales</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">✉</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Pines del mapa</span>
+                <strong data-admin-count data-value="{{ ($mapTotal) }}">0</strong>
+                <small>{{ ($mapStatesCount) }} estados con actividad</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Usuarios internos</span>
+                <strong data-admin-count data-value="{{ ($usersTotal) }}">0</strong>
+                <small>{{ ($usersAdmin) }} admins · {{ ($usersManager) }} managers</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◉</span>
+        </article>
+    </section>
+
+    <section class="admin-dashboard__grid">
+        <article class="admin-panel admin-panel--wide">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Contenido</p>
+                    <h3>Resumen por módulo</h3>
+                </div>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($jumbotronPublished) }}">0</strong>
+                    <span>Slides publicados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($jumbotronDraft) }}">0</strong>
+                    <span>Slides borrador</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($jumbotronHidden) }}">0</strong>
+                    <span>Slides ocultos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($jumbotronExpired) }}">0</strong>
+                    <span>Slides expirados</span>
+                </div>
+            </div>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsDraft) }}">0</strong>
+                    <span>Proyectos borrador</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsHidden) }}">0</strong>
+                    <span>Proyectos ocultos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsArchived) }}">0</strong>
+                    <span>Proyectos archivados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsInPage) }}">0</strong>
+                    <span>Visibles en proyectos</span>
+                </div>
+            </div>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsHome) }}">0</strong>
+                    <span>Proyectos home</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsHomeFeatured) }}">0</strong>
+                    <span>Destacado home</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsFeatured) }}">0</strong>
+                    <span>Destacados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($projectsMap) }}">0</strong>
+                    <span>Marcados para mapa</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Multimedia</p>
+                    <h3>Datos de proyectos</h3>
+                </div>
+            </header>
+
+            <div class="admin-mini-list">
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">M</span>
+                    <span>
+                        <strong>{{ ($projectMediaTotal) }} archivos multimedia</strong>
+                        <small>{{ ($projectMediaImages) }} imágenes · {{ ($projectMediaVideos) }} videos</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">#</span>
+                    <span>
+                        <strong>{{ ($projectTagsTotal) }} tags</strong>
+                        <small>Etiquetas asociadas a proyectos</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">F</span>
+                    <span>
+                        <strong>{{ ($projectFactsTotal) }} facts</strong>
+                        <small>Datos destacados de proyectos</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">S</span>
+                    <span>
+                        <strong>{{ ($projectScopeTotal) }} alcances</strong>
+                        <small>Items de alcance registrados</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">R</span>
+                    <span>
+                        <strong>{{ ($projectResultsTotal) }} resultados</strong>
+                        <small>Indicadores de resultados</small>
+                    </span>
+                </div>
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Mensajes</p>
+                    <h3>Estado de contacto</h3>
+                </div>
+
+                <a href="@url/admin/mensajes" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($messagesInProgress) }}">0</strong>
+                    <span>Seguimiento</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($messagesAnswered) }}">0</strong>
+                    <span>Respondidos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($messagesUrgent) }}">0</strong>
+                    <span>Urgentes</span>
+                </div>
+            </div>
+
+            <div class="admin-mini-list">
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">N</span>
+                    <span>
+                        <strong>{{ ($messagesNew) }} nuevos</strong>
+                        <small>{{ ($messagesRead) }} leídos</small>
+                    </span>
+                </div>
+
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">A</span>
+                    <span>
+                        <strong>{{ ($messagesArchived) }} archivados</strong>
+                        <small>{{ ($messagesSpam) }} spam</small>
+                    </span>
+                </div>
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Clientes</p>
+                    <h3>Estado de clientes</h3>
+                </div>
+
+                <a href="@url/admin/clientes" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($clientsActive) }}">0</strong>
+                    <span>Activos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($clientsFeatured) }}">0</strong>
+                    <span>Destacados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($clientsInactive) }}">0</strong>
+                    <span>Inactivos</span>
+                </div>
+            </div>
+        </article>
+
+        <article class="admin-panel admin-panel--wide">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Portafolio</p>
+                    <h3>Proyectos recientes</h3>
+                </div>
+
+                <a href="@url/admin/proyectos" class="admin-panel__link">
+                    Ver todos <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table" data-admin-filterable>
+                    <thead>
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>Ubicación</th>
+                            <th>Año</th>
+                            <th>Estado</th>
+                            <th>Mapa</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% foreach ($recentProjects as $project): %}
+                        {%
+                        $projectTitle = $project['title'] ?? 'Sin título';
+                        $projectSlug = $project['slug'] ?? '';
+                        $projectLocation = $project['location_display'] ?? 'Sin ubicación';
+                        $projectYear = $project['project_year'] ?? '—';
+                        $projectStatus = $project['status'] ?? 'draft';
+                        $projectMap = !empty($project['show_on_map']);
+
+                        $statusLabel = match ($projectStatus) {
+                            'published' => 'Publicado',
+                            'hidden' => 'Oculto',
+                            'archived' => 'Archivado',
+                            default => 'Borrador',
+                        };
+
+                        $statusClass = match ($projectStatus) {
+                            'published' => 'admin-badge--success',
+                            'hidden', 'archived' => 'admin-badge--muted',
+                            default => 'admin-badge--warning',
+                        };
+                        %}
+
+                        <tr>
+                            <td>
+                                <strong>{{{ ($projectTitle) }}}</strong>
+                                <small>@url/proyecto/{{{ ($projectSlug) }}}</small>
+                            </td>
+                            <td>{{{ ($projectLocation) }}}</td>
+                            <td>{{{ ($projectYear) }}}</td>
+                            <td>
+                                <span class="admin-badge {{ ($statusClass) }}">
+                                    {{{ ($statusLabel) }}}
+                                </span>
+                            </td>
+                            <td>
+                                {% if ($projectMap): %}
+                                <span class="admin-badge admin-badge--neutral">Visible</span>
+                                {% else: %}
+                                <span class="admin-badge admin-badge--muted">Oculto</span>
+                                {% endif; %}
+                            </td>
+                        </tr>
+                        {% endforeach; %}
+
+                        {% if (empty($recentProjects)): %}
+                        <tr>
+                            <td colspan="5">
+                                <strong>No hay proyectos registrados todavía.</strong>
+                                <small>Crea tu primer proyecto desde el panel administrativo.</small>
+                            </td>
+                        </tr>
+                        {% endif; %}
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Contacto</p>
+                    <h3>Mensajes recientes</h3>
+                </div>
+
+                <a href="@url/admin/mensajes" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-message-list" data-admin-filterable>
+                {% foreach ($recentMessages as $message): %}
+                {%
+                $messageName = $message['name'] ?? 'Contacto';
+                $messageSubject = $message['subject'] ?? ($message['service'] ?? 'Mensaje de contacto');
+                $messageText = $message['message'] ?? '';
+                $messageStatus = $message['status'] ?? 'new';
+
+                $dotClass = match ($messageStatus) {
+                    'answered' => 'admin-dot--done',
+                    'in_progress' => 'admin-dot--progress',
+                    default => 'admin-dot--new',
+                };
+                %}
+
+                <article class="admin-message">
+                    <span class="admin-avatar admin-avatar--sm" data-admin-initials
+                        data-admin-name="{{{ ($messageName) }}}"></span>
+
+                    <div class="admin-message__content">
+                        <strong>{{{ ($messageName) }}}</strong>
+                        <small>{{{ ($messageSubject) }}}</small>
+                        <p>{{{ ($messageText) }}}</p>
+                    </div>
+
+                    <span class="admin-dot {{ ($dotClass) }}" aria-hidden="true"></span>
+                </article>
+                {% endforeach; %}
+
+                {% if (empty($recentMessages)): %}
+                <article class="admin-message">
+                    <div class="admin-message__content">
+                        <strong>No hay mensajes recientes.</strong>
+                        <p>Los mensajes del formulario de contacto aparecerán aquí.</p>
+                    </div>
+                </article>
                 {% endif; %}
-              </small>
-            </span>
-          </a>
-        {% endforeach; %}
-
-        {% if (empty($jumbotronSlides)): %}
-          <div class="admin-mini-item">
-            <span class="admin-mini-item__icon">00</span>
-            <span>
-              <strong>No hay slides publicados.</strong>
-              <small>Crea un slide para el jumbotron principal.</small>
-            </span>
-          </div>
-        {% endif; %}
-      </div>
-    </article>
-
-    <article class="admin-panel">
-      <header class="admin-panel__header">
-        <div>
-          <p>Mapa</p>
-          <h3>Marcadores</h3>
-        </div>
-
-        <a href="@url/admin/mapa" class="admin-panel__link">
-          Ver mapa <span aria-hidden="true">→</span>
-        </a>
-      </header>
-
-      <div class="admin-map-summary">
-        <div>
-          <strong data-admin-count data-value="{{ ($mapProjects) }}">0</strong>
-          <span>Proyectos</span>
-        </div>
-
-        <div>
-          <strong data-admin-count data-value="{{ ($mapOffices) }}">0</strong>
-          <span>Oficinas</span>
-        </div>
-
-        <div>
-          <strong data-admin-count data-value="{{ ($mapWorkshops) }}">0</strong>
-          <span>Talleres</span>
-        </div>
-      </div>
-
-      <div class="admin-state-list">
-        {% foreach (($mapStates ?? []) as $stateName): %}
-          <span>{{{ ($stateName) }}}</span>
-        {% endforeach; %}
-
-        {% if (empty($mapStates)): %}
-          <span>Sin estados registrados</span>
-        {% endif; %}
-      </div>
-    </article>
-
-    <article class="admin-panel admin-panel--wide">
-      <header class="admin-panel__header">
-        <div>
-          <p>Auditoría</p>
-          <h3>Movimientos recientes</h3>
-        </div>
-
-        <a href="@url/admin/auditoria" class="admin-panel__link">
-          Historial <span aria-hidden="true">→</span>
-        </a>
-      </header>
-
-      <div class="admin-timeline" data-admin-filterable>
-        {% foreach ($auditLogs as $log): %}
-          {%
-            $action = $log['action'] ?? 'updated';
-            $table = $log['table_name'] ?? 'tabla';
-            $label = $log['record_label'] ?? 'Registro';
-            $actor = $log['actor_name'] ?? 'Sistema';
-
-            $markerClass = match ($action) {
-                'created' => 'admin-timeline__marker--created',
-                'deleted' => 'admin-timeline__marker--deleted',
-                default => 'admin-timeline__marker--updated',
-            };
-
-            $actionLabel = match ($action) {
-                'created' => 'Registro creado',
-                'deleted' => 'Registro eliminado',
-                'restored' => 'Registro restaurado',
-                'status_changed' => 'Estado actualizado',
-                default => 'Registro actualizado',
-            };
-          %}
-
-          <article class="admin-timeline__item">
-            <span class="admin-timeline__marker {{ ($markerClass) }}"></span>
-
-            <div>
-              <strong>{{{ ($actionLabel) }}}</strong>
-              <p>{{{ ($label) }}}</p>
-              <small>{{{ ($actor) }}} · {{{ ($table) }}}</small>
             </div>
-          </article>
-        {% endforeach; %}
+        </article>
 
-        {% if (empty($auditLogs)): %}
-          <article class="admin-timeline__item">
-            <span class="admin-timeline__marker"></span>
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Jumbotron</p>
+                    <h3>Slides activos</h3>
+                </div>
 
-            <div>
-              <strong>Sin movimientos recientes.</strong>
-              <p>Cuando se creen, editen o eliminen registros, aparecerán aquí.</p>
-              <small>Auditoría</small>
+                <a href="@url/admin/jumbotron" class="admin-panel__link">
+                    Editar <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-mini-list" data-admin-filterable>
+                {% foreach ($jumbotronSlides as $index => $slide): %}
+                {%
+                $slideId = $slide['id'] ?? 0;
+                $slideTitle = $slide['title'] ?? 'Slide sin título';
+                $backgroundType = $slide['background_type'] ?? 'none';
+                $hasButton = !empty($slide['button_label']);
+                $slideNumber = str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT);
+                %}
+
+                <a href="@url/admin/jumbotron/{{ ($slideId) }}" class="admin-mini-item">
+                    <span class="admin-mini-item__icon">{{{ ($slideNumber) }}}</span>
+
+                    <span>
+                        <strong>{{{ ($slideTitle) }}}</strong>
+                        <small>
+                            Fondo: {{{ ($backgroundType) }}}
+                            {% if ($hasButton): %}
+                            · CTA activo
+                            {% else: %}
+                            · Sin CTA
+                            {% endif; %}
+                        </small>
+                    </span>
+                </a>
+                {% endforeach; %}
+
+                {% if (empty($jumbotronSlides)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay slides publicados.</strong>
+                        <small>Crea un slide para el jumbotron principal.</small>
+                    </span>
+                </div>
+                {% endif; %}
             </div>
-          </article>
-        {% endif; %}
-      </div>
-    </article>
-  </section>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Mapa</p>
+                    <h3>Marcadores</h3>
+                </div>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($mapProjects) }}">0</strong>
+                    <span>Proyectos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($mapOffices) }}">0</strong>
+                    <span>Oficinas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($mapWorkshops) }}">0</strong>
+                    <span>Talleres</span>
+                </div>
+            </div>
+
+            <div class="admin-state-list">
+                {% foreach ($mapStates as $stateName): %}
+                <span>{{{ ($stateName) }}}</span>
+                {% endforeach; %}
+
+                {% if (empty($mapStates)): %}
+                <span>Sin estados registrados</span>
+                {% endif; %}
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Usuarios</p>
+                    <h3>Accesos internos</h3>
+                </div>
+
+                <a href="@url/admin/usuarios" class="admin-panel__link">
+                    Gestionar <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-mini-list">
+                {% foreach ($users as $adminUser): %}
+                {%
+                $userName = $adminUser['name'] ?? 'Usuario';
+                $userEmail = $adminUser['email'] ?? '';
+                $userRole = $adminUser['role'] ?? 'manager';
+
+                $userRoleLabel = match ($userRole) {
+                    'admin' => 'Admin',
+                    'manager' => 'Manager',
+                    default => 'Usuario',
+                };
+                %}
+
+                <div class="admin-mini-item">
+                    <span class="admin-avatar admin-avatar--sm" data-admin-initials
+                        data-admin-name="{{{ ($userName) }}}"></span>
+
+                    <span>
+                        <strong>{{{ ($userName) }}}</strong>
+                        <small>{{{ ($userRoleLabel) }}} · {{{ ($userEmail) }}}</small>
+                    </span>
+                </div>
+                {% endforeach; %}
+
+                {% if (empty($users)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay usuarios internos.</strong>
+                        <small>Registra administradores o managers.</small>
+                    </span>
+                </div>
+                {% endif; %}
+            </div>
+        </article>
+
+        <article class="admin-panel admin-panel--wide">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Auditoría</p>
+                    <h3>Movimientos recientes</h3>
+                </div>
+
+                <span class="admin-badge admin-badge--neutral">
+                    {{ ($auditTotal) }} registros
+                </span>
+            </header>
+
+            <div class="admin-timeline" data-admin-filterable>
+                {% foreach ($auditLogs as $log): %}
+                {%
+                $action = $log['action'] ?? 'updated';
+                $table = $log['table_name'] ?? 'tabla';
+                $label = $log['record_label'] ?? 'Registro';
+                $actor = $log['actor_name'] ?? 'Sistema';
+
+                $markerClass = match ($action) {
+                    'created' => 'admin-timeline__marker--created',
+                    'deleted' => 'admin-timeline__marker--deleted',
+                    default => 'admin-timeline__marker--updated',
+                };
+
+                $actionLabel = match ($action) {
+                    'created' => 'Registro creado',
+                    'deleted' => 'Registro eliminado',
+                    'restored' => 'Registro restaurado',
+                    'status_changed' => 'Estado actualizado',
+                    default => 'Registro actualizado',
+                };
+                %}
+
+                <article class="admin-timeline__item">
+                    <span class="admin-timeline__marker {{ ($markerClass) }}"></span>
+
+                    <div>
+                        <strong>{{{ ($actionLabel) }}}</strong>
+                        <p>{{{ ($label) }}}</p>
+                        <small>{{{ ($actor) }}} · {{{ ($table) }}}</small>
+                    </div>
+                </article>
+                {% endforeach; %}
+
+                {% if (empty($auditLogs)): %}
+                <article class="admin-timeline__item">
+                    <span class="admin-timeline__marker"></span>
+
+                    <div>
+                        <strong>Sin movimientos recientes.</strong>
+                        <p>Cuando se creen, editen o eliminen registros, aparecerán aquí.</p>
+                        <small>Auditoría</small>
+                    </div>
+                </article>
+                {% endif; %}
+            </div>
+        </article>
+    </section>
 </section>

@@ -1,12 +1,5 @@
 import { MX_EN_MAP } from "./projects-map-mx";
-import imgJtron from "@images/JTRON.jpg";
-import imgStats from "@images/STATS.jpg";
-import imgMembership from "@images/membership.jpg";
-const PROJECT_IMAGES = {
-  jtron: imgJtron,
-  stats: imgStats,
-  membership: imgMembership,
-};
+
 /* ============================================================================
  * 1. CALIBRACIÓN GEOGRÁFICA  (lat/lng  ->  unidades del mapa mx_en)
  * ----------------------------------------------------------------------------
@@ -233,277 +226,69 @@ function latLngToMapPoint(lat, lng) {
  *              su entry; para oficinas/talleres, lo que quieras (contacto, etc.)
  * ========================================================================== */
 
-const PROJECT_MARKERS = [
-  {
-    lat: 20.61,
-    lng: -100.41,
-    type: "project",
-    state: "Querétaro",
-    title: "Nave industrial Bajío",
-    kind: "Proyecto destacado",
-    location: "Querétaro, Qro.",
-    year: "2026",
-    summary:
-      "Desarrollo estructural y acompañamiento técnico para nave industrial con soluciones en acero.",
-    href: "/proyecto/nave-industrial-bajio",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.538898818101988,
-    lng: -100.43297348902101,
-    type: "project",
-    state: "Guanajuato",
-    title: "Plataforma metálica de producción",
-    kind: "Proyecto industrial",
-    location: "Celaya, Gto.",
-    year: "2025",
-    summary:
-      "Diseño y revisión de plataforma metálica para operación industrial.",
-    href: "/proyecto/plataforma-metalica-produccion",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.5497,
-    lng: -100.6792,
-    type: "project",
-    state: "Guanajuato",
-    title: "Refuerzo estructural de bodega",
-    kind: "Refuerzo estructural",
-    location: "Apaseo el Grande, Gto.",
-    year: "2025",
-    summary:
-      "Evaluación de condiciones existentes y propuesta de refuerzo estructural.",
-    href: "/proyecto/refuerzo-estructural-bodega",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.3886,
-    lng: -100.0003,
-    type: "project",
-    state: "Querétaro",
-    title: "Cubierta de acero para patio de maniobras",
-    kind: "Cubierta metálica",
-    location: "San Juan del Río, Qro.",
-    year: "2025",
-    summary:
-      "Propuesta estructural para cubierta metálica con criterios de montaje y operación.",
-    href: "/proyecto/cubierta-acero-patio-maniobras",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.5931,
-    lng: -100.392,
-    type: "project",
-    state: "Querétaro",
-    title: "Dictamen estructural comercial",
-    kind: "Dictamen",
-    location: "Querétaro, Qro.",
-    year: "2025",
-    summary:
-      "Inspección técnica y elaboración de dictamen para inmueble comercial.",
-    href: "/proyecto/dictamen-estructural-comercial",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.6767,
-    lng: -101.3563,
-    type: "project",
-    state: "Guanajuato",
-    title: "Estructura de soporte para equipo",
-    kind: "Soporte industrial",
-    location: "Irapuato, Gto.",
-    year: "2024",
-    summary:
-      "Diseño de estructura secundaria para soporte de equipo industrial.",
-    href: "/proyecto/estructura-soporte-equipo",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.5446,
-    lng: -100.4458,
-    type: "project",
-    state: "Querétaro",
-    title: "Valuación de inmueble industrial",
-    kind: "Valuación",
-    location: "Corregidora, Qro.",
-    year: "2024",
-    summary:
-      "Análisis de valor para inmueble industrial considerando estado, ubicación y uso.",
-    href: "/proyecto/valuacion-inmueble-industrial",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.6122,
-    lng: -100.2731,
-    type: "project",
-    state: "Querétaro",
-    title: "Mezzanine para área de almacén",
-    kind: "Mezzanine",
-    location: "El Marqués, Qro.",
-    year: "2024",
-    summary:
-      "Desarrollo estructural de mezzanine metálico para ampliar capacidad operativa.",
-    href: "/proyecto/mezzanine-almacen",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 21.1219,
-    lng: -101.686,
-    type: "project",
-    state: "Guanajuato",
-    title: "Supervisión de montaje estructural",
-    kind: "Supervisión",
-    location: "León, Gto.",
-    year: "2024",
-    summary:
-      "Seguimiento técnico de montaje de estructura metálica y control documental.",
-    href: "/proyecto/supervision-montaje-estructural",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.9431,
-    lng: -101.4282,
-    type: "project",
-    state: "Guanajuato",
-    title: "Ampliación de nave de producción",
-    kind: "Ampliación",
-    location: "Silao, Gto.",
-    year: "2023",
-    summary:
-      "Análisis y propuesta estructural para ampliación de área productiva.",
-    href: "/proyecto/ampliacion-nave-produccion",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.5739,
-    lng: -101.1957,
-    type: "project",
-    state: "Guanajuato",
-    title: "Revisión de cimentación para equipo",
-    kind: "Cimentación",
-    location: "Salamanca, Gto.",
-    year: "2023",
-    summary:
-      "Revisión técnica de cimentación para equipo industrial y anclajes.",
-    href: "/proyecto/revision-cimentacion-equipo",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.57,
-    lng: -100.376,
-    type: "project",
-    state: "Querétaro",
-    title: "Escaleras y pasarelas industriales",
-    kind: "Accesos industriales",
-    location: "Querétaro, Qro.",
-    year: "2023",
-    summary:
-      "Diseño de elementos de acceso metálico para operación y mantenimiento.",
-    href: "/proyecto/escaleras-pasarelas-industriales",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.5047,
-    lng: -100.1447,
-    type: "project",
-    state: "Querétaro",
-    title: "Diagnóstico de nave existente",
-    kind: "Diagnóstico",
-    location: "Pedro Escobedo, Qro.",
-    year: "2022",
-    summary:
-      "Levantamiento visual, registro de condiciones y diagnóstico técnico.",
-    href: "/proyecto/diagnostico-nave-existente",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.625,
-    lng: -100.395,
-    type: "project",
-    state: "Querétaro",
-    title: "Estructura para anuncios exteriores",
-    kind: "Estructura exterior",
-    location: "Querétaro, Qro.",
-    year: "2022",
-    summary:
-      "Diseño estructural para soporte exterior considerando acciones de viento.",
-    href: "/proyecto/estructura-anuncios",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.56,
-    lng: -100.425,
-    type: "project",
-    state: "Querétaro",
-    title: "Evaluación estructural de casa habitación",
-    kind: "Residencial",
-    location: "Querétaro, Qro.",
-    year: "2022",
-    summary:
-      "Revisión técnica de vivienda existente y recomendaciones de intervención.",
-    href: "/proyecto/evaluacion-casa-habitacion",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.585,
-    lng: -100.389,
-    type: "office",
-    state: "Querétaro",
-    title: "Oficina central L+E",
-    kind: "Oficina / sucursal",
-    location: "Querétaro, Qro.",
-    year: "Operación",
-    summary:
-      "Atención técnica, coordinación de proyectos, diseño estructural y valuación.",
-    href: "/contacto",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 20.546,
-    lng: -100.685,
-    type: "workshop",
-    state: "Guanajuato",
-    title: "Taller de fabricación Bajío",
-    kind: "Taller",
-    location: "Apaseo el Grande, Gto.",
-    year: "Operación",
-    summary:
-      "Apoyo para fabricación, preparación, revisión y logística de elementos metálicos.",
-    href: "/contacto",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-  {
-    lat: 19.4326,
-    lng: -99.1332,
-    type: "office",
-    state: "Ciudad de México",
-    title: "Sucursal de atención centro",
-    kind: "Oficina / sucursal",
-    location: "CDMX",
-    year: "Cobertura",
-    summary: "Punto de atención y coordinación para proyectos en zona centro.",
-    href: "/contacto",
-    image: PROJECT_IMAGES.jtron,
-    imageAlt: "Plataforma metálica de producción",
-  },
-];
+const DEFAULT_MARKERS_ENDPOINT = "/site-api/map/projects";
+
+let PROJECT_MARKERS = [];
+let markersRequest = null;
+
+async function fetchProjectMarkers(map) {
+  if (markersRequest) return markersRequest;
+
+  const endpoint =
+    map.dataset.markersEndpoint ||
+    map.querySelector("[data-projects-map-vector]")?.dataset.markersEndpoint ||
+    DEFAULT_MARKERS_ENDPOINT;
+
+  markersRequest = fetch(endpoint, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "X-Requested-With": "XMLHttpRequest",
+    },
+    credentials: "same-origin",
+  })
+    .then(async (response) => {
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.ok) {
+        throw new Error(data?.message || "No se pudieron cargar los pines.");
+      }
+
+      return Array.isArray(data.markers) ? data.markers : [];
+    })
+    .then((markers) => markers.map(normalizeProjectMarker).filter(Boolean));
+
+  return markersRequest;
+}
+
+function normalizeProjectMarker(marker = {}) {
+  const lat = Number(marker.lat);
+  const lng = Number(marker.lng);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return null;
+  }
+
+  const type = ["project", "office", "workshop"].includes(marker.type)
+    ? marker.type
+    : "project";
+
+  return {
+    id: Number(marker.id || 0),
+    lat,
+    lng,
+    type,
+    state: String(marker.state || ""),
+    title: String(marker.title || "Proyecto"),
+    kind: String(marker.kind || "Proyecto"),
+    location: String(marker.location || ""),
+    year: String(marker.year || ""),
+    summary: String(marker.summary || ""),
+    href: String(marker.href || ""),
+    image: String(marker.image || ""),
+    imageAlt: String(marker.imageAlt || marker.image_alt || marker.title || ""),
+  };
+}
 
 /* Posición en el mapa calculada automáticamente desde lat/lng. */
 function spreadCloseMarkers(markers, minDistance = 11, radius = 9) {
@@ -573,13 +358,21 @@ export default function initProjectsMap() {
   maps.forEach((map) => initSingleProjectsMap(map));
 }
 
-function initSingleProjectsMap(map) {
+async function initSingleProjectsMap(map) {
   const vectorMap = map.querySelector("[data-projects-map-vector]");
   if (!vectorMap) return;
 
-  if (vectorMap.dataset.vectorReady === "true") return;
+  if (
+    vectorMap.dataset.vectorReady === "true" ||
+    vectorMap.dataset.vectorReady === "loading"
+  ) {
+    return;
+  }
+
+  vectorMap.dataset.vectorReady = "loading";
 
   map.classList.remove("projects-map--missing-vector");
+  map.classList.add("projects-map--loading");
 
   const card = buildCardElement(map);
   const panel = buildPanelElement(map);
@@ -602,6 +395,9 @@ function initSingleProjectsMap(map) {
   try {
     vectorMap.innerHTML = "";
 
+    const fetchedMarkers = await fetchProjectMarkers(map);
+    PROJECT_MARKERS = fetchedMarkers;
+
     const svg = buildNativeMexicoSvg(
       vectorMap,
       map,
@@ -619,6 +415,8 @@ function initSingleProjectsMap(map) {
       statePaths,
     );
 
+    PROJECT_MARKERS = preparedMarkers;
+
     renderSvgMarkers(
       svg,
       map,
@@ -633,7 +431,10 @@ function initSingleProjectsMap(map) {
 
     vectorMap.dataset.vectorReady = "true";
 
-    map.classList.remove("projects-map--missing-vector");
+    map.classList.remove(
+      "projects-map--missing-vector",
+      "projects-map--loading",
+    );
     map.classList.add("projects-map--ready");
 
     document.addEventListener("click", (event) => {
@@ -672,7 +473,10 @@ function initSingleProjectsMap(map) {
       closePanel(panel, panelState, true);
     });
   } catch (error) {
+    vectorMap.dataset.vectorReady = "false";
+    map.classList.remove("projects-map--loading");
     map.classList.add("projects-map--missing-vector");
+
     console.error('No se pudo inicializar el mapa SVG "mx_en":', error);
   }
 }

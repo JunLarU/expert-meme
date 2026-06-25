@@ -8,6 +8,7 @@ import initLatestReveal from "./sections/latest-reveal";
 import initNavbar from "./sections/navbar";
 import initProjectEntryRelated from "./sections/project-entry-related";
 import initProjectEntrySlider from "./sections/project-entry-slider";
+import initProjectsInfiniteScroll from "./sections/projects-infinite-scroll";
 import initProjectsMap from "./sections/projects-map";
 import initSmoothScrollLinks from "./sections/smooth-scroll";
 import initSplide from "./sections/splide";
@@ -66,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initClientsHexGrid();
   initAboutMvv();
   initSmoothScrollLinks();
+  initProjectsInfiniteScroll();
 
   initProjectsMap();
 
