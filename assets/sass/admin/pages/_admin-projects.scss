@@ -1,0 +1,65 @@
+// ==========================================================
+// Admin Projects - Código de obra
+// Importar después de _dashboard.scss y admin-forms-enhanced.scss.
+// ==========================================================
+
+.admin-projects-page {
+  .admin-table__sort-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+
+    color: rgba($color-dark, 0.66);
+    font-family: $font-montserrat;
+    font-size: 1.12rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 2rem;
+      height: 2rem;
+
+      border-radius: 999rem;
+      background-color: rgba($color-logo-red, 0.08);
+      color: $color-logo-red;
+
+      font-size: 1rem;
+      line-height: 1;
+
+      transition:
+        background-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: $color-logo-red;
+      outline: none;
+
+      span {
+        background-color: $color-logo-red;
+        color: $color-white;
+        transform: translateY(-0.1rem);
+      }
+    }
+  }
+
+  .admin-panel__header > .admin-dashboard__actions {
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .admin-badge--work-code,
+  .admin-table .admin-badge.admin-badge--neutral:first-child {
+    font-variant-numeric: tabular-nums;
+  }
+}

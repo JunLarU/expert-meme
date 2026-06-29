@@ -47,18 +47,25 @@ class Projects extends Controller
         'Yucatán',
         'Zacatecas',
     ];
-    public function index()
+    public function index(Request $request)
     {
         if (isGuest()) {
             return redirect('/login');
         }
 
-        $projects = Project::allProjects();
+        $workCodeOrder = strtolower(trim((string) $request->query('work_code_order', '')));
+
+        if (! in_array($workCodeOrder, ['asc', 'desc'], true)) {
+            $workCodeOrder = '';
+        }
+
+        $projects = Project::allProjects($workCodeOrder);
 
         return view('pages/admin/projects', 'Proyectos', [
-            'user'     => auth(),
-            'projects' => $projects,
-            'stats'    => $this->makeStats($projects),
+            'user'          => auth(),
+            'projects'      => $projects,
+            'stats'         => $this->makeStats($projects),
+            'workCodeOrder' => $workCodeOrder,
         ], 'layouts/admin/layout');
     }
 
@@ -73,11 +80,12 @@ class Projects extends Controller
             'mode'         => 'create',
             'project'      => [
                 'status'           => Project::STATUS_DRAFT,
+                'work_code'        => Project::nextWorkCode(),
                 'country'          => 'México',
                 'map_type'         => Project::MAP_PROJECT,
                 'show_in_home'     => 1,
                 'show_in_projects' => 1,
-                'show_on_map'      => 1,
+                'show_on_map'      => null,
                 'is_featured'      => 0,
                 'is_home_featured' => 0,
                 'sort_order'       => Project::nextSortOrder(),
@@ -343,7 +351,9 @@ class Projects extends Controller
     {
         $input = $request->data();
 
-        $title = $this->str($input, 'title', $current['title'] ?? '');
+        $title       = $this->str($input, 'title', $current['title'] ?? '');
+        $workCodeRaw = $this->str($input, 'work_code', $current['work_code'] ?? '');
+        $workCode    = preg_match('/^\d+$/', $workCodeRaw) === 1 ? (int) $workCodeRaw : null;
 
         $brief       = $this->nullable($input, 'brief', $current['brief'] ?? null);
         $description = $this->nullable($input, 'description', $current['description'] ?? null);
@@ -357,17 +367,23 @@ class Projects extends Controller
         $service    = $this->nullable($input, 'service', $current['service'] ?? null);
         $scopeLabel = $this->nullable($input, 'scope_label', $current['scope_label'] ?? null);
 
-        $city            = $this->nullable($input, 'city', $current['city'] ?? null);
-        $state           = $this->nullable($input, 'state', $current['state'] ?? null);
-        $country         = 'México';
-        $locationDetail  = $this->nullable($input, 'location_display', $current['location_display'] ?? null);
+        $city           = $this->nullable($input, 'city', $current['city'] ?? null);
+        $state          = $this->nullable($input, 'state', $current['state'] ?? null);
+        $country        = 'México';
+        $locationDetail = $this->cleanLocationDetail(
+            $this->nullable($input, 'location_display', $current['location_display'] ?? null),
+            $city,
+            $state
+        );
         $locationDisplay = $this->composeLocation($locationDetail, $city, $state);
 
         $projectYear = $this->intNullable($input, 'project_year', $current['project_year'] ?? null);
 
         $mapLat    = $this->floatNullable($input, 'map_lat', $current['map_lat'] ?? null);
         $mapLng    = $this->floatNullable($input, 'map_lng', $current['map_lng'] ?? null);
-        $showOnMap = ($mapLat !== null && $mapLng !== null) ? 1 : 0;
+        $showOnMap = $this->mapVisibilityNullable(
+            $input['show_on_map'] ?? ($current['show_on_map'] ?? null)
+        );
 
         $googleMapsUrl = $this->urlNullable($input, 'google_maps_url', $current['result_button_url'] ?? null);
 
@@ -382,6 +398,7 @@ class Projects extends Controller
         return [
             'slug'                => $this->str($input, 'slug', $current['slug'] ?? ''),
             'status'              => $this->str($input, 'status', $current['status'] ?? Project::STATUS_DRAFT),
+            'work_code'           => $workCode,
             'title'               => $title,
             'subtitle'            => null,
             'brief'               => $brief,
@@ -454,6 +471,29 @@ class Projects extends Controller
             'seo_description'     => $seoDescription,
         ];
     }
+
+    private function mapVisibilityNullable(mixed $value): ?int
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $value = strtolower(trim((string) $value));
+
+        if ($value === '' || $value === 'auto' || $value === 'null') {
+            return null;
+        }
+
+        if (in_array($value, ['1', 'true', 'on', 'yes', 'si', 'sí', 'show', 'mostrar'], true)) {
+            return 1;
+        }
+
+        if (in_array($value, ['0', 'false', 'off', 'no', 'hide', 'ocultar'], true)) {
+            return 0;
+        }
+
+        return null;
+    }
     private function validatePayload(array $payload): array
     {
         $errors = [];
@@ -464,6 +504,12 @@ class Projects extends Controller
 
         if (mb_strlen((string) ($payload['title'] ?? '')) > 255) {
             $errors['title'] = 'El nombre del proyecto no debe exceder 255 caracteres.';
+        }
+
+        $workCode = $payload['work_code'] ?? null;
+
+        if ($workCode === null || ! is_numeric($workCode) || (int) $workCode <= 0) {
+            $errors['work_code'] = 'El código de obra es obligatorio y debe ser un número mayor a cero.';
         }
 
         if (trim((string) ($payload['brief'] ?? '')) === '') {
@@ -1340,15 +1386,111 @@ class Projects extends Controller
         return $candidate;
     }
 
+    private function cleanLocationDetail(?string $detail, ?string $city, ?string $state): ?string
+    {
+        $value = trim((string) ($detail ?? ''));
+
+        if ($value === '') {
+            return null;
+        }
+
+        $parts = $this->splitLocationParts($value);
+
+        if (empty($parts)) {
+            return null;
+        }
+
+        $cityKey  = $this->normalizeLocationSegment($city);
+        $stateKey = $this->normalizeLocationSegment($state);
+
+        /*
+     * Importante:
+     * Quitamos únicamente el sufijo "municipio, estado" que el sistema compone.
+     * No eliminamos segmentos intermedios, porque pueden ser colonias o zonas reales.
+     *
+     * Ejemplo:
+     * San Felipe 30, San Mateo, Corregidora, Querétaro
+     * => San Felipe 30, San Mateo
+     */
+        while (
+            $cityKey !== ''
+            && $stateKey !== ''
+            && count($parts) >= 2
+        ) {
+            $lastKey = $this->normalizeLocationSegment($parts[count($parts) - 1]);
+            $prevKey = $this->normalizeLocationSegment($parts[count($parts) - 2]);
+
+            if ($lastKey !== $stateKey || $prevKey !== $cityKey) {
+                break;
+            }
+
+            array_pop($parts); // estado
+            array_pop($parts); // municipio
+        }
+
+        /*
+     * Fallback por si existe un registro viejo incompleto:
+     * "Dirección, Querétaro" con estado al final.
+     */
+        if (
+            $stateKey !== ''
+            && count($parts) >= 1
+            && $this->normalizeLocationSegment($parts[count($parts) - 1]) === $stateKey
+        ) {
+            array_pop($parts);
+        }
+
+        /*
+     * Fallback por si existe un registro viejo incompleto:
+     * "Dirección, Corregidora" con municipio al final.
+     *
+     * Ojo: solo se ejecuta después de intentar quitar municipio+estado.
+     */
+        if (
+            $cityKey !== ''
+            && count($parts) >= 1
+            && $this->normalizeLocationSegment($parts[count($parts) - 1]) === $cityKey
+        ) {
+            array_pop($parts);
+        }
+
+        return empty($parts) ? null : implode(', ', $parts);
+    }
+
+    private function splitLocationParts(string $value): array
+    {
+        return array_values(array_filter(array_map(
+            fn($part) => trim((string) $part),
+            explode(',', $value)
+        ), fn($part) => $part !== ''));
+    }
+
+    private function normalizeLocationSegment(?string $value): string
+    {
+        $value = trim(preg_replace('/\s+/u', ' ', (string) ($value ?? '')) ?? '');
+
+        if ($value === '') {
+            return '';
+        }
+
+        $value = str_replace(['.', '(', ')'], '', $value);
+
+        return mb_strtolower($value, 'UTF-8');
+    }
+
     private function composeLocation(?string $detail, ?string $city, ?string $state): ?string
     {
-        $parts = [];
+        $detail = $this->cleanLocationDetail($detail, $city, $state);
+        $parts  = [];
+        $seen   = [];
 
         foreach ([$detail, $city, $state] as $part) {
             $part = trim((string) ($part ?? ''));
+            $key  = $this->normalizeLocationSegment($part);
 
-            if ($part !== '' && ! in_array($part, $parts, true)) {
-                $parts[] = $part;
+            if ($part !== '' && $key !== '' && ! isset($seen[$key])) {
+                $parts[]    = $part;
+                $seen[$key] = true;
             }
         }
 

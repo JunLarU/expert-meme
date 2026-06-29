@@ -2,6 +2,7 @@ import "../sass/app.scss";
 
 import { bootstrapWhisDefaults } from "./helpers/framework-defaults";
 import initAboutMvv from "./sections/about-mvv";
+import initAssociationCertificationsCarousel from "./sections/association-certifications-carousel";
 import initClientsHexGrid from "./sections/clients-hex-grid";
 import initFooter from "./sections/footer";
 import initLatestReveal from "./sections/latest-reveal";
@@ -10,6 +11,7 @@ import initProjectEntryRelated from "./sections/project-entry-related";
 import initProjectEntrySlider from "./sections/project-entry-slider";
 import initProjectsInfiniteScroll from "./sections/projects-infinite-scroll";
 import initProjectsMap from "./sections/projects-map";
+import initProjectsSearch from "./sections/projects-search";
 import initSmoothScrollLinks from "./sections/smooth-scroll";
 import initSplide from "./sections/splide";
 import initStats from "./sections/stats";
@@ -65,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initStats();
   initClientsHexGrid();
+  initAssociationCertificationsCarousel();
   initAboutMvv();
   initSmoothScrollLinks();
   initProjectsInfiniteScroll();
@@ -72,6 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initProjectsMap();
 
   initLatestReveal();
+  initProjectsSearch();
 
   // initAdminApiTokens();
   //  try {

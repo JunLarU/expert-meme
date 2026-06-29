@@ -15,13 +15,45 @@ function initAboutMvvPanels() {
 
     if (!panels.length) return;
 
+    const buildClosedColumns = () => {
+      return panels.map(() => "minmax(0, 1fr)").join(" ");
+    };
+
+    const buildActiveColumns = (activePanel) => {
+      return panels
+        .map((panel) => {
+          if (panel !== activePanel) return "minmax(0, 1fr)";
+
+          const grow = Number.parseFloat(panel.dataset.mvvGrow || "3.35");
+          return `minmax(0, ${Number.isFinite(grow) ? grow : 3.35}fr)`;
+        })
+        .join(" ");
+    };
+
     const setActive = (panel, active) => {
       panel.classList.toggle("is-active", active);
       panel.setAttribute("aria-expanded", active ? "true" : "false");
     };
 
+    const setClosedColumns = () => {
+      container.style.setProperty("--mvv-columns", buildClosedColumns());
+      container.removeAttribute("data-mvv-has-active");
+    };
+
     const clearPanels = () => {
       panels.forEach((panel) => setActive(panel, false));
+      setClosedColumns();
+    };
+
+    const activateDesktopPanel = (panel) => {
+      if (!desktopQuery.matches) return;
+
+      panels.forEach((currentPanel) => {
+        setActive(currentPanel, currentPanel === panel);
+      });
+
+      container.style.setProperty("--mvv-columns", buildActiveColumns(panel));
+      container.setAttribute("data-mvv-has-active", "true");
     };
 
     const toggleMobilePanel = (panel) => {
@@ -34,6 +66,17 @@ function initAboutMvvPanels() {
       }
     };
 
+    /*
+      Muy importante:
+      Deja las columnas cerradas ya escritas como lista explícita desde el inicio.
+      Así, cuando entras desde otra sección, el navegador anima desde:
+      1fr 1fr 1fr 1fr 1fr
+      hacia:
+      1fr 1fr 3.35fr 1fr 1fr
+      y ya no desde repeat(...), que suele brincar.
+    */
+    setClosedColumns();
+
     panels.forEach((panel) => {
       if (!panel.hasAttribute("tabindex")) {
         panel.setAttribute("tabindex", "0");
@@ -42,39 +85,17 @@ function initAboutMvvPanels() {
       panel.setAttribute("aria-expanded", "false");
 
       panel.addEventListener("pointerenter", () => {
-        if (!desktopQuery.matches) return;
-
-        clearPanels();
-        setActive(panel, true);
-      });
-
-      panel.addEventListener("pointerleave", () => {
-        if (!desktopQuery.matches) return;
-
-        setActive(panel, false);
+        activateDesktopPanel(panel);
       });
 
       panel.addEventListener("focusin", () => {
-        if (!desktopQuery.matches) return;
-
-        clearPanels();
-        setActive(panel, true);
+        activateDesktopPanel(panel);
       });
 
-      panel.addEventListener("focusout", (event) => {
-        if (!desktopQuery.matches) return;
-        if (panel.contains(event.relatedTarget)) return;
-
-        setActive(panel, false);
-      });
-
-      // Dentro de initAboutMvvPanels, en el listener de click
       panel.addEventListener("click", () => {
-        // Solo ejecuta el acordeón si estamos en mobile (max-width: 767px)
-        if (window.matchMedia("(max-width: 767px)").matches) {
-          toggleMobilePanel(panel);
-        }
-        // En escritorio no hacemos nada en click, porque el hover ya lo gestiona todo.
+        if (desktopQuery.matches) return;
+
+        toggleMobilePanel(panel);
       });
 
       panel.addEventListener("keydown", (event) => {
@@ -83,13 +104,25 @@ function initAboutMvvPanels() {
         event.preventDefault();
 
         if (desktopQuery.matches) {
-          clearPanels();
-          setActive(panel, true);
+          activateDesktopPanel(panel);
           return;
         }
 
         toggleMobilePanel(panel);
       });
+    });
+
+    container.addEventListener("pointerleave", () => {
+      if (!desktopQuery.matches) return;
+
+      clearPanels();
+    });
+
+    container.addEventListener("focusout", (event) => {
+      if (!desktopQuery.matches) return;
+      if (container.contains(event.relatedTarget)) return;
+
+      clearPanels();
     });
 
     const handleViewportChange = () => {
@@ -103,4 +136,3 @@ function initAboutMvvPanels() {
     }
   });
 }
-

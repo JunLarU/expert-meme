@@ -67,6 +67,41 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
             </div>
 
         </header>
+        <!-- Buscador en tiempo real -->
+        <div class="projects-search" data-projects-search>
+            <div class="projects-search__inner">
+                <div class="projects-search__field">
+                    <input type="text" id="projects-search-input" class="projects-search__input" placeholder=" "
+                        autocomplete="off" data-projects-search-input>
+
+                    <label class="projects-search__label" for="projects-search-input">
+                        Buscar proyectos por nombre, ubicación, servicio o tags
+                    </label>
+
+                    <span class="projects-search__icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="20" height="20">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.8" fill="none" />
+                            <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="currentColor" stroke-width="1.8" />
+                        </svg>
+                    </span>
+
+                    <button type="button" class="projects-search__clear" data-projects-search-clear
+                        aria-label="Limpiar búsqueda" hidden>
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <p class="projects-search__hint">
+                    Prueba con “Querétaro”, “estructura metálica”, “montaje”, “nave industrial” o “supervisión”.
+                </p>
+            </div>
+
+            <!-- Contenedor de resultados (flotante) -->
+            <div class="projects-search__results" data-projects-search-results hidden>
+                <div class="projects-search__results-inner">
+                    <!-- Los resultados se inyectarán aquí -->
+                </div>
+            </div>
+        </div>
         <div class="latest__projects projects-page__grid" data-projects-grid
             data-projects-endpoint="@url/site-api/projects" data-projects-per-page="{{{ ($projectsPerPage) }}}"
             data-projects-offset="{{{ (count($initialProjects)) }}}" data-projects-total="{{{ ($projectsTotal) }}}"

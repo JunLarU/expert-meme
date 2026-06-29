@@ -18,6 +18,7 @@ $pageTitle = $isEdit ? 'Editar proyecto' : 'Nuevo proyecto';
 $title = $project['title'] ?? '';
 $slug = $project['slug'] ?? '';
 $status = $project['status'] ?? 'draft';
+$workCode = $project['work_code'] ?? '';
 
 $brief = $project['brief'] ?? '';
 $description = $project['description'] ?? '';
@@ -28,6 +29,64 @@ $locationDisplay = $project['location_display'] ?? '';
 $city = $project['city'] ?? '';
 $state = $project['state'] ?? ($project['map_state'] ?? '');
 $country = 'México';
+
+$locationDetailInput = $locationDisplay;
+
+/*
+* En edición, location_display viene guardado como:
+* "dirección/zona, municipio, estado".
+* Este bloque deja en el input SOLO la dirección/zona, pero conserva
+* comas internas de la dirección si existen.
+*/
+$normalizeLocationSegment = function ($value) {
+$value = trim(preg_replace('/\s+/u', ' ', (string) ($value ?? '')) ?? '');
+
+$value = strtr($value, [
+'Á' => 'A', 'É' => 'E', 'Í' => 'I', 'Ó' => 'O', 'Ú' => 'U', 'Ü' => 'U', 'Ñ' => 'N',
+'á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n',
+]);
+
+$value = mb_strtolower($value, 'UTF-8');
+$value = preg_replace('/[^a-z0-9]+/u', '', $value) ?? '';
+
+$aliases = [
+'cdmx' => 'ciudaddemexico',
+'df' => 'ciudaddemexico',
+'distritofederal' => 'ciudaddemexico',
+'edomex' => 'estadodemexico',
+'edodemexico' => 'estadodemexico',
+'estadomexico' => 'estadodemexico',
+'qro' => 'queretaro',
+'qrooo' => 'quintanaroo',
+'bc' => 'bajacalifornia',
+'bcs' => 'bajacaliforniasur',
+'bcnsur' => 'bajacaliforniasur',
+'gto' => 'guanajuato',
+'nl' => 'nuevoleon',
+'slp' => 'sanluispotosi',
+];
+
+return $aliases[$value] ?? $value;
+};
+
+$locationParts = array_values(array_filter(array_map('trim', explode(',', (string) $locationDetailInput))));
+$locationKeys = array_values(array_filter([
+$normalizeLocationSegment($city),
+$normalizeLocationSegment($state),
+$normalizeLocationSegment('México'),
+]));
+
+while (!empty($locationParts)) {
+$lastLocationPart = $normalizeLocationSegment(end($locationParts));
+
+if ($lastLocationPart === '' || !in_array($lastLocationPart, $locationKeys, true)) {
+break;
+}
+
+array_pop($locationParts);
+}
+
+$locationDetailInput = implode(', ', $locationParts);
 
 $clientName = $project['client_name'] ?? '';
 $service = $project['service'] ?? '';
@@ -43,6 +102,12 @@ $googleMapsUrl = $project['result_button_url'] ?? '';
 
 $showInHome = (int) ($project['show_in_home'] ?? 1);
 $showInProjects = (int) ($project['show_in_projects'] ?? 1);
+
+$showOnMapRaw = $project['show_on_map'] ?? null;
+$showOnMap = ($showOnMapRaw === null || $showOnMapRaw === '')
+? 'auto'
+: (string) ((int) $showOnMapRaw);
+
 $isFeatured = (int) ($project['is_featured'] ?? 0);
 $isHomeFeatured = (int) ($project['is_home_featured'] ?? 0);
 $sortOrder = (int) ($project['sort_order'] ?? 0);
@@ -101,8 +166,8 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
       <p class="admin-dashboard__eyebrow">Proyectos</p>
       <h2 id="admin-project-form-title">{{{ ($pageTitle) }}}</h2>
       <span>
-        Llena la información visible del proyecto. El sistema genera automáticamente slug, SEO,
-        textos del hero, portada, tarjeta y pin usando la imagen principal de la galería.
+        Llena la información visible del proyecto. El código de obra es interno para administración y búsqueda;
+        no se muestra en la página pública ni en la entry del proyecto.
       </span>
     </div>
 
@@ -139,6 +204,16 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
               placeholder=" " required maxlength="255" data-label="nombre del proyecto">
             <label class="form-label" for="project-title">Nombre del proyecto *</label>
             <span class="form-group__error" data-field-error data-error-for="title"></span>
+          </div>
+
+          <div class="form-group" data-field="work_code">
+            <input type="number" id="project-work-code" name="work_code" class="form-control"
+              value="{{{ ($workCode) }}}" placeholder=" " required min="1" step="1" inputmode="numeric"
+              data-label="código de obra">
+            <label class="form-label" for="project-work-code">Código de obra *</label>
+            <span class="form-group__help">Uso interno. Sirve para ordenar y buscar en el panel admin; no se muestra en
+              el sitio público.</span>
+            <span class="form-group__error" data-field-error data-error-for="work_code"></span>
           </div>
 
           <div class="form-group form-group--select" data-field="status">
@@ -220,9 +295,9 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
           <div class="form-group form-group--select" data-field="state">
             <select id="project-state" name="state" class="form-control" required data-label="estado de la República">
               {% if (empty($state)): %}
-              <option value="" selected>Selecciona un estado</option>
+              <option value="" selected disabled></option>
               {% else: %}
-              <option value="">Selecciona un estado</option>
+              <option value="" disabled></option>
               {% endif; %}
 
               {% foreach ($mexicanStates as $mxState): %}
@@ -237,15 +312,17 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
             <span class="form-group__error" data-field-error data-error-for="state"></span>
           </div>
 
+
           <input type="hidden" name="country" value="México">
 
           <div class="form-group admin-form-grid__full" data-field="location_display">
             <input type="text" id="project-location-display" name="location_display" class="form-control"
-              value="{{{ ($locationDisplay) }}}" placeholder=" " maxlength="255"
+              value="{{{ ($locationDetailInput) }}}" placeholder=" " maxlength="255"
               data-label="dirección, parque industrial o zona">
             <label class="form-label" for="project-location-display">Dirección, parque industrial o zona</label>
-            <span class="form-group__help">Opcional. Ejemplo: Parque Industrial Querétaro. El sistema arma la ubicación
-              visible con este dato, municipio y estado.</span>
+            <span class="form-group__help">Opcional. Ejemplo: Parque Industrial Querétaro. Captura solo la
+              dirección/zona;
+              no repitas municipio ni estado.</span>
             <span class="form-group__error" data-field-error data-error-for="location_display"></span>
           </div>
 
@@ -272,6 +349,37 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
             <label class="form-label" for="project-map-lng">Longitud para pin del mapa</label>
             <span class="form-group__help">Opcional. Ejemplo: -100.389888.</span>
             <span class="form-group__error" data-field-error data-error-for="map_lng"></span>
+          </div>
+
+          <div class="form-group form-group--select admin-form-grid__full" data-field="show_on_map">
+            <select id="project-show-on-map" name="show_on_map" class="form-control" data-label="mostrar pin en mapa">
+              {% if ($showOnMap === 'auto'): %}
+              <option value="auto" selected>Automático: mostrar si tiene estado o coordenadas</option>
+              {% else: %}
+              <option value="auto">Automático: mostrar si tiene estado o coordenadas</option>
+              {% endif; %}
+
+              {% if ($showOnMap === '1'): %}
+              <option value="1" selected>Mostrar pin en el mapa</option>
+              {% else: %}
+              <option value="1">Mostrar pin en el mapa</option>
+              {% endif; %}
+
+              {% if ($showOnMap === '0'): %}
+              <option value="0" selected>Ocultar pin del mapa</option>
+              {% else: %}
+              <option value="0">Ocultar pin del mapa</option>
+              {% endif; %}
+            </select>
+
+            <label class="form-label" for="project-show-on-map">Pin en mapa</label>
+
+            <span class="form-group__help">
+              Automático guarda NULL. Mostrar guarda 1. Ocultar guarda 0.
+              Si no capturas coordenadas, el mapa puede colocar el pin dentro del estado seleccionado.
+            </span>
+
+            <span class="form-group__error" data-field-error data-error-for="show_on_map"></span>
           </div>
 
           <div class="form-group" data-field="client_name">
@@ -319,6 +427,8 @@ $galleryMediaBySlot = array_values($galleryMedia ?? []);
             <span class="form-group__help">Opcional. Describe qué hizo L+E Ingeniería.</span>
             <span class="form-group__error" data-field-error data-error-for="scope_label"></span>
           </div>
+
+
         </div>
       </fieldset>
 

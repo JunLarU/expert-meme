@@ -48,10 +48,32 @@ default => 'Usuario',
 
 $topbarIsAdmin = $topbarRole === 'admin';
 
+$topbarSearchQuery = '';
+
+try {
+    if (function_exists('request')) {
+        $topbarSearchQuery = (string) (request()->query('q') ?? '');
+    }
+} catch (\Throwable $th) {
+    $topbarSearchQuery = '';
+}
+
+if ($topbarSearchQuery === '') {
+    $topbarSearchQuery = (string) ($_GET['q'] ?? '');
+}
+
+$topbarSearchQuery = str_replace("\0", '', $topbarSearchQuery);
+$topbarSearchQuery = trim(preg_replace('/\s+/', ' ', $topbarSearchQuery) ?: '');
+$topbarSearchQuery = mb_substr($topbarSearchQuery, 0, 120);
+
 
 %}
 
+
+
 {%
+
+    
 $topbarInitials = 'AD';
 
 $topbarNameParts = preg_split('/\s+/', trim((string) $topbarName));
@@ -109,6 +131,12 @@ $topbarInitials = strtoupper($topbarInitials);
         </a>
 
         {% if ($topbarIsAdmin): %}
+        <a class="admin-sidebar__link"
+            href="@url/admin/asociaciones-certificaciones">
+            <span class="admin-sidebar__icon" aria-hidden="true">▥</span>
+            <span class="admin-sidebar__text">Asociaciones y certificaciones</span>
+        </a>
+
         <a class="admin-sidebar__link" href="@url/admin/clientes">
             <span class="admin-sidebar__icon" aria-hidden="true">◈</span>
             <span class="admin-sidebar__text">Clientes</span>
@@ -153,6 +181,7 @@ $topbarInitials = strtoupper($topbarInitials);
         <label class="admin-topbar__search-label" for="admin-global-search">Buscar</label>
 
         <input id="admin-global-search" name="q" type="search" placeholder="Buscar proyectos, clientes, mensajes..."
+            value="{{{ ($topbarSearchQuery) }}}"
             autocomplete="off" data-admin-search>
 
         <button type="submit" aria-label="Buscar">🔎</button>

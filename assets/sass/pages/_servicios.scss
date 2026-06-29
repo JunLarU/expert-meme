@@ -307,7 +307,6 @@
 
     .services-card__list li::before {
       background-color: $color-light;
-      box-shadow: 0 0 0 0.35rem rgba($color-light, 0.16);
     }
 
     .services-card__link span {
@@ -419,7 +418,6 @@
         height: 0.7rem;
         border-radius: 50%;
         background-color: $color-logo-red;
-        box-shadow: 0 0 0 0.35rem rgba($color-logo-red, 0.12);
         transition:
           background-color 260ms ease,
           box-shadow 260ms ease;
@@ -708,11 +706,11 @@
         position: absolute;
         left: 1.35rem;
         top: 1.75rem;
-        width: 1rem;
-        height: 1rem;
+        width: 0.7rem;
+        height: 0.7rem;
         border-radius: 50%;
         background-color: $color-logo-red;
-        box-shadow: 0 0 0 0.45rem rgba($color-logo-red, 0.12);
+        //box-shadow: 0 0 0 0.45rem rgba($color-logo-red, 0.12);
       }
     }
   }

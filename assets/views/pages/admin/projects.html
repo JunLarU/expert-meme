@@ -8,6 +8,12 @@ $draft = (int) ($stats['draft'] ?? 0);
 $home = (int) ($stats['home'] ?? 0);
 $featured = (int) ($stats['featured'] ?? 0);
 $map = (int) ($stats['map'] ?? 0);
+
+$workCodeOrder = strtolower((string) ($workCodeOrder ?? ''));
+$workCodeOrder = in_array($workCodeOrder, ['asc', 'desc'], true) ? $workCodeOrder : '';
+$workCodeAscActive = $workCodeOrder === 'asc';
+$workCodeDescActive = $workCodeOrder === 'desc';
+$workCodeSortLabel = $workCodeAscActive ? 'Código ↑' : ($workCodeDescActive ? 'Código ↓' : 'Código');
 %}
 
 <section class="admin-dashboard admin-projects-page" aria-labelledby="admin-projects-title">
@@ -81,15 +87,28 @@ $map = (int) ($stats['map'] ?? 0);
         <h3>Listado de proyectos</h3>
       </div>
 
-      <a href="@url/admin/proyectos/crear" class="admin-panel__link">
-        Crear proyecto <span aria-hidden="true">→</span>
-      </a>
+      <div class="admin-dashboard__actions">
+        <a href="@url/admin/proyectos?work_code_order=asc" class="admin-button admin-button--xs {{ ($workCodeAscActive ? 'admin-button--primary' : 'admin-button--secondary') }}">
+          Código ↑
+        </a>
+        <a href="@url/admin/proyectos?work_code_order=desc" class="admin-button admin-button--xs {{ ($workCodeDescActive ? 'admin-button--primary' : 'admin-button--secondary') }}">
+          Código ↓
+        </a>
+        <a href="@url/admin/proyectos/crear" class="admin-panel__link">
+          Crear proyecto <span aria-hidden="true">→</span>
+        </a>
+      </div>
     </header>
 
     <div class="admin-table-wrap">
       <table class="admin-table" data-admin-filterable>
         <thead>
           <tr>
+            <th>
+              <a href="@url/admin/proyectos?work_code_order={{{ ($workCodeAscActive ? 'desc' : 'asc') }}}" class="admin-table__sort-link" aria-label="Ordenar por código de obra">
+                Código de obra <span aria-hidden="true">{{{ ($workCodeSortLabel === 'Código ↓' ? '↓' : '↑') }}}</span>
+              </a>
+            </th>
             <th>Proyecto</th>
             <th>Ubicación</th>
             <th>Año</th>
@@ -106,6 +125,7 @@ $map = (int) ($stats['map'] ?? 0);
           {%
           $id = (int) ($project['id'] ?? 0);
           $title = $project['title'] ?? 'Proyecto sin título';
+          $workCode = $project['work_code'] ?? '—';
           $slug = $project['slug'] ?? '';
           $location = $project['location_display'] ?? 'Sin ubicación';
           $year = $project['project_year'] ?? '—';
@@ -137,6 +157,10 @@ $map = (int) ($stats['map'] ?? 0);
           %}
 
           <tr>
+            <td>
+              <span class="admin-badge admin-badge--neutral admin-badge--work-code">#{{{ ($workCode) }}}</span>
+            </td>
+
             <td>
               <strong>{{{ ($title) }}}</strong>
               <small>@url/proyecto/{{{ ($slug) }}}</small>
@@ -197,7 +221,7 @@ $map = (int) ($stats['map'] ?? 0);
 
           {% if (empty($projects)): %}
           <tr>
-            <td colspan="8">
+            <td colspan="9">
               <strong>No hay proyectos registrados todavía.</strong>
               <small>Crea tu primer proyecto para alimentar el home, el mapa y el portafolio.</small>
             </td>

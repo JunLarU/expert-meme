@@ -337,25 +337,49 @@ function dedupeMarkers(markers) {
     return true;
   });
 }
+function toNullableNumber(value) {
+  if (value === null || value === undefined) return null;
+
+  const raw = String(value).trim();
+
+  if (raw === "") return null;
+
+  const number = Number(raw);
+
+  return Number.isFinite(number) ? number : null;
+}
+
 function normalizeProjectMarker(marker = {}) {
-  const lat = Number(marker.lat);
-  const lng = Number(marker.lng);
-
-  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
-    return null;
-  }
-
   const type = ["project", "office", "workshop"].includes(marker.type)
     ? marker.type
     : "project";
 
+  const state = String(marker.state || marker.map_state || "").trim();
+
+  const lat = toNullableNumber(marker.lat ?? marker.map_lat);
+  const lng = toNullableNumber(marker.lng ?? marker.map_lng);
+
+  /*
+    Antes aquí se descartaban todos los proyectos sin lat/lng.
+    Pero el mapa actual ya distribuye los pines dentro del estado, así que
+    con `state` basta para poder colocarlos.
+  */
+  if ((lat === null || lng === null) && state === "") {
+    return null;
+  }
+
   return {
     id: Number(marker.id || 0),
-    source: String(marker.source || (type === "project" ? "projects" : "office_workshops")),
+    source: String(
+      marker.source || (type === "project" ? "projects" : "office_workshops"),
+    ),
+
     lat,
     lng,
+
     type,
-    state: String(marker.state || ""),
+    state,
+
     title: String(marker.title || "Proyecto"),
     kind: String(marker.kind || TYPE_LABEL[type] || "Proyecto"),
     location: String(marker.location || ""),
@@ -373,7 +397,6 @@ function normalizeProjectMarker(marker = {}) {
     openingHours: String(marker.openingHours || marker.opening_hours || ""),
   };
 }
-
 /* Posición en el mapa calculada automáticamente desde lat/lng. */
 function spreadCloseMarkers(markers, minDistance = 11, radius = 9) {
   const placed = [];

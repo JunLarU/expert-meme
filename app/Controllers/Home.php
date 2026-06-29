@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Models\AssociationCertificationSlide;
 use App\Models\Client;
 use App\Models\HomeJumbotronSlide;
 use App\Models\Message;
@@ -19,12 +20,9 @@ class Home extends Controller
         $featuredProject = Project::homeFeatured();
 
         /*
-         * Si no hay proyecto marcado como destacado,
-         * usamos el más reciente como destacado.
-         *
-         * Si solo existe 1 proyecto publicado en home,
-         * ese será el destacado y no se repetirá abajo.
-         */
+     * Si no hay proyecto marcado como destacado,
+     * usamos el más reciente como destacado.
+     */
         if (! $featuredProject) {
             $latestForFeatured = Project::latestForHome(1);
             $featuredProject   = $latestForFeatured[0] ?? null;
@@ -36,13 +34,38 @@ class Home extends Controller
 
         $latestProjects = Project::latestForHome(3, $featuredProjectId);
 
-        return view('pages/main/home', 'Inicio', [
-            'jumbotronSlides' => HomeJumbotronSlide::published('home'),
-            'clients'         => Client::active(),
+        /*
+     * Agregamos tags ya procesados para home.
+     * Así la vista no necesita closures ni lógica compleja.
+     */
+        if ($featuredProject) {
+            $featuredProject = $this->projectWithDisplayTags($featuredProject, 1);
+        }
 
-            'featuredProject' => $featuredProject,
-            'latestProjects'  => $latestProjects,
+        $latestProjects = array_values(array_map(
+            fn(array $project, int $index) => $this->projectWithDisplayTags($project, $index + 2),
+            $latestProjects,
+            array_keys($latestProjects)
+        ));
+
+        return view('pages/main/home', 'Inicio', [
+            'jumbotronSlides'   => HomeJumbotronSlide::published('home'),
+            'associationSlides' => $this->associationSlidesFor('home'),
+            'clients'           => Client::active(),
+
+            'featuredProject'   => $featuredProject,
+            'latestProjects'    => $latestProjects,
         ], 'layouts/main');
+    }
+
+    private function projectWithDisplayTags(array $project, int $position = 1): array
+    {
+        $card = Project::toProjectCard($project, $position);
+
+        $project['display_tags']   = $card['tags'] ?? [];
+        $project['display_number'] = $card['number'] ?? str_pad((string) $position, 2, '0', STR_PAD_LEFT);
+
+        return $project;
     }
 
     public function contactSend(Request $request)
@@ -147,9 +170,22 @@ class Home extends Controller
         return $host !== '' ? "{$scheme}://{$host}{$uri}" : $uri;
     }
 
+    private function associationSlidesFor(string $page): array
+    {
+        try {
+            return $page === 'about'
+                ? AssociationCertificationSlide::forAbout()
+                : AssociationCertificationSlide::forHome();
+        } catch (\Throwable $th) {
+            return [];
+        }
+    }
+
     public function nosotros()
     {
-        return view('pages/main/nosotros', 'Nosotros');
+        return view('pages/main/nosotros', 'Nosotros', [
+            'associationSlides' => $this->associationSlidesFor('about'),
+        ], 'layouts/main');
     }
 
     public function servicios()
@@ -260,5 +296,28 @@ class Home extends Controller
     public function store()
     {
         return view('pages/main/form', 'Formulario');
+    }
+    public function searchProjectsJson(Request $request): Response
+    {
+        $query = trim((string) $request->query('q', ''));
+        if ($query === '') {
+            return Response::json(['ok' => true, 'query' => '', 'projects' => [], 'total' => 0]);
+        }
+
+        $limit    = max(1, min(30, (int) $request->query('limit', 10)));
+        $projects = Project::search2($query, $limit);
+
+        $cards = array_values(array_map(
+            fn(array $project, int $idx) => Project::toProjectCard($project, $idx + 1),
+            $projects,
+            array_keys($projects)
+        ));
+
+        return Response::json([
+            'ok'       => true,
+            'query'    => $query,
+            'projects' => $cards,
+            'total'    => count($cards),
+        ]);
     }
 }

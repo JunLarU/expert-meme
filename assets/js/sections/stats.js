@@ -1,9 +1,9 @@
 export default function initStats(customStats = null) {
   const stats = customStats ?? [
-    { value: "+100", label: "Edificios construidos" },
-    { value: "+1,000", label: "Toneladas de acero semanales" },
-    { value: "+15 Años", label: "de experiencia" },
-    { value: "100+ Empleados", label: "equipo de trabajo" },
+    { value: "+20 años", label: "de trayectoria en diseño, fabricación y montaje" },
+    { value: "+500 obras", label: "ejecutadas en estructura metálica" },
+    { value: "+12 estados", label: "con presencia operativa en la República Mexicana" },
+    { value: "+1’000,000m²", label: "de estructura diseñada, fabricada y montada" },
   ];
 
   const section = document.querySelector(".stats");
@@ -14,91 +14,74 @@ export default function initStats(customStats = null) {
   const animationDuration = 750;
   const changeEvery = 1500;
 
-  // Convierte textos como:
-  // "+15 Años"          => prefix "+", number 15, suffix " Años"
-  // "3,500+ Empleados" => prefix "", number 3500, suffix "+ Empleados"
-  // "+17,000 Ton"      => prefix "+", number 17000, suffix " Ton"
-  // "15.5%"            => prefix "", number 15.5, suffix "%"
-  const parseValue = (value) => {
-    const raw = String(value ?? "").trim();
+  const normalizeNumber = (numberText) => {
+    let text = String(numberText ?? "").trim();
 
-    const match = raw.match(/([+-]?)(\d[\d.,]*)/);
+    /*
+      Soporta:
+      1,000,000
+      1.000.000
+      1’000,000
+      1'000,000
+      1 000 000
+      1,000,000.50
+      1.000.000,50
+    */
+    text = text.replace(/[\s\u00a0\u202f'’‘`´]/g, "");
 
-    if (!match) {
+    if (!text) {
       return {
-        prefix: raw,
         number: 0,
-        suffix: "",
         decimals: 0,
       };
     }
 
-    const fullMatch = match[0];
-    const sign = match[1] ?? "";
-    const numberText = match[2] ?? "";
+    const dotCount = (text.match(/\./g) ?? []).length;
+    const commaCount = (text.match(/,/g) ?? []).length;
 
-    const start = match.index;
-    const end = start + fullMatch.length;
-
-    const prefix = raw.slice(0, start) + sign;
-    const suffix = raw.slice(end);
-
-    const normalized = normalizeNumber(numberText);
-
-    return {
-      prefix,
-      number: normalized.number,
-      suffix,
-      decimals: normalized.decimals,
-    };
-  };
-
-  const normalizeNumber = (numberText) => {
-    let text = String(numberText).trim();
-
-    const hasDot = text.includes(".");
-    const hasComma = text.includes(",");
+    const hasDot = dotCount > 0;
+    const hasComma = commaCount > 0;
 
     let decimals = 0;
+    let decimalSeparator = null;
 
     if (hasDot && hasComma) {
       const lastDot = text.lastIndexOf(".");
       const lastComma = text.lastIndexOf(",");
 
-      const decimalSeparator = lastDot > lastComma ? "." : ",";
-      const thousandSeparator = decimalSeparator === "." ? "," : ".";
-
-      const decimalPart = text.split(decimalSeparator).pop();
-      decimals = decimalPart.length;
-
-      text = text
-        .replaceAll(thousandSeparator, "")
-        .replace(decimalSeparator, ".");
+      decimalSeparator = lastDot > lastComma ? "." : ",";
     } else if (hasComma) {
       const parts = text.split(",");
       const lastPart = parts[parts.length - 1];
 
-      // "1,000" => miles
-      // "15,5"  => decimal
-      if (parts.length === 2 && lastPart.length === 3) {
-        text = text.replaceAll(",", "");
-        decimals = 0;
+      if (commaCount === 1) {
+        decimalSeparator = lastPart.length === 3 ? null : ",";
       } else {
-        decimals = lastPart.length;
-        text = text.replace(",", ".");
+        decimalSeparator = lastPart.length === 3 ? null : ",";
       }
     } else if (hasDot) {
       const parts = text.split(".");
       const lastPart = parts[parts.length - 1];
 
-      // "1.000" => miles
-      // "15.5"  => decimal
-      if (parts.length === 2 && lastPart.length === 3) {
-        text = text.replaceAll(".", "");
-        decimals = 0;
+      if (dotCount === 1) {
+        decimalSeparator = lastPart.length === 3 ? null : ".";
       } else {
-        decimals = lastPart.length;
+        decimalSeparator = lastPart.length === 3 ? null : ".";
       }
+    }
+
+    if (decimalSeparator) {
+      const decimalPart = text.split(decimalSeparator).pop() ?? "";
+      decimals = decimalPart.length;
+
+      const thousandSeparator = decimalSeparator === "." ? "," : ".";
+
+      text = text
+        .replace(new RegExp(`\\${thousandSeparator}`, "g"), "")
+        .replace(decimalSeparator, ".");
+    } else {
+      text = text.replace(/[.,]/g, "");
+      decimals = 0;
     }
 
     const number = Number(text);
@@ -109,6 +92,66 @@ export default function initStats(customStats = null) {
     };
   };
 
+  const shouldSeparateSuffix = (suffix) => {
+    const cleanSuffix = String(suffix ?? "").trim();
+
+    if (!cleanSuffix) return false;
+
+    /*
+      Separa texto/unidades:
+      +500proyectos  => +500 proyectos
+      +1,000,000m²   => +1,000,000 m²
+
+      Pero no separa símbolos pegados:
+      15%            => 15%
+      3,500+         => 3,500+
+    */
+    return /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9]/.test(cleanSuffix);
+  };
+
+  const parseValue = (value) => {
+    const raw = String(value ?? "").trim();
+
+    /*
+      Antes fallaba con millones tipo:
+      +1’000,000m²
+
+      Ahora toma como número completo:
+      1’000,000
+    */
+    const match = raw.match(/([+-]?)(\d(?:[\d\s.,'’‘`´]*\d)?)/u);
+
+    if (!match) {
+      return {
+        prefix: raw,
+        number: 0,
+        suffix: "",
+        decimals: 0,
+        separateSuffix: false,
+      };
+    }
+
+    const fullMatch = match[0];
+    const sign = match[1] ?? "";
+    const numberText = match[2] ?? "";
+
+    const start = match.index ?? 0;
+    const end = start + fullMatch.length;
+
+    const prefix = raw.slice(0, start) + sign;
+    const suffix = raw.slice(end).trim();
+
+    const normalized = normalizeNumber(numberText);
+
+    return {
+      prefix,
+      number: normalized.number,
+      suffix,
+      decimals: normalized.decimals,
+      separateSuffix: shouldSeparateSuffix(suffix),
+    };
+  };
+
   const getFormatter = (decimals = 0) => {
     return new Intl.NumberFormat("es-MX", {
       minimumFractionDigits: decimals,
@@ -116,7 +159,6 @@ export default function initStats(customStats = null) {
     });
   };
 
-  // ---------- Render ----------
   statsContainer.innerHTML = "";
 
   const nodes = stats.map((stat) => {
@@ -127,6 +169,7 @@ export default function initStats(customStats = null) {
 
     const valueEl = document.createElement("h3");
     valueEl.className = "stat__value";
+    valueEl.style.whiteSpace = "nowrap";
 
     const prefixEl = document.createElement("span");
     prefixEl.className = "stat__prefix";
@@ -145,6 +188,10 @@ export default function initStats(customStats = null) {
     suffixEl.textContent = parsed.suffix;
     labelEl.textContent = stat.label ?? "";
 
+    if (parsed.separateSuffix) {
+      suffixEl.style.marginLeft = "0.16em";
+    }
+
     valueEl.appendChild(prefixEl);
     valueEl.appendChild(numEl);
     valueEl.appendChild(suffixEl);
@@ -162,7 +209,6 @@ export default function initStats(customStats = null) {
     return el;
   });
 
-  // ---------- Animación ----------
   const animateNumber = (node, toValue, duration = 750) => {
     const numEl = node.querySelector(".stat__num");
     const decimals = node._decimals ?? 0;
@@ -172,16 +218,18 @@ export default function initStats(customStats = null) {
 
     if (node._rafId) {
       cancelAnimationFrame(node._rafId);
+      node._rafId = 0;
     }
 
     const from = 0;
+    const target = Number.isFinite(toValue) ? toValue : 0;
     const start = performance.now();
 
     const tick = (now) => {
       const t = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
 
-      let current = from + (toValue - from) * eased;
+      let current = from + (target - from) * eased;
 
       if (decimals === 0) {
         current = Math.round(current);
@@ -196,14 +244,14 @@ export default function initStats(customStats = null) {
         node._rafId = requestAnimationFrame(tick);
       } else {
         node._rafId = 0;
-        numEl.textContent = formatter.format(toValue);
+        node._current = target;
+        numEl.textContent = formatter.format(target);
       }
     };
 
     node._rafId = requestAnimationFrame(tick);
   };
 
-  // ---------- Ciclo ----------
   let index = 0;
   let interval = null;
 
@@ -232,8 +280,10 @@ export default function initStats(customStats = null) {
   };
 
   const stopAnimation = () => {
-    clearInterval(interval);
-    interval = null;
+    if (interval) {
+      clearInterval(interval);
+      interval = null;
+    }
 
     nodes.forEach((node) => {
       if (node._rafId) {
@@ -243,7 +293,11 @@ export default function initStats(customStats = null) {
     });
   };
 
-  // ---------- IntersectionObserver ----------
+  if (!("IntersectionObserver" in window)) {
+    startAnimation();
+    return;
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -254,7 +308,7 @@ export default function initStats(customStats = null) {
         }
       }
     },
-    { threshold: 0.4 }
+    { threshold: 0.4 },
   );
 
   observer.observe(section);

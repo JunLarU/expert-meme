@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Models\Client;
+use App\Models\User;
 use Whis\App;
 use Whis\Http\Controller;
 use Whis\Http\Request;
@@ -11,8 +12,8 @@ class Clients extends Controller
 {
     public function index()
     {
-        if (isGuest()) {
-            return redirect('/login');
+        if ($response = $this->denyPageUnlessAdmin()) {
+            return $response;
         }
 
         $clients = Client::ordered();
@@ -26,8 +27,8 @@ class Clients extends Controller
 
     public function create()
     {
-        if (isGuest()) {
-            return redirect('/login');
+        if ($response = $this->denyPageUnlessAdmin()) {
+            return $response;
         }
 
         return view('pages/admin/client-form', 'Nuevo cliente', [
@@ -43,8 +44,8 @@ class Clients extends Controller
 
     public function edit(int $id)
     {
-        if (isGuest()) {
-            return redirect('/login');
+        if ($response = $this->denyPageUnlessAdmin()) {
+            return $response;
         }
 
         $client = Client::findArray($id);
@@ -62,8 +63,8 @@ class Clients extends Controller
 
     public function store(Request $request)
     {
-        if (isGuest()) {
-            return $this->jsonError('No autorizado.', 401);
+        if ($response = $this->denyJsonUnlessAdmin()) {
+            return $response;
         }
 
         $payload = $this->payload($request);
@@ -105,8 +106,8 @@ class Clients extends Controller
 
     public function update(Request $request, int $id)
     {
-        if (isGuest()) {
-            return $this->jsonError('No autorizado.', 401);
+        if ($response = $this->denyJsonUnlessAdmin()) {
+            return $response;
         }
 
         $current = Client::findArray($id);
@@ -161,8 +162,8 @@ class Clients extends Controller
 
     public function delete(int $id)
     {
-        if (isGuest()) {
-            return redirect('/login');
+        if ($response = $this->denyPageUnlessAdmin()) {
+            return $response;
         }
 
         $client = Client::findArray($id);
@@ -185,8 +186,8 @@ class Clients extends Controller
 
     public function destroy(Request $request, int $id)
     {
-        if (isGuest()) {
-            return $this->jsonError('No autorizado.', 401);
+        if ($response = $this->denyJsonUnlessAdmin()) {
+            return $response;
         }
 
         $client = Client::findArray($id);
@@ -403,6 +404,76 @@ class Clients extends Controller
         }
 
         return in_array($input[$key], ['1', 1, true, 'true', 'on', 'yes'], true) ? 1 : 0;
+    }
+
+
+    private function denyPageUnlessAdmin()
+    {
+        if (isGuest()) {
+            return redirect('/login');
+        }
+
+        if (! $this->currentUserIsAdmin()) {
+            return redirect('/admin');
+        }
+
+        return null;
+    }
+
+    private function denyJsonUnlessAdmin()
+    {
+        if (isGuest()) {
+            return $this->jsonError('No autorizado.', 401);
+        }
+
+        if (! $this->currentUserIsAdmin()) {
+            return $this->jsonError('Solo un administrador puede gestionar este módulo.', [], 403);
+        }
+
+        return null;
+    }
+
+    private function currentUserIsAdmin(): bool
+    {
+        return $this->currentUserRole() === User::ROLE_ADMIN;
+    }
+
+    private function currentUserRole(): string
+    {
+        return strtolower(trim((string) $this->currentUserValue('role', '')));
+    }
+
+    private function currentUserValue(string $key, mixed $default = null): mixed
+    {
+        $user = auth();
+
+        if (! $user) {
+            return $default;
+        }
+
+        if (is_array($user)) {
+            return $user[$key] ?? $default;
+        }
+
+        if (is_object($user)) {
+            if (method_exists($user, 'toArray')) {
+                $data = $user->toArray();
+
+                if (is_array($data) && array_key_exists($key, $data)) {
+                    return $data[$key];
+                }
+            }
+
+            try {
+                $value = $user->{$key};
+
+                return $value ?? $default;
+            } catch (\Throwable $th) {
+                return $default;
+            }
+        }
+
+        return $default;
     }
 
     private function userId(mixed $user): ?int

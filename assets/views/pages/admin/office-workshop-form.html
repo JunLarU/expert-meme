@@ -74,7 +74,8 @@ $mexicanStates = [
 ];
 %}
 
-<section class="admin-dashboard admin-projects-page admin-office-workshops-page" aria-labelledby="admin-office-workshop-form-title">
+<section class="admin-dashboard admin-projects-page admin-office-workshops-page"
+  aria-labelledby="admin-office-workshop-form-title">
   <header class="admin-dashboard__hero">
     <div>
       <p class="admin-dashboard__eyebrow">Mapa</p>
@@ -166,16 +167,16 @@ $mexicanStates = [
           </div>
 
           <div class="form-group form-group--textarea admin-form-grid__full" data-field="summary">
-            <textarea id="office-workshop-summary" name="summary" class="form-control" placeholder=" " required maxlength="700"
-              data-label="resumen corto">{{{ ($summary) }}}</textarea>
+            <textarea id="office-workshop-summary" name="summary" class="form-control" placeholder=" " required
+              maxlength="700" data-label="resumen corto">{{{ ($summary) }}}</textarea>
             <label class="form-label" for="office-workshop-summary">Resumen corto *</label>
             <span class="form-group__help">Se muestra en la tarjeta del pin y en el panel del estado.</span>
             <span class="form-group__error" data-field-error data-error-for="summary"></span>
           </div>
 
           <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
-            <textarea id="office-workshop-description" name="description" class="form-control" placeholder=" " maxlength="2000"
-              data-label="descripción">{{{ ($description) }}}</textarea>
+            <textarea id="office-workshop-description" name="description" class="form-control" placeholder=" "
+              maxlength="2000" data-label="descripción">{{{ ($description) }}}</textarea>
             <label class="form-label" for="office-workshop-description">Descripción interna</label>
             <span class="form-group__help">Opcional. No es necesaria para el pin si el resumen ya está claro.</span>
             <span class="form-group__error" data-field-error data-error-for="description"></span>
@@ -188,8 +189,8 @@ $mexicanStates = [
 
         <div class="admin-form-grid">
           <div class="form-group admin-form-grid__full" data-field="address">
-            <input type="text" id="office-workshop-address" name="address" class="form-control" value="{{{ ($address) }}}"
-              placeholder=" " maxlength="500" data-label="dirección">
+            <input type="text" id="office-workshop-address" name="address" class="form-control"
+              value="{{{ ($address) }}}" placeholder=" " maxlength="500" data-label="dirección">
             <label class="form-label" for="office-workshop-address">Dirección</label>
             <span class="form-group__help">Calle, número, colonia o referencia.</span>
             <span class="form-group__error" data-field-error data-error-for="address"></span>
@@ -206,11 +207,11 @@ $mexicanStates = [
             <select id="office-workshop-state" name="state" class="form-control" required data-label="estado">
               <option value="">Selecciona un estado</option>
               {% foreach ($mexicanStates as $stateOption): %}
-                {% if ($state === $stateOption): %}
-                <option value="{{{ ($stateOption) }}}" selected>{{{ ($stateOption) }}}</option>
-                {% else: %}
-                <option value="{{{ ($stateOption) }}}">{{{ ($stateOption) }}}</option>
-                {% endif; %}
+              {% if ($state === $stateOption): %}
+              <option value="{{{ ($stateOption) }}}" selected>{{{ ($stateOption) }}}</option>
+              {% else: %}
+              <option value="{{{ ($stateOption) }}}">{{{ ($stateOption) }}}</option>
+              {% endif; %}
               {% endforeach; %}
             </select>
             <label class="form-label" for="office-workshop-state">Estado *</label>
@@ -218,46 +219,52 @@ $mexicanStates = [
           </div>
 
           <div class="form-group" data-field="postal_code">
-            <input type="text" id="office-workshop-postal-code" name="postal_code" class="form-control" value="{{{ ($postalCode) }}}"
-              placeholder=" " maxlength="20" data-label="código postal">
+            <input type="text" id="office-workshop-postal-code" name="postal_code" class="form-control"
+              value="{{{ ($postalCode) }}}" placeholder=" " maxlength="20" data-label="código postal">
             <label class="form-label" for="office-workshop-postal-code">Código postal</label>
             <span class="form-group__error" data-field-error data-error-for="postal_code"></span>
           </div>
 
           <div class="form-group" data-field="map_lat">
-            <input type="number" id="office-workshop-map-lat" name="map_lat" class="form-control" value="{{{ ($mapLat) }}}"
-              placeholder=" " step="0.00000001" min="-90" max="90" data-label="latitud">
+            <input type="number" id="office-workshop-map-lat" name="map_lat" class="form-control"
+              value="{{{ ($mapLat) }}}" placeholder=" " step="0.00000001" min="-90" max="90" data-label="latitud">
             <label class="form-label" for="office-workshop-map-lat">Latitud para pin *</label>
             <span class="form-group__help">Ejemplo: 20.588793.</span>
             <span class="form-group__error" data-field-error data-error-for="map_lat"></span>
           </div>
 
           <div class="form-group" data-field="map_lng">
-            <input type="number" id="office-workshop-map-lng" name="map_lng" class="form-control" value="{{{ ($mapLng) }}}"
-              placeholder=" " step="0.00000001" min="-180" max="180" data-label="longitud">
+            <input type="number" id="office-workshop-map-lng" name="map_lng" class="form-control"
+              value="{{{ ($mapLng) }}}" placeholder=" " step="0.00000001" min="-180" max="180" data-label="longitud">
             <label class="form-label" for="office-workshop-map-lng">Longitud para pin *</label>
             <span class="form-group__help">Ejemplo: -100.389888.</span>
             <span class="form-group__error" data-field-error data-error-for="map_lng"></span>
           </div>
 
           <div class="form-group admin-form-grid__full" data-field="google_maps_url">
-            <input type="url" id="office-workshop-google-maps-url" name="google_maps_url" class="form-control" value="{{{ ($googleMapsUrl) }}}"
-              placeholder=" " maxlength="800" data-label="enlace de Google Maps">
+            <input type="url" id="office-workshop-google-maps-url" name="google_maps_url" class="form-control"
+              value="{{{ ($googleMapsUrl) }}}" placeholder=" " maxlength="800" data-label="enlace de Google Maps">
             <label class="form-label" for="office-workshop-google-maps-url">Enlace de Google Maps</label>
             <span class="form-group__help">Opcional. Si lo dejas vacío, se genera con latitud y longitud.</span>
             <span class="form-group__error" data-field-error data-error-for="google_maps_url"></span>
           </div>
 
+          <input type="hidden" name="show_on_map" value="0">
+
           <div class="form-group form-group--checkbox admin-form-grid__full" data-field="show_on_map">
-            <label class="form-checkbox">
+            <label class="admin-check admin-check--map-pin" for="office-workshop-show-on-map">
               {% if ($showOnMap === 1): %}
-              <input type="checkbox" name="show_on_map" value="1" checked>
+              <input type="checkbox" id="office-workshop-show-on-map" name="show_on_map" value="1" checked>
               {% else: %}
-              <input type="checkbox" name="show_on_map" value="1">
+              <input type="checkbox" id="office-workshop-show-on-map" name="show_on_map" value="1">
               {% endif; %}
-              <span>Mostrar como pin en el mapa</span>
+
+              <span>
+                <strong>Mostrar como pin en el mapa</strong>
+                <small>Debe estar publicado y tener coordenadas para aparecer públicamente.</small>
+              </span>
             </label>
-            <span class="form-group__help">Debe estar publicado y tener coordenadas para aparecer públicamente.</span>
+
             <span class="form-group__error" data-field-error data-error-for="show_on_map"></span>
           </div>
         </div>
@@ -268,8 +275,8 @@ $mexicanStates = [
 
         <div class="admin-form-grid">
           <div class="form-group" data-field="contact_name">
-            <input type="text" id="office-workshop-contact-name" name="contact_name" class="form-control" value="{{{ ($contactName) }}}"
-              placeholder=" " maxlength="180" data-label="contacto">
+            <input type="text" id="office-workshop-contact-name" name="contact_name" class="form-control"
+              value="{{{ ($contactName) }}}" placeholder=" " maxlength="180" data-label="contacto">
             <label class="form-label" for="office-workshop-contact-name">Contacto</label>
             <span class="form-group__error" data-field-error data-error-for="contact_name"></span>
           </div>
@@ -289,15 +296,15 @@ $mexicanStates = [
           </div>
 
           <div class="form-group" data-field="whatsapp">
-            <input type="tel" id="office-workshop-whatsapp" name="whatsapp" class="form-control" value="{{{ ($whatsapp) }}}"
-              placeholder=" " maxlength="60" data-label="WhatsApp">
+            <input type="tel" id="office-workshop-whatsapp" name="whatsapp" class="form-control"
+              value="{{{ ($whatsapp) }}}" placeholder=" " maxlength="60" data-label="WhatsApp">
             <label class="form-label" for="office-workshop-whatsapp">WhatsApp</label>
             <span class="form-group__error" data-field-error data-error-for="whatsapp"></span>
           </div>
 
           <div class="form-group admin-form-grid__full" data-field="opening_hours">
-            <input type="text" id="office-workshop-opening-hours" name="opening_hours" class="form-control" value="{{{ ($openingHours) }}}"
-              placeholder=" " maxlength="255" data-label="horario">
+            <input type="text" id="office-workshop-opening-hours" name="opening_hours" class="form-control"
+              value="{{{ ($openingHours) }}}" placeholder=" " maxlength="255" data-label="horario">
             <label class="form-label" for="office-workshop-opening-hours">Horario</label>
             <span class="form-group__help">Ejemplo: Lunes a viernes, 8:00 a 18:00 h.</span>
             <span class="form-group__error" data-field-error data-error-for="opening_hours"></span>
@@ -313,7 +320,8 @@ $mexicanStates = [
           <div class="form-group admin-form-grid__full">
             <label class="form-label">Imagen actual</label>
             <div class="admin-table__actions" style="margin-top: 1rem;">
-              <a href="{{{ ($mapImageUrl) }}}" target="_blank" rel="noopener noreferrer" class="admin-button admin-button--xs admin-button--secondary">
+              <a href="{{{ ($mapImageUrl) }}}" target="_blank" rel="noopener noreferrer"
+                class="admin-button admin-button--xs admin-button--secondary">
                 Ver imagen actual
               </a>
             </div>
@@ -329,13 +337,12 @@ $mexicanStates = [
               {% endif; %}
             </label>
             <input type="file" id="office-workshop-map-image-file" name="map_image_file" class="form-control"
-              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
-              data-min-files="0" data-max-files="1" data-max-file-size="8mb" data-max-total-size="8mb"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" data-min-files="0" data-max-files="1"
+              data-max-file-size="8mb" data-max-total-size="8mb"
               data-file-types=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
               data-message-file-size="La imagen debe pesar máximo 8 MB."
               data-message-file-total-size="La imagen debe pesar máximo 8 MB."
-              data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP."
-              data-label="imagen del pin">
+              data-message-file-type="Solo se permiten imágenes PNG, JPG, JPEG o WEBP." data-label="imagen del pin">
             <span class="form-group__help">Se usa en la tarjeta del mapa. Si la cambias, se elimina la anterior.</span>
             <span class="form-group__error" data-field-error data-error-for="map_image_file"></span>
           </div>

@@ -137,6 +137,8 @@ CREATE TABLE IF NOT EXISTS home_jumbotron_slides (
 CREATE TABLE IF NOT EXISTS projects (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
+    work_code BIGINT UNSIGNED NOT NULL,
+
     slug VARCHAR(180) UNIQUE,
     status ENUM('draft', 'published', 'hidden', 'archived') DEFAULT 'draft',
 
@@ -222,6 +224,7 @@ CREATE TABLE IF NOT EXISTS projects (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     INDEX idx_projects_status (status),
+    INDEX idx_projects_work_code (work_code),
     INDEX idx_projects_slug (slug),
     INDEX idx_projects_state (state),
     INDEX idx_projects_year (project_year),
@@ -647,5 +650,44 @@ CREATE TABLE IF NOT EXISTS office_workshops (
     INDEX idx_office_workshops_deleted_at (deleted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS association_certification_slides (
+    id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+    title VARCHAR(255) NOT NULL,
+    short_title VARCHAR(80) NULL,
+    slug VARCHAR(180) NULL UNIQUE,
+
+    url TEXT NULL,
+    image_url TEXT NULL,
+    image_alt VARCHAR(255) NULL,
+    description TEXT NULL,
+
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    show_in_home TINYINT(1) NOT NULL DEFAULT 1,
+    show_in_about TINYINT(1) NOT NULL DEFAULT 1,
+
+    sort_order INT(10) UNSIGNED NOT NULL DEFAULT 0,
+
+    created_by INT(11) NULL,
+    updated_by INT(11) NULL,
+    deleted_by INT(11) NULL,
+    deleted_at DATETIME NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_assoc_cert_title (title),
+    INDEX idx_assoc_cert_active (is_active),
+    INDEX idx_assoc_cert_home (show_in_home),
+    INDEX idx_assoc_cert_about (show_in_about),
+    INDEX idx_assoc_cert_order (sort_order),
+    INDEX idx_assoc_cert_deleted_at (deleted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE projects ADD FULLTEXT INDEX ft_search (
+    title, subtitle, brief, summary, description,
+    category, city, state, country, client_name,
+    service, specialty, material_system
+);
 
 SET FOREIGN_KEY_CHECKS = 1;

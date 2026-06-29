@@ -1,3 +1,7 @@
+{%
+$associationSlides = $associationSlides ?? [];
+%}
+
 <section class="about-hero lazy-bg" data-background-src="/images/JTRON.jpg" aria-labelledby="about-hero-title">
     <div class="about-hero__overlay">
         <div class="about-hero__content">
@@ -11,7 +15,7 @@
                 y acompañamiento profesional para desarrollar proyectos seguros, eficientes y construibles.
             </p>
 
-            <a href="#identidad" class="button__primary button__primary--light about-hero__button" data-smooth-scroll >
+            <a href="#identidad" class="button__primary button__primary--light about-hero__button" data-smooth-scroll>
                 Conoce nuestra forma de trabajo
             </a>
         </div>
@@ -22,65 +26,54 @@
     <div class="image">
         <div class="nosotros-carousel nosotros-carousel--logos" role="list"
             aria-label="Certificaciones, membresías y referencias técnicas de L+E Ingeniería">
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="American Concrete Institute" loading="lazy" decoding="async" width="900" height="600">
-                <figcaption>ACI</figcaption>
-            </figure>
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="AISC Professional Member" loading="lazy" decoding="async" width="900" height="600">
-                <figcaption>AISC</figcaption>
-            </figure>
+            {% foreach ($associationSlides as $associationSlide): %}
+            {%
+            $associationTitle = trim((string) ($associationSlide['title'] ?? 'Asociación o certificación'));
+            $associationShortTitle = trim((string) ($associationSlide['short_title'] ?? ''));
+            $associationImage = trim((string) ($associationSlide['image_url'] ?? ''));
+            $associationAlt = trim((string) ($associationSlide['image_alt'] ?? ''));
+            $associationDescription = trim((string) ($associationSlide['description'] ?? ''));
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="International Institute of Welding Personnel Qualification System" loading="lazy"
-                    decoding="async" width="900" height="600">
-                <figcaption>IWS</figcaption>
-            </figure>
+            if ($associationShortTitle === '') {
+                $associationShortTitle = $associationTitle;
+            }
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="Sociedad Mexicana de Ingeniería Sísmica" loading="lazy" decoding="async" width="900"
-                    height="600">
-                <figcaption>SMIS</figcaption>
-            </figure>
+            if ($associationImage === '') {
+                $associationImage = '/images/JTRON.jpg';
+            }
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="American Welding Society" loading="lazy" decoding="async" width="900" height="600">
-                <figcaption>AWS</figcaption>
-            </figure>
+            if ($associationAlt === '') {
+                $associationAlt = $associationTitle;
+            }
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="Cámara Mexicana de la Industria de la Construcción" loading="lazy" decoding="async" width="900"
-                    height="600">
-                <figcaption>CMIC</figcaption>
-            </figure>
+            if ($associationDescription === '') {
+                $associationDescription = 'Respaldo técnico, normativo y profesional aplicado a nuestros proyectos.';
+            }
+            %}
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="Colegio de Ingenieros Civiles de Querétaro" loading="lazy" decoding="async" width="900"
-                    height="600">
-                <figcaption>CICQ</figcaption>
-            </figure>
+            <figure class="nosotros-carousel__item" role="listitem" tabindex="0">
+                <img class="nosotros-carousel__img lazy-image" data-src="{{{ ($associationImage) }}}"
+                    alt="{{{ ($associationAlt) }}}" loading="lazy" decoding="async" width="900" height="600">
 
-            <figure class="nosotros-carousel__item" role="listitem">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="Normatividad técnica para diseño, construcción y supervisión" loading="lazy" decoding="async"
-                    width="900" height="600">
-                <figcaption>Normatividad</figcaption>
+                <figcaption class="nosotros-carousel__overlay">
+                    <strong>{{{ ($associationShortTitle) }}}</strong>
+                    <span>{{{ ($associationDescription) }}}</span>
+                </figcaption>
             </figure>
+            {% endforeach; %}
 
-            <figure class="nosotros-carousel__item" role="listitem">
+            {% if (empty($associationSlides)): %}
+            <figure class="nosotros-carousel__item" role="listitem" tabindex="0">
                 <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg"
-                    alt="Conocimientos técnicos en valuación inmobiliaria" loading="lazy" decoding="async" width="900"
-                    height="600">
-                <figcaption>Valuación</figcaption>
+                    alt="L+E Ingeniería" loading="lazy" decoding="async" width="900" height="600">
+
+                <figcaption class="nosotros-carousel__overlay">
+                    <strong>L+E</strong>
+                    <span>Registra asociaciones y certificaciones desde el panel administrativo.</span>
+                </figcaption>
             </figure>
+            {% endif; %}
         </div>
     </div>
 
@@ -122,8 +115,10 @@
 
                 <div class="about-mvv__text">
                     <p>
-                        Desarrollar soluciones de ingeniería, construcción y valuación que ayuden a nuestros
-                        clientes a tomar decisiones seguras, eficientes y técnicamente fundamentadas.
+                        Potenciar los elementos de ingeniería con valor para satisfacer al cliente,
+                        desarrollando soluciones de diseño, fabricación, montaje y construcción en acero
+                        que sean seguras, rentables y eficientes, y que respalden decisiones técnicamente
+                        fundamentadas.
                     </p>
                 </div>
             </div>
@@ -136,30 +131,61 @@
 
                 <div class="about-mvv__text">
                     <p>
-                        Ser una firma reconocida por integrar diseño estructural, construcción en acero y
-                        análisis técnico con soluciones confiables, claras y orientadas al valor del proyecto.
+                        Posicionarnos a nivel nacional como una de las mejores opciones en construcción
+                        y desarrollo de proyectos, sostenidas en la especialización y capacitación constante
+                        de nuestro personal. Buscamos ser reconocidos por nuestros proyectos, negocios y
+                        soluciones integrales y, actuando hoy, convertirnos en una empresa de clase mundial
+                        que vive la sinergia en cada obra.
                     </p>
                 </div>
             </div>
         </article>
 
-        <article class="about-mvv__panel about-mvv__panel--values lazy-bg" data-about-mvv-panel
+        <article class="about-mvv__panel about-mvv__panel--values lazy-bg" data-about-mvv-panel data-mvv-grow="4.2"
             data-background-src="/images/membership.jpg" tabindex="0">
             <div class="about-mvv__panel-inner">
                 <h3>Valores</h3>
 
                 <div class="about-mvv__text">
                     <ul>
-                        <li><strong>Seguridad:</strong> cada decisión técnica debe proteger personas, inversión y
+                        <li><strong>Seguridad:</strong> cada decisión técnica protege a las personas, la inversión y el
                             patrimonio.</li>
                         <li><strong>Honestidad:</strong> comunicamos alcances, riesgos y soluciones con claridad.</li>
+                        <li><strong>Profesionalismo y servicio:</strong> respondemos con seriedad técnica y
+                            acompañamiento al cliente en todo el proyecto.</li>
                         <li><strong>Eficiencia:</strong> optimizamos recursos sin comprometer calidad ni cumplimiento.
-                        </li>
-                        <li><strong>Responsabilidad:</strong> asumimos cada proyecto con seriedad técnica y profesional.
                         </li>
                         <li><strong>Mejora continua:</strong> aplicamos aprendizaje, normatividad y experiencia de
                             campo.</li>
                     </ul>
+                </div>
+            </div>
+        </article>
+
+        <article class="about-mvv__panel about-mvv__panel--quality lazy-bg" data-about-mvv-panel
+            data-background-src="/images/JTRON.jpg" tabindex="0">
+            <div class="about-mvv__panel-inner">
+                <h3>Calidad</h3>
+
+                <div class="about-mvv__text">
+                    <p>
+                        Documentamos y aplicamos nuestro Sistema de Gestión de Calidad con eficiencia,
+                        eficacia y servicio integrador, para que cada entrega cumpla lo prometido.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <article class="about-mvv__panel about-mvv__panel--environment lazy-bg" data-about-mvv-panel data-mvv-grow="3.8"
+            data-background-src="/images/STATS.jpg" tabindex="0">
+            <div class="about-mvv__panel-inner">
+                <h3>Ambiental</h3>
+
+                <div class="about-mvv__text">
+                    <p>
+                        Empleamos equipos, materiales y procesos eficientes, modernos y con mantenimiento
+                        adecuado, para reducir al máximo el impacto ambiental que generamos en nuestros proyectos.
+                    </p>
                 </div>
             </div>
         </article>

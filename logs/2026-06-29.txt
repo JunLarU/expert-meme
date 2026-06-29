@@ -1,0 +1,289 @@
+	2026-06-29 00:12:16: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:18: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:22: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:25: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:29: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:33: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:37: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:40: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:44: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:48: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:51: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:55: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:12:59: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:13:02: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:13:06: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:13:10: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+
+	2026-06-29 00:13:14: ParseError by 192.168.68.79
+Uncaught exception: 'ParseError' with message 'syntax error, unexpected token ":", expecting ";"'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(80): Whis\View\StencilEngine->phpFileOutput('E:/F22_LMASE-V2...', Array)
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(75): Whis\View\StencilEngine->renderView('pages/main/home', Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/home', Array, 'layouts/main', 'Inicio')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/home', Array, 'layouts/main', 'Inicio')
+#4 E:\F22_LMASE-V2\app\Controllers\Home.php(40): view('pages/main/home', 'Inicio', Array, 'layouts/main')
+#5 [internal function]: App\Controllers\Home->home()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#10 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#11 {main}
+Thrown in 'E:\F22_LMASE-V2\resources\views\pages\main\home.php' on line 2
+
+

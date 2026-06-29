@@ -1402,3 +1402,213 @@
     transform: translateY(-0.1rem);
   }
 }
+
+// ==========================================================
+// Admin Message Alert
+// Muestra alerta roja superior cuando existen mensajes nuevos.
+// Importar después de _dashboard.scss si se usa como partial.
+// ==========================================================
+
+.admin-message-alert {
+  position: relative;
+  z-index: 2;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1.2rem;
+
+  width: 100%;
+  margin: 0 0 1.6rem;
+  padding: 1.25rem 1.45rem;
+
+  border: 0.1rem solid rgba(#b91c1c, 0.28);
+  border-left: 0.55rem solid #b91c1c;
+  border-radius: 1.4rem;
+
+  background:
+    linear-gradient(135deg, rgba(#b91c1c, 0.98), rgba(#7f1d1d, 0.96)),
+    #b91c1c;
+
+  color: $color-white;
+  text-decoration: none;
+
+  box-shadow:
+    0 1.4rem 3.2rem rgba(#7f1d1d, 0.18),
+    inset 0 0 0 0.1rem rgba($color-white, 0.13);
+
+  overflow: hidden;
+
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -40% auto auto -8%;
+
+    width: 18rem;
+    height: 18rem;
+
+    border-radius: 50%;
+    background-color: rgba($color-white, 0.12);
+
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto -8% -70% auto;
+
+    width: 22rem;
+    height: 22rem;
+
+    border-radius: 50%;
+    background-color: rgba($color-white, 0.08);
+
+    pointer-events: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: $color-white;
+    border-color: rgba(#fecaca, 0.55);
+    box-shadow:
+      0 1.8rem 3.8rem rgba(#7f1d1d, 0.24),
+      0 0 0 0.35rem rgba(#b91c1c, 0.12),
+      inset 0 0 0 0.1rem rgba($color-white, 0.18);
+    transform: translateY(-0.12rem);
+    outline: none;
+
+    .admin-message-alert__cta span {
+      transform: translateX(0.28rem);
+    }
+  }
+
+  &__icon {
+    position: relative;
+    z-index: 1;
+
+    width: 4.4rem;
+    height: 4.4rem;
+    flex: 0 0 4.4rem;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 1.1rem;
+    background-color: rgba($color-white, 0.16);
+    box-shadow: inset 0 0 0 0.1rem rgba($color-white, 0.18);
+
+    color: $color-white;
+
+    font-family: $font-montserrat;
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    gap: 0.22rem;
+    min-width: 0;
+
+    strong,
+    small {
+      display: block;
+      margin: 0;
+    }
+
+    strong {
+      color: $color-white;
+
+      font-family: $font-montserrat;
+      font-size: clamp(1.55rem, 1.8vw, 2rem);
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    small {
+      max-width: 68rem;
+
+      color: rgba($color-white, 0.86);
+
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+  }
+
+  &__meta,
+  &__cta {
+    position: relative;
+    z-index: 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 3.4rem;
+    padding: 0.7rem 1rem;
+
+    border-radius: 999rem;
+
+    font-family: $font-montserrat;
+    font-size: 1.08rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    background-color: rgba($color-white, 0.14);
+    color: rgba($color-white, 0.9);
+    box-shadow: inset 0 0 0 0.1rem rgba($color-white, 0.16);
+  }
+
+  &__cta {
+    gap: 0.45rem;
+
+    background-color: $color-white;
+    color: #991b1b;
+
+    span {
+      display: inline-block;
+      transition: transform 180ms ease;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .admin-message-alert {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 1rem;
+    padding: 1.15rem;
+
+    &__meta,
+    &__cta {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    &__cta {
+      min-height: 4rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-message-alert,
+  .admin-message-alert__cta span {
+    transition: none !important;
+  }
+}

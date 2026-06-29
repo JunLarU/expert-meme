@@ -30,7 +30,7 @@ class Proyectos extends Controller
         $scopeItems  = $this->rowsByProject('project_scope_items', $projectId);
         $resultStats = $this->rowsByProject('project_result_stats', $projectId);
 
-        $relatedProjects = $this->relatedProjects($projectId, 5);
+        $relatedProjects = $this->relatedProjects($project, $projectTags, 5);
 
         $projectEntry = $this->projectEntryPayload(
             $project,
@@ -230,18 +230,133 @@ class Proyectos extends Controller
         return '/proyecto/' . (int) ($project['id'] ?? 0);
     }
 
-    private function relatedProjects(int $projectId, int $limit = 5): array
+    private function relatedProjects(array $currentProject, array $currentTags = [], int $limit = 5): array
     {
+        $currentProjectId = (int) ($currentProject['id'] ?? 0);
+        $limit            = max(1, min(12, $limit));
+
         $projects = Project::forProjectsPage();
 
-        $related = [];
+        if (empty($projects)) {
+            return [];
+        }
+
+        $candidateIds = [];
 
         foreach ($projects as $project) {
-            if ((int) ($project['id'] ?? 0) === $projectId) {
+            $candidateId = (int) ($project['id'] ?? 0);
+
+            if ($candidateId <= 0 || $candidateId === $currentProjectId) {
                 continue;
             }
 
-            $related[] = $project;
+            $candidateIds[] = $candidateId;
+        }
+
+        if (empty($candidateIds)) {
+            return [];
+        }
+
+        $tagsByProjectId = $this->projectTagsByProjectIds($candidateIds, ProjectTag::TYPE_TAG);
+        $currentTagKeys  = $this->tagKeysFromRows($currentTags);
+        $currentTerms    = $this->projectSearchTerms($currentProject, $currentTagKeys);
+
+        $scored = [];
+
+        foreach ($projects as $project) {
+            $candidateId = (int) ($project['id'] ?? 0);
+
+            if ($candidateId <= 0 || $candidateId === $currentProjectId) {
+                continue;
+            }
+
+            $candidateTagKeys = $this->tagKeysFromRows($tagsByProjectId[$candidateId] ?? []);
+            $candidateTerms   = $this->projectSearchTerms($project, $candidateTagKeys);
+
+            $score = $this->relatedProjectScore(
+                $currentProject,
+                $project,
+                $currentTagKeys,
+                $candidateTagKeys,
+                $currentTerms,
+                $candidateTerms
+            );
+
+            $scored[] = [
+                'project' => $project,
+                'score'   => $score,
+                'recent'  => $this->projectRecentValue($project),
+                'id'      => $candidateId,
+            ];
+        }
+
+        if (empty($scored)) {
+            return [];
+        }
+
+        usort($scored, function (array $a, array $b): int {
+            $scoreComparison = $b['score'] <=> $a['score'];
+
+            if ($scoreComparison !== 0) {
+                return $scoreComparison;
+            }
+
+            $recentComparison = $b['recent'] <=> $a['recent'];
+
+            if ($recentComparison !== 0) {
+                return $recentComparison;
+            }
+
+            return $b['id'] <=> $a['id'];
+        });
+
+        $related = [];
+        $usedIds = [];
+
+        /*
+         * Primero tomamos proyectos realmente relacionados.
+         * Si no hay suficientes, rellenamos con los más recientes.
+         */
+        foreach ($scored as $item) {
+            if ((int) $item['score'] <= 0) {
+                continue;
+            }
+
+            $projectId = (int) $item['id'];
+
+            $related[]           = $item['project'];
+            $usedIds[$projectId] = true;
+
+            if (count($related) >= $limit) {
+                return $related;
+            }
+        }
+
+        usort($scored, function (array $a, array $b): int {
+            $recentComparison = $b['recent'] <=> $a['recent'];
+
+            if ($recentComparison !== 0) {
+                return $recentComparison;
+            }
+
+            $scoreComparison = $b['score'] <=> $a['score'];
+
+            if ($scoreComparison !== 0) {
+                return $scoreComparison;
+            }
+
+            return $b['id'] <=> $a['id'];
+        });
+
+        foreach ($scored as $item) {
+            $projectId = (int) $item['id'];
+
+            if (isset($usedIds[$projectId])) {
+                continue;
+            }
+
+            $related[]           = $item['project'];
+            $usedIds[$projectId] = true;
 
             if (count($related) >= $limit) {
                 break;
@@ -249,6 +364,231 @@ class Proyectos extends Controller
         }
 
         return $related;
+    }
+
+    private function relatedProjectScore(
+        array $currentProject,
+        array $candidateProject,
+        array $currentTagKeys,
+        array $candidateTagKeys,
+        array $currentTerms,
+        array $candidateTerms
+    ): int {
+        $score = 0;
+
+        $currentState = $this->normalizeRelatedValue(
+            ($currentProject['state'] ?? '') ?: ($currentProject['map_state'] ?? '')
+        );
+        $candidateState = $this->normalizeRelatedValue(
+            ($candidateProject['state'] ?? '') ?: ($candidateProject['map_state'] ?? '')
+        );
+
+        if ($currentState !== '' && $currentState === $candidateState) {
+            $score += 55;
+        }
+
+        if ($this->sameNormalizedField($currentProject, $candidateProject, 'city')) {
+            $score += 40;
+        }
+
+        foreach ([
+            'category'        => 45,
+            'category_badge'  => 35,
+            'service'         => 35,
+            'specialty'       => 30,
+            'material_system' => 25,
+            'map_kind'        => 20,
+            'client_name'     => 10,
+        ] as $field => $weight) {
+            if ($this->sameNormalizedField($currentProject, $candidateProject, $field)) {
+                $score += $weight;
+            }
+        }
+
+        $sharedTags = array_intersect($currentTagKeys, $candidateTagKeys);
+
+        if (! empty($sharedTags)) {
+            $score += min(240, count($sharedTags) * 80);
+        }
+
+        $sharedTerms = array_intersect($currentTerms, $candidateTerms);
+
+        if (! empty($sharedTerms)) {
+            $score += min(60, count($sharedTerms) * 6);
+        }
+
+        $currentYear   = (int) ($currentProject['project_year'] ?? 0);
+        $candidateYear = (int) ($candidateProject['project_year'] ?? 0);
+
+        if ($currentYear > 0 && $candidateYear > 0) {
+            $yearDistance = abs($currentYear - $candidateYear);
+
+            if ($yearDistance === 0) {
+                $score += 12;
+            } elseif ($yearDistance <= 2) {
+                $score += 6;
+            }
+        }
+
+        return $score;
+    }
+
+    private function projectTagsByProjectIds(array $projectIds, ?string $type = null): array
+    {
+        $projectIds = array_values(array_unique(array_filter(array_map(
+            fn($id) => (int) $id,
+            $projectIds
+        ))));
+
+        if (empty($projectIds)) {
+            return [];
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($projectIds), '?'));
+        $params       = $projectIds;
+
+        $sql = "SELECT *
+                FROM project_tags
+                WHERE project_id IN ({$placeholders})";
+
+        if ($type !== null && $type !== '') {
+            $sql      .= " AND type = ?";
+            $params[]  = $type;
+        }
+
+        $sql .= " ORDER BY project_id ASC, sort_order ASC, id ASC";
+
+        try {
+            $rows = ProjectTag::getDatabaseDriver()->statement($sql, $params) ?: [];
+        } catch (\Throwable $th) {
+            return [];
+        }
+
+        $grouped = [];
+
+        foreach ($rows as $row) {
+            $projectId = (int) ($row['project_id'] ?? 0);
+
+            if ($projectId <= 0) {
+                continue;
+            }
+
+            $grouped[$projectId][] = $row;
+        }
+
+        return $grouped;
+    }
+
+    private function tagKeysFromRows(array $tags): array
+    {
+        $keys = [];
+
+        foreach ($tags as $tag) {
+            $name = is_array($tag)
+                ? (string) ($tag['slug'] ?: ($tag['name'] ?? ''))
+                : (string) $tag;
+
+            $key = $this->normalizeRelatedValue($name);
+
+            if ($key !== '') {
+                $keys[$key] = true;
+            }
+        }
+
+        return array_keys($keys);
+    }
+
+    private function projectSearchTerms(array $project, array $tagKeys = []): array
+    {
+        $source = implode(' ', array_filter([
+            $project['title'] ?? '',
+            $project['subtitle'] ?? '',
+            $project['brief'] ?? '',
+            $project['summary'] ?? '',
+            $project['description'] ?? '',
+            $project['category'] ?? '',
+            $project['category_badge'] ?? '',
+            $project['service'] ?? '',
+            $project['specialty'] ?? '',
+            $project['material_system'] ?? '',
+            $project['scope_label'] ?? '',
+            $project['city'] ?? '',
+            $project['state'] ?? '',
+            $project['map_kind'] ?? '',
+        ]));
+
+        $normalized = $this->normalizeRelatedValue($source);
+        $words      = preg_split('/\s+/', $normalized) ?: [];
+
+        $stopWords = [
+            'de' => true, 'del' => true, 'la' => true, 'las' => true, 'el' => true,
+            'los' => true, 'y' => true, 'en' => true, 'para' => true, 'por' => true,
+            'con' => true, 'una' => true, 'uno' => true, 'un' => true, 'al' => true,
+            'a' => true, 'o' => true, 'e' => true, 'le' => true, 'ingenieria' => true,
+            'proyecto' => true, 'obra' => true, 'obras' => true, 'servicio' => true,
+            'servicios' => true, 'mexico' => true,
+        ];
+
+        $terms = [];
+
+        foreach ($words as $word) {
+            $word = trim($word);
+
+            if ($word === '' || strlen($word) < 4 || isset($stopWords[$word])) {
+                continue;
+            }
+
+            $terms[$word] = true;
+        }
+
+        foreach ($tagKeys as $tagKey) {
+            if ($tagKey !== '') {
+                $terms[$tagKey] = true;
+            }
+        }
+
+        return array_keys($terms);
+    }
+
+    private function sameNormalizedField(array $a, array $b, string $field): bool
+    {
+        $aValue = $this->normalizeRelatedValue($a[$field] ?? '');
+        $bValue = $this->normalizeRelatedValue($b[$field] ?? '');
+
+        return $aValue !== '' && $aValue === $bValue;
+    }
+
+    private function normalizeRelatedValue(mixed $value): string
+    {
+        $value = trim((string) ($value ?? ''));
+
+        if ($value === '') {
+            return '';
+        }
+
+        $converted = iconv('UTF-8', 'ASCII//TRANSLIT', $value);
+
+        if ($converted !== false) {
+            $value = $converted;
+        }
+
+        $value = strtolower($value);
+        $value = preg_replace('/[^a-z0-9]+/', ' ', $value);
+        $value = trim((string) $value);
+
+        return preg_replace('/\s+/', ' ', $value) ?: '';
+    }
+
+    private function projectRecentValue(array $project): int
+    {
+        $year = (int) ($project['project_year'] ?? 0);
+
+        $createdAt = strtotime((string) ($project['created_at'] ?? '')) ?: 0;
+        $updatedAt = strtotime((string) ($project['updated_at'] ?? '')) ?: 0;
+
+        return ($year * 10000000000)
+            + max($createdAt, $updatedAt)
+            + (int) ($project['id'] ?? 0);
     }
 
     private function rowsByProject(string $table, int $projectId): array

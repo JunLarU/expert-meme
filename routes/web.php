@@ -1,12 +1,14 @@
 <?php
 
+use App\Controllers\Admin\AssociationCertificationSlides;
 use App\Controllers\Admin\Clients;
 use App\Controllers\Admin\Dashboard;
 use App\Controllers\Admin\Jumbotron;
 use App\Controllers\Admin\Messages;
-use App\Controllers\Admin\Projects;
-use App\Controllers\Admin\Users;
 use App\Controllers\Admin\OfficeWorkshops as AdminOfficeWorkshops;
+use App\Controllers\Admin\Projects;
+use App\Controllers\Admin\Search as AdminSearch;
+use App\Controllers\Admin\Users;
 use App\Controllers\Home;
 use App\Controllers\Proyectos;
 use App\Middlewares\AuthMiddleware;
@@ -18,14 +20,16 @@ Auth::Routes();
 
 CONTROLLER(Home::class, '', [
     'get'  => [
-        ''                      => 'home',
-        'nosotros'              => 'nosotros',
-        'proyectos'             => 'proyectos',
-        'servicios'             => 'servicios',
-        'contacto'              => 'contacto',
-        'site-api/projects'     => 'projectsJson',
-        'site-api/map/projects' => 'projectsMapJson',
+        ''                              => 'home',
+        'nosotros'                      => 'nosotros',
+        'proyectos'                     => 'proyectos',
+        'servicios'                     => 'servicios',
+        'contacto'                      => 'contacto',
+        'site-api/projects'             => 'projectsJson',
+        'site-api/map/projects'         => 'projectsMapJson',
         'site-api/map/office-workshops' => 'officeWorkshopsMapJson',
+        //GET('/site-api/search/projects', [Home::class, 'searchProjectsJson']);
+        'site-api/search/projects' => 'searchProjectsJson',
     ],
     'post' => [
         'contact/send' => 'contactSend',
@@ -36,6 +40,7 @@ GET('/proyecto/{id}', [Proyectos::class, 'entry']);
 
 GROUP('/admin', function () {
     GET('', [Dashboard::class, 'index']);
+    GET('/buscar', [AdminSearch::class, 'index']);
     GET('/jumbotron', [Jumbotron::class, 'index']);
     GET('/jumbotron/crear', [Jumbotron::class, 'create']);
     GET('/jumbotron/{id:\d+}', [Jumbotron::class, 'edit']);
@@ -103,6 +108,16 @@ GROUP('/admin', function () {
     POST('/oficinas-talleres', [AdminOfficeWorkshops::class, 'store']);
     POST('/oficinas-talleres/{id:\d+}/actualizar', [AdminOfficeWorkshops::class, 'update']);
     POST('/oficinas-talleres/{id:\d+}/eliminar', [AdminOfficeWorkshops::class, 'destroy']);
+
+    GET('/asociaciones-certificaciones', [AssociationCertificationSlides::class, 'index']);
+    GET('/asociaciones-certificaciones/crear', [AssociationCertificationSlides::class, 'create']);
+    GET('/asociaciones-certificaciones/{id:\d+}', [AssociationCertificationSlides::class, 'edit']);
+    GET('/asociaciones-certificaciones/{id:\d+}/editar', [AssociationCertificationSlides::class, 'edit']);
+    GET('/asociaciones-certificaciones/{id:\d+}/eliminar', [AssociationCertificationSlides::class, 'delete']);
+
+    POST('/asociaciones-certificaciones', [AssociationCertificationSlides::class, 'store']);
+    POST('/asociaciones-certificaciones/{id:\d+}/actualizar', [AssociationCertificationSlides::class, 'update']);
+    POST('/asociaciones-certificaciones/{id:\d+}/eliminar', [AssociationCertificationSlides::class, 'destroy']);
     /*
     |--------------------------------------------------------------------------
     | Admin: API Tokens

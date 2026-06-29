@@ -1,5 +1,6 @@
 {%
 $stats = $stats ?? [];
+$dashboardIsAdmin = (bool) ($isAdmin ?? false);
 
 $jumbotronTotal = (int) ($stats['jumbotron_total'] ?? 0);
 $jumbotronPublished = (int) ($stats['jumbotron_published'] ?? 0);
@@ -32,6 +33,21 @@ $clientsActive = (int) ($stats['clients_active'] ?? 0);
 $clientsFeatured = (int) ($stats['clients_featured'] ?? 0);
 $clientsInactive = (int) ($stats['clients_inactive'] ?? 0);
 
+$associationsTotal = (int) ($stats['associations_total'] ?? 0);
+$associationsActive = (int) ($stats['associations_active'] ?? 0);
+$associationsHome = (int) ($stats['associations_home'] ?? 0);
+$associationsAbout = (int) ($stats['associations_about'] ?? 0);
+$associationsInactive = (int) ($stats['associations_inactive'] ?? 0);
+
+$officeWorkshopsTotal = (int) ($stats['office_workshops_total'] ?? 0);
+$officeWorkshopsPublished = (int) ($stats['office_workshops_published'] ?? 0);
+$officeWorkshopsDraft = (int) ($stats['office_workshops_draft'] ?? 0);
+$officeWorkshopsHidden = (int) ($stats['office_workshops_hidden'] ?? 0);
+$officeWorkshopsArchived = (int) ($stats['office_workshops_archived'] ?? 0);
+$officeWorkshopsOffices = (int) ($stats['office_workshops_offices'] ?? 0);
+$officeWorkshopsWorkshops = (int) ($stats['office_workshops_workshops'] ?? 0);
+$officeWorkshopsMap = (int) ($stats['office_workshops_map'] ?? 0);
+
 $messagesTotal = (int) ($stats['messages_total'] ?? 0);
 $messagesNew = (int) ($stats['messages_new'] ?? 0);
 $messagesRead = (int) ($stats['messages_read'] ?? 0);
@@ -55,13 +71,50 @@ $auditTotal = (int) ($stats['audit_total'] ?? 0);
 
 $recentProjects = $recentProjects ?? [];
 $recentMessages = $recentMessages ?? [];
+$newMessageAlert = $newMessageAlert ?? null;
 $jumbotronSlides = $jumbotronSlides ?? [];
+$associationSlides = $associationSlides ?? [];
+$officeWorkshops = $officeWorkshops ?? [];
 $auditLogs = $auditLogs ?? [];
 $mapStates = $mapStates ?? [];
 $users = $users ?? [];
 %}
 
 <section class="admin-dashboard" aria-labelledby="admin-dashboard-title">
+    {% if (!empty($newMessageAlert)): %}
+    {%
+    $messageAlertCount = (int) ($newMessageAlert['count'] ?? 0);
+    $messageAlertUrl = $newMessageAlert['url'] ?? '/admin/mensajes';
+    $messageAlertTitle = $newMessageAlert['title'] ?? 'Tienes mensajes nuevos';
+    $messageAlertDescription = $newMessageAlert['description'] ?? 'Revisa la bandeja de mensajes.';
+    $messageAlertCta = $newMessageAlert['cta'] ?? 'Ver mensajes';
+    $messageAlertIsSingle = (bool) ($newMessageAlert['is_single'] ?? false);
+    %}
+
+    <a href="@url{{{ ($messageAlertUrl) }}}" class="admin-message-alert" aria-label="{{{ ($messageAlertTitle) }}}">
+        <span class="admin-message-alert__icon" aria-hidden="true">
+            !
+        </span>
+
+        <span class="admin-message-alert__content">
+            <strong>{{{ ($messageAlertTitle) }}}</strong>
+            <small>{{{ ($messageAlertDescription) }}}</small>
+        </span>
+
+        <span class="admin-message-alert__meta">
+            {% if ($messageAlertIsSingle): %}
+            Nuevo
+            {% else: %}
+            {{ ($messageAlertCount) }} pendientes
+            {% endif; %}
+        </span>
+
+        <span class="admin-message-alert__cta">
+            {{{ ($messageAlertCta) }}} <span aria-hidden="true">→</span>
+        </span>
+    </a>
+    {% endif; %}
+
     <header class="admin-dashboard__hero">
         <div>
             <p class="admin-dashboard__eyebrow">Resumen general</p>
@@ -69,8 +122,12 @@ $users = $users ?? [];
             <h2 id="admin-dashboard-title">Dashboard</h2>
 
             <span>
-                Vista rápida de jumbotron, proyectos, multimedia, clientes, mensajes,
-                mapa, usuarios internos y auditoría.
+                {% if ($dashboardIsAdmin): %}
+                Vista rápida de jumbotron, proyectos, multimedia, asociaciones y certificaciones,
+                clientes, oficinas y talleres, mensajes, mapa, usuarios internos y auditoría.
+                {% else: %}
+                Vista rápida de jumbotron, proyectos, multimedia, mensajes y mapa de proyectos.
+                {% endif; %}
             </span>
         </div>
 
@@ -104,15 +161,6 @@ $users = $users ?? [];
             <span class="admin-stat-card__icon" aria-hidden="true">▤</span>
         </article>
 
-        <article class="admin-stat-card">
-            <div class="admin-stat-card__content">
-                <span>Clientes activos</span>
-                <strong data-admin-count data-value="{{ ($clientsActive) }}">0</strong>
-                <small>{{ ($clientsTotal) }} clientes registrados</small>
-            </div>
-            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
-        </article>
-
         <article class="admin-stat-card admin-stat-card--alert">
             <div class="admin-stat-card__content">
                 <span>Mensajes nuevos</span>
@@ -131,6 +179,34 @@ $users = $users ?? [];
             <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
         </article>
 
+        {% if ($dashboardIsAdmin): %}
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Asociaciones activas</span>
+                <strong data-admin-count data-value="{{ ($associationsActive) }}">0</strong>
+                <small>{{ ($associationsTotal) }} registros totales</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">▥</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Clientes activos</span>
+                <strong data-admin-count data-value="{{ ($clientsActive) }}">0</strong>
+                <small>{{ ($clientsTotal) }} clientes registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Oficinas y talleres</span>
+                <strong data-admin-count data-value="{{ ($officeWorkshopsPublished) }}">0</strong>
+                <small>{{ ($officeWorkshopsTotal) }} registros totales</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
+        </article>
+
         <article class="admin-stat-card">
             <div class="admin-stat-card__content">
                 <span>Usuarios internos</span>
@@ -139,6 +215,7 @@ $users = $users ?? [];
             </div>
             <span class="admin-stat-card__icon" aria-hidden="true">◉</span>
         </article>
+        {% endif; %}
     </section>
 
     <section class="admin-dashboard__grid">
@@ -215,6 +292,52 @@ $users = $users ?? [];
                     <span>Marcados para mapa</span>
                 </div>
             </div>
+
+            {% if ($dashboardIsAdmin): %}
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsActive) }}">0</strong>
+                    <span>Asociaciones activas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsHome) }}">0</strong>
+                    <span>Visibles en home</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsAbout) }}">0</strong>
+                    <span>Visibles en nosotros</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsInactive) }}">0</strong>
+                    <span>Inactivas</span>
+                </div>
+            </div>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsOffices) }}">0</strong>
+                    <span>Oficinas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsWorkshops) }}">0</strong>
+                    <span>Talleres</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsMap) }}">0</strong>
+                    <span>Marcados para mapa</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsArchived) }}">0</strong>
+                    <span>Archivados</span>
+                </div>
+            </div>
+            {% endif; %}
         </article>
 
         <article class="admin-panel">
@@ -316,6 +439,7 @@ $users = $users ?? [];
             </div>
         </article>
 
+        {% if ($dashboardIsAdmin): %}
         <article class="admin-panel">
             <header class="admin-panel__header">
                 <div>
@@ -346,6 +470,141 @@ $users = $users ?? [];
             </div>
         </article>
 
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Contenido</p>
+                    <h3>Asociaciones y certificaciones</h3>
+                </div>
+
+                <a href="@url/admin/asociaciones-certificaciones" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsActive) }}">0</strong>
+                    <span>Activas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsHome) }}">0</strong>
+                    <span>Home</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($associationsAbout) }}">0</strong>
+                    <span>Nosotros</span>
+                </div>
+            </div>
+
+            <div class="admin-mini-list" data-admin-filterable>
+                {% foreach ($associationSlides as $associationSlide): %}
+                {%
+                $associationId = (int) ($associationSlide['id'] ?? 0);
+                $associationTitle = $associationSlide['title'] ?? 'Registro sin título';
+                $associationShortTitle = $associationSlide['short_title'] ?? '';
+                $associationActive = (int) ($associationSlide['is_active'] ?? 0) === 1;
+                $associationHome = (int) ($associationSlide['show_in_home'] ?? 0) === 1;
+                $associationAbout = (int) ($associationSlide['show_in_about'] ?? 0) === 1;
+                %}
+
+                <a href="@url/admin/asociaciones-certificaciones/{{ ($associationId) }}" class="admin-mini-item">
+                    <span class="admin-mini-item__icon">
+                        {{{ ($associationShortTitle !== '' ? substr($associationShortTitle, 0, 2) : 'AC') }}}
+                    </span>
+
+                    <span>
+                        <strong>{{{ ($associationTitle) }}}</strong>
+                        <small>
+                            {% if ($associationActive): %}Activa{% else: %}Inactiva{% endif; %}
+                            {% if ($associationHome): %} · Home{% endif; %}
+                            {% if ($associationAbout): %} · Nosotros{% endif; %}
+                        </small>
+                    </span>
+                </a>
+                {% endforeach; %}
+
+                {% if (empty($associationSlides)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay asociaciones o certificaciones registradas.</strong>
+                        <small>Crea el primer registro para alimentar el carrusel vertical.</small>
+                    </span>
+                </div>
+                {% endif; %}
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Ubicaciones</p>
+                    <h3>Oficinas y talleres</h3>
+                </div>
+
+                <a href="@url/admin/oficinas-talleres" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsPublished) }}">0</strong>
+                    <span>Publicados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsDraft) }}">0</strong>
+                    <span>Borrador</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($officeWorkshopsHidden) }}">0</strong>
+                    <span>Ocultos</span>
+                </div>
+            </div>
+
+            <div class="admin-mini-list" data-admin-filterable>
+                {% foreach ($officeWorkshops as $item): %}
+                {%
+                $itemId = (int) ($item['id'] ?? 0);
+                $itemTitle = $item['title'] ?? 'Registro sin título';
+                $itemType = $item['type'] ?? 'office';
+                $itemStatus = $item['status'] ?? 'draft';
+                $itemTypeLabel = $itemType === 'workshop' ? 'Taller' : 'Oficina';
+                $itemStatusLabel = match ($itemStatus) {
+                    'published' => 'Publicado',
+                    'hidden' => 'Oculto',
+                    'archived' => 'Archivado',
+                    default => 'Borrador',
+                };
+                %}
+
+                <a href="@url/admin/oficinas-talleres/{{ ($itemId) }}" class="admin-mini-item">
+                    <span class="admin-mini-item__icon">{{{ ($itemType === 'workshop' ? 'T' : 'O') }}}</span>
+                    <span>
+                        <strong>{{{ ($itemTitle) }}}</strong>
+                        <small>{{{ ($itemTypeLabel) }}} · {{{ ($itemStatusLabel) }}}</small>
+                    </span>
+                </a>
+                {% endforeach; %}
+
+                {% if (empty($officeWorkshops)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay oficinas o talleres registrados.</strong>
+                        <small>Crea el primer registro desde el panel administrativo.</small>
+                    </span>
+                </div>
+                {% endif; %}
+            </div>
+        </article>
+        {% endif; %}
+
         <article class="admin-panel admin-panel--wide">
             <header class="admin-panel__header">
                 <div>
@@ -362,6 +621,7 @@ $users = $users ?? [];
                 <table class="admin-table" data-admin-filterable>
                     <thead>
                         <tr>
+                            <th>Código</th>
                             <th>Proyecto</th>
                             <th>Ubicación</th>
                             <th>Año</th>
@@ -374,6 +634,7 @@ $users = $users ?? [];
                         {% foreach ($recentProjects as $project): %}
                         {%
                         $projectTitle = $project['title'] ?? 'Sin título';
+                        $projectWorkCode = $project['work_code'] ?? '—';
                         $projectSlug = $project['slug'] ?? '';
                         $projectLocation = $project['location_display'] ?? 'Sin ubicación';
                         $projectYear = $project['project_year'] ?? '—';
@@ -395,6 +656,9 @@ $users = $users ?? [];
                         %}
 
                         <tr>
+                            <td>
+                                <span class="admin-badge admin-badge--neutral admin-badge--work-code">#{{{ ($projectWorkCode) }}}</span>
+                            </td>
                             <td>
                                 <strong>{{{ ($projectTitle) }}}</strong>
                                 <small>@url/proyecto/{{{ ($projectSlug) }}}</small>
@@ -418,7 +682,7 @@ $users = $users ?? [];
 
                         {% if (empty($recentProjects)): %}
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 <strong>No hay proyectos registrados todavía.</strong>
                                 <small>Crea tu primer proyecto desde el panel administrativo.</small>
                             </td>
@@ -510,11 +774,7 @@ $users = $users ?? [];
                         <strong>{{{ ($slideTitle) }}}</strong>
                         <small>
                             Fondo: {{{ ($backgroundType) }}}
-                            {% if ($hasButton): %}
-                            · CTA activo
-                            {% else: %}
-                            · Sin CTA
-                            {% endif; %}
+                            {% if ($hasButton): %} · CTA activo{% else: %} · Sin CTA{% endif; %}
                         </small>
                     </span>
                 </a>
@@ -546,6 +806,7 @@ $users = $users ?? [];
                     <span>Proyectos</span>
                 </div>
 
+                {% if ($dashboardIsAdmin): %}
                 <div>
                     <strong data-admin-count data-value="{{ ($mapOffices) }}">0</strong>
                     <span>Oficinas</span>
@@ -555,6 +816,7 @@ $users = $users ?? [];
                     <strong data-admin-count data-value="{{ ($mapWorkshops) }}">0</strong>
                     <span>Talleres</span>
                 </div>
+                {% endif; %}
             </div>
 
             <div class="admin-state-list">
@@ -568,6 +830,7 @@ $users = $users ?? [];
             </div>
         </article>
 
+        {% if ($dashboardIsAdmin): %}
         <article class="admin-panel">
             <header class="admin-panel__header">
                 <div>
@@ -676,5 +939,6 @@ $users = $users ?? [];
                 {% endif; %}
             </div>
         </article>
+        {% endif; %}
     </section>
 </section>

@@ -1,0 +1,227 @@
+{%
+$query = trim((string) ($query ?? ''));
+$searched = (bool) ($searched ?? false);
+$queryIsValid = (bool) ($queryIsValid ?? false);
+$minLength = (int) ($minLength ?? 2);
+$groups = $groups ?? [];
+$resultCount = (int) ($resultCount ?? 0);
+$moduleCount = (int) ($moduleCount ?? 0);
+$isAdmin = (bool) ($isAdmin ?? false);
+
+$hasQuery = $query !== '';
+$hasGroups = !empty($groups);
+$roleLabel = $isAdmin ? 'Admin' : 'Manager';
+$roleDescription = $isAdmin ? 'Búsqueda completa' : 'Búsqueda limitada por permisos';
+%}
+
+<section class="admin-dashboard admin-search-page" aria-labelledby="admin-search-title">
+  <header class="admin-dashboard__hero admin-search-page__hero">
+    <div>
+      <p class="admin-dashboard__eyebrow">Búsqueda global</p>
+      <h2 id="admin-search-title">Resultados de búsqueda</h2>
+      <span>
+        Busca en jumbotron, proyectos, mensajes y datos relacionados. Clientes, usuarios,
+        oficinas/talleres y asociaciones/certificaciones solo aparecen para usuarios Admin.
+      </span>
+    </div>
+
+    <div class="admin-dashboard__actions">
+      <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+    </div>
+  </header>
+
+  <article class="admin-search-query admin-panel admin-panel--wide" aria-labelledby="admin-search-query-title">
+    <div class="admin-search-query__header">
+      <div>
+        <p>Consulta</p>
+        <h3 id="admin-search-query-title">Buscar en el panel</h3>
+      </div>
+
+      <span class="admin-search-query__scope">
+        {{{ ($roleLabel) }}}
+      </span>
+    </div>
+
+    <form class="form form--default admin-search-form" action="@url/admin/buscar" method="get" role="search">
+      <div class="admin-search-form__field" data-field="q">
+        <span class="admin-search-form__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.9"></circle>
+            <path d="M16.2 16.2 21 21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"></path>
+          </svg>
+        </span>
+
+        <input id="admin-search-page-input" name="q" type="search" class="form-control admin-search-form__input"
+          value="{{{ ($query) }}}" placeholder=" " autocomplete="off" maxlength="120" autofocus>
+
+        <label class="form-label admin-search-form__label" for="admin-search-page-input">
+          Texto buscado
+        </label>
+
+        {% if ($hasQuery): %}
+        <a href="@url/admin/buscar" class="admin-search-form__clear" aria-label="Limpiar búsqueda">
+          ×
+        </a>
+        {% endif; %}
+      </div>
+
+      <div class="admin-search-form__help-row">
+        <p>
+          Ejemplo: nombre de proyecto, cliente, correo, estado, servicio, tag o título de slide.
+        </p>
+
+        <span>
+          Mínimo {{ ($minLength) }} caracteres
+        </span>
+      </div>
+
+      <div class="admin-search-form__actions">
+        <button type="submit" class="admin-button admin-button--primary">
+          Buscar
+        </button>
+
+        <a href="@url/admin/buscar" class="admin-button admin-button--secondary">
+          Limpiar
+        </a>
+      </div>
+    </form>
+  </article>
+
+  <section class="admin-search-stats" aria-label="Resumen de búsqueda">
+    <article class="admin-search-stat">
+      <span class="admin-search-stat__icon" aria-hidden="true">🔎</span>
+
+      <div class="admin-search-stat__content">
+        <span>Resultados</span>
+        <strong data-admin-count data-value="{{ ($resultCount) }}">0</strong>
+        <small>{% if ($query !== ''): %}Para “{{{ ($query) }}}”{% else: %}Escribe algo para buscar{% endif; %}</small>
+      </div>
+    </article>
+
+    <article class="admin-search-stat">
+      <span class="admin-search-stat__icon" aria-hidden="true">▦</span>
+
+      <div class="admin-search-stat__content">
+        <span>Módulos</span>
+        <strong data-admin-count data-value="{{ ($moduleCount) }}">0</strong>
+        <small>Con coincidencias visibles</small>
+      </div>
+    </article>
+
+    <article class="admin-search-stat">
+      <span class="admin-search-stat__icon" aria-hidden="true">◉</span>
+
+      <div class="admin-search-stat__content">
+        <span>Rol</span>
+        <strong>{{{ ($roleLabel) }}}</strong>
+        <small>{{{ ($roleDescription) }}}</small>
+      </div>
+    </article>
+  </section>
+
+  {% if ($searched && !$queryIsValid): %}
+  <article class="admin-search-state admin-search-state--warning admin-panel admin-panel--wide">
+    <span class="admin-search-state__icon" aria-hidden="true">!</span>
+    <div>
+      <strong>La búsqueda es muy corta.</strong>
+      <p>Escribe al menos {{ ($minLength) }} caracteres para buscar.</p>
+    </div>
+  </article>
+  {% endif; %}
+
+  {% if (!$searched): %}
+  <article class="admin-search-state admin-search-state--empty admin-panel admin-panel--wide">
+    <span class="admin-search-state__icon" aria-hidden="true">🔎</span>
+    <div>
+      <strong>Escribe una búsqueda en el campo superior.</strong>
+      <p>También puedes usar la barra del navbar: <code>/admin/buscar?q=texto+buscado</code>.</p>
+    </div>
+  </article>
+  {% endif; %}
+
+  {% if ($searched && $queryIsValid && empty($groups)): %}
+  <article class="admin-search-state admin-search-state--empty admin-panel admin-panel--wide">
+    <span class="admin-search-state__icon" aria-hidden="true">00</span>
+    <div>
+      <strong>No se encontraron resultados.</strong>
+      <p>Intenta con otro término, nombre, correo, estado, servicio, tag o categoría.</p>
+    </div>
+  </article>
+  {% endif; %}
+
+  {% if (!empty($groups)): %}
+  <section class="admin-search-results" aria-label="Resultados encontrados">
+    {% foreach ($groups as $group): %}
+    {%
+    $groupTitle = $group['title'] ?? 'Resultados';
+    $groupIcon = $group['icon'] ?? '•';
+    $groupTotal = (int) ($group['total'] ?? 0);
+    $results = $group['results'] ?? [];
+    %}
+
+    <article class="admin-search-group admin-panel admin-panel--wide">
+      <header class="admin-search-group__header">
+        <div class="admin-search-group__title">
+          <span class="admin-search-group__icon" aria-hidden="true">{{{ ($groupIcon) }}}</span>
+          <div>
+            <p>Coincidencias</p>
+            <h3>{{{ ($groupTitle) }}}</h3>
+          </div>
+        </div>
+
+        <span class="admin-badge admin-badge--neutral">
+          {{ ($groupTotal) }} resultado{% if ($groupTotal !== 1): %}s{% endif; %}
+        </span>
+      </header>
+
+      <div class="admin-search-group__list" data-admin-filterable>
+        {% foreach ($results as $result): %}
+        {%
+        $resultTitle = $result['title'] ?? 'Resultado';
+        $resultSubtitle = $result['subtitle'] ?? '';
+        $resultExcerpt = $result['excerpt'] ?? '';
+        $resultUrl = $result['url'] ?? '/admin';
+        $resultBadge = $result['badge'] ?? '';
+        %}
+
+        <a href="@url{{{ ($resultUrl) }}}" class="admin-search-result-card">
+          <span class="admin-search-result-card__icon" aria-hidden="true">{{{ ($groupIcon) }}}</span>
+
+          <span class="admin-search-result-card__body">
+            <strong>{{{ ($resultTitle) }}}</strong>
+
+            {% if ($resultSubtitle !== ''): %}
+            <small>{{{ ($resultSubtitle) }}}</small>
+            {% endif; %}
+
+            {% if ($resultExcerpt !== ''): %}
+            <em>{{{ ($resultExcerpt) }}}</em>
+            {% endif; %}
+          </span>
+
+          <span class="admin-search-result-card__meta">
+            {% if ($resultBadge !== ''): %}
+            <span class="admin-badge admin-badge--neutral">{{{ ($resultBadge) }}}</span>
+            {% endif; %}
+
+            <span class="admin-search-result-card__arrow" aria-hidden="true">→</span>
+          </span>
+        </a>
+        {% endforeach; %}
+
+        {% if ($groupTotal > count($results)): %}
+        <div class="admin-search-result-card admin-search-result-card--more">
+          <span class="admin-search-result-card__icon" aria-hidden="true">+</span>
+
+          <span class="admin-search-result-card__body">
+            <strong>Hay más coincidencias en este módulo.</strong>
+            <small>Se muestran los primeros {{ (count($results)) }} resultados más relevantes.</small>
+          </span>
+        </div>
+        {% endif; %}
+      </div>
+    </article>
+    {% endforeach; %}
+  </section>
+  {% endif; %}
+</section>

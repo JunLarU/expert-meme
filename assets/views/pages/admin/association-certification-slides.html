@@ -1,0 +1,167 @@
+{%
+$slides = $slides ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$active = (int) ($stats['active'] ?? 0);
+$home = (int) ($stats['home'] ?? 0);
+$about = (int) ($stats['about'] ?? 0);
+$inactive = (int) ($stats['inactive'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page admin-association-page" aria-labelledby="admin-association-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Contenido principal</p>
+            <h2 id="admin-association-title">Asociaciones y certificaciones</h2>
+            <span>
+                Administra las imágenes, títulos y descripciones que alimentan el carrusel de logos en Home y Nosotros.
+                Al cambiar o eliminar una imagen también se limpia el archivo anterior del almacenamiento.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+            <a href="@url/admin/asociaciones-certificaciones/crear" class="admin-button admin-button--primary">
+                Nueva asociación o certificación
+            </a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de asociaciones y certificaciones">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Total</span>
+                <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+                <small>Registros capturados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Activas</span>
+                <strong data-admin-count data-value="{{ ($active) }}">0</strong>
+                <small>Visibles públicamente</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Home</span>
+                <strong data-admin-count data-value="{{ ($home) }}">0</strong>
+                <small>Se muestran en Home</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">⌂</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Nosotros</span>
+                <strong data-admin-count data-value="{{ ($about) }}">0</strong>
+                <small>Se muestran en Nosotros</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◎</span>
+        </article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header">
+            <div>
+                <p>Logos</p>
+                <h3>Listado de asociaciones y certificaciones</h3>
+            </div>
+
+            <a href="@url/admin/asociaciones-certificaciones/crear" class="admin-panel__link">
+                Crear registro <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead>
+                    <tr>
+                        <th>Registro</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Secciones</th>
+                        <th>Orden</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% foreach ($slides as $slide): %}
+                    {%
+                    $id = (int) ($slide['id'] ?? 0);
+                    $title = $slide['title'] ?? 'Registro sin nombre';
+                    $shortTitle = $slide['short_title'] ?? '';
+                    $slug = $slide['slug'] ?? '';
+                    $imageUrl = $slide['image_url'] ?? '';
+                    $description = $slide['description'] ?? '—';
+                    $sortOrder = $slide['sort_order'] ?? 0;
+                    $isActive = (int) ($slide['is_active'] ?? 0) === 1;
+                    $showInHome = (int) ($slide['show_in_home'] ?? 0) === 1;
+                    $showInAbout = (int) ($slide['show_in_about'] ?? 0) === 1;
+                    %}
+
+                    <tr>
+                        <td>
+                            <strong>{{{ ($title) }}}</strong>
+                            <small>{{{ ($shortTitle ?: $slug) }}}</small>
+                            {% if (!empty($imageUrl)): %}
+                            <small>{{{ ($imageUrl) }}}</small>
+                            {% else: %}
+                            <small>Sin imagen</small>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($description) }}}</td>
+                        <td>
+                            {% if ($isActive): %}
+                            <span class="admin-badge admin-badge--success">Activa</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Inactiva</span>
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($showInHome): %}
+                            <span class="admin-badge admin-badge--neutral">Home</span>
+                            {% endif; %}
+
+                            {% if ($showInAbout): %}
+                            <span class="admin-badge admin-badge--neutral">Nosotros</span>
+                            {% endif; %}
+
+                            {% if (!$showInHome && !$showInAbout): %}
+                            <span class="admin-badge admin-badge--muted">Sin sección</span>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($sortOrder) }}}</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <a href="@url/admin/asociaciones-certificaciones/{{ ($id) }}/editar"
+                                    class="admin-button admin-button--xs admin-button--secondary">Editar</a>
+                                <a href="@url/admin/asociaciones-certificaciones/{{ ($id) }}/eliminar"
+                                    class="admin-button admin-button--xs admin-button--danger"
+                                    onclick="return confirm('¿Eliminar este registro? También se borrará su imagen del servidor.');">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endforeach; %}
+
+                    {% if (empty($slides)): %}
+                    <tr>
+                        <td colspan="6">
+                            <strong>No hay asociaciones ni certificaciones registradas todavía.</strong>
+                            <small>Crea el primer registro para alimentar el carrusel de Home y Nosotros.</small>
+                        </td>
+                    </tr>
+                    {% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

@@ -3,9 +3,11 @@
 namespace App\Controllers\Admin;
 
 use App\Models\AuditLog;
+use App\Models\AssociationCertificationSlide;
 use App\Models\Client;
 use App\Models\HomeJumbotronSlide;
 use App\Models\Message;
+use App\Models\OfficeWorkshop;
 use App\Models\Project;
 use App\Models\ProjectFact;
 use App\Models\ProjectMedia;
@@ -26,6 +28,7 @@ class Dashboard extends Controller
         }
 
         $user = auth();
+        $isAdmin = $this->currentUserIsAdmin();
 
         /*
          * ===============================
@@ -68,12 +71,82 @@ class Dashboard extends Controller
 
         /*
          * ===============================
-         * CLIENTES
+         * MÓDULOS SOLO ADMIN
          * ===============================
          */
-        $clients = $this->safeRows(fn() => Client::ordered());
-        $activeClients = $this->safeRows(fn() => Client::active());
-        $featuredClients = $this->safeRows(fn() => Client::featured());
+        $clients = [];
+        $activeClients = [];
+        $featuredClients = [];
+
+        $associationSlides = [];
+        $activeAssociationSlides = [];
+        $associationSlidesForHome = [];
+        $associationSlidesForAbout = [];
+        $recentAssociationSlides = [];
+
+        $officeWorkshops = [];
+        $publishedOfficeWorkshops = [];
+        $officeWorkshopMarkers = [];
+        $recentOfficeWorkshops = [];
+
+        $users = [];
+        $userStats = [];
+
+        if ($isAdmin) {
+            /*
+             * ===============================
+             * CLIENTES
+             * ===============================
+             */
+            $clients = $this->safeRows(fn() => Client::ordered());
+            $activeClients = $this->safeRows(fn() => Client::active());
+            $featuredClients = $this->safeRows(fn() => Client::featured());
+
+            /*
+             * ===============================
+             * ASOCIACIONES Y CERTIFICACIONES
+             * ===============================
+             */
+            $associationSlides = $this->safeRows(fn() => AssociationCertificationSlide::ordered());
+
+            $activeAssociationSlides = array_values(array_filter(
+                $associationSlides,
+                fn(array $slide) => (int) ($slide['is_active'] ?? 0) === 1
+            ));
+
+            $associationSlidesForHome = array_values(array_filter(
+                $activeAssociationSlides,
+                fn(array $slide) => (int) ($slide['show_in_home'] ?? 0) === 1
+            ));
+
+            $associationSlidesForAbout = array_values(array_filter(
+                $activeAssociationSlides,
+                fn(array $slide) => (int) ($slide['show_in_about'] ?? 0) === 1
+            ));
+
+            $recentAssociationSlides = $this->limitRows(
+                $associationSlides,
+                self::DASHBOARD_LIMIT
+            );
+
+            /*
+             * ===============================
+             * OFICINAS Y TALLERES
+             * ===============================
+             */
+            $officeWorkshops = $this->safeRows(fn() => OfficeWorkshop::allItems());
+            $publishedOfficeWorkshops = $this->safeRows(fn() => OfficeWorkshop::published());
+            $officeWorkshopMarkers = $this->safeRows(fn() => OfficeWorkshop::mapMarkers());
+            $recentOfficeWorkshops = $this->limitRows($officeWorkshops, self::DASHBOARD_LIMIT);
+
+            /*
+             * ===============================
+             * USUARIOS
+             * ===============================
+             */
+            $users = $this->safeRows(fn() => User::forAdmin());
+            $userStats = $this->safeStats(fn() => User::stats());
+        }
 
         /*
          * ===============================
@@ -88,37 +161,40 @@ class Dashboard extends Controller
             self::DASHBOARD_LIMIT
         );
 
-        /*
-         * ===============================
-         * USUARIOS
-         * ===============================
-         */
-        $users = $this->safeRows(fn() => User::forAdmin());
-        $userStats = $this->safeStats(fn() => User::stats());
+        $newMessages = $this->sortByDateDesc(array_values(array_filter(
+            $messages,
+            fn(array $message) => (string) ($message['status'] ?? '') === 'new'
+        )));
+
+        $newMessageAlert = $this->newMessageAlert($newMessages);
 
         /*
          * ===============================
          * MAPA
          * ===============================
-         *
-         * El mapa sale de Project::mapMarkers().
-         * Ahí ya se filtra por:
-         * - status published
-         * - show_on_map = 1
-         * - coordenadas existentes
-         * - deleted_at IS NULL
+         * Para managers solo se muestran pines provenientes de proyectos.
+         * Para admin se suman también oficinas y talleres.
          */
+        $visibleMapMarkers = $isAdmin
+            ? array_merge($projectMarkers, $officeWorkshopMarkers)
+            : $projectMarkers;
+
         $mapProjects = $this->countByValue($projectMarkers, 'type', Project::MAP_PROJECT);
-        $mapOffices = $this->countByValue($projectMarkers, 'type', Project::MAP_OFFICE);
-        $mapWorkshops = $this->countByValue($projectMarkers, 'type', Project::MAP_WORKSHOP);
-        $mapStates = $this->uniqueStates($projectMarkers);
+        $mapOffices = $this->countByValue($projectMarkers, 'type', Project::MAP_OFFICE)
+            + $this->countByValue($officeWorkshopMarkers, 'type', OfficeWorkshop::TYPE_OFFICE);
+        $mapWorkshops = $this->countByValue($projectMarkers, 'type', Project::MAP_WORKSHOP)
+            + $this->countByValue($officeWorkshopMarkers, 'type', OfficeWorkshop::TYPE_WORKSHOP);
+        $mapStates = $this->uniqueStates($visibleMapMarkers);
 
         /*
          * ===============================
          * AUDITORÍA
          * ===============================
+         * Solo admin puede ver movimientos internos.
          */
-        $allAuditLogs = $this->safeRows(fn() => AuditLog::all('created_at', true) ?? []);
+        $allAuditLogs = $isAdmin
+            ? $this->safeRows(fn() => AuditLog::all('created_at', true) ?? [])
+            : [];
 
         $auditLogs = $this->limitRows(
             $allAuditLogs,
@@ -126,7 +202,8 @@ class Dashboard extends Controller
         );
 
         return view('pages/admin/dashboard', 'Dashboard', [
-            'user' => $user,
+            'user'    => $user,
+            'isAdmin' => $isAdmin,
 
             'stats' => [
                 /*
@@ -165,12 +242,33 @@ class Dashboard extends Controller
                 'project_results_total' => count($projectResultStats),
 
                 /*
-                 * Clientes
+                 * Clientes: solo admin
                  */
                 'clients_total'    => count($clients),
                 'clients_active'   => count($activeClients),
                 'clients_featured' => count($featuredClients),
                 'clients_inactive' => max(0, count($clients) - count($activeClients)),
+
+                /*
+                 * Asociaciones y certificaciones: solo admin
+                 */
+                'associations_total'    => count($associationSlides),
+                'associations_active'   => count($activeAssociationSlides),
+                'associations_home'     => count($associationSlidesForHome),
+                'associations_about'    => count($associationSlidesForAbout),
+                'associations_inactive' => max(0, count($associationSlides) - count($activeAssociationSlides)),
+
+                /*
+                 * Oficinas y talleres: solo admin
+                 */
+                'office_workshops_total'     => count($officeWorkshops),
+                'office_workshops_published' => count($publishedOfficeWorkshops),
+                'office_workshops_draft'     => $this->countByValue($officeWorkshops, 'status', OfficeWorkshop::STATUS_DRAFT),
+                'office_workshops_hidden'    => $this->countByValue($officeWorkshops, 'status', OfficeWorkshop::STATUS_HIDDEN),
+                'office_workshops_archived'  => $this->countByValue($officeWorkshops, 'status', OfficeWorkshop::STATUS_ARCHIVED),
+                'office_workshops_offices'   => $this->countByValue($officeWorkshops, 'type', OfficeWorkshop::TYPE_OFFICE),
+                'office_workshops_workshops' => $this->countByValue($officeWorkshops, 'type', OfficeWorkshop::TYPE_WORKSHOP),
+                'office_workshops_map'       => $this->countFlag($officeWorkshops, 'show_on_map'),
 
                 /*
                  * Mensajes
@@ -187,14 +285,14 @@ class Dashboard extends Controller
                 /*
                  * Mapa
                  */
-                'map_total'     => count($projectMarkers),
+                'map_total'     => count($visibleMapMarkers),
                 'map_projects'  => $mapProjects,
-                'map_offices'   => $mapOffices,
-                'map_workshops' => $mapWorkshops,
+                'map_offices'   => $isAdmin ? $mapOffices : 0,
+                'map_workshops' => $isAdmin ? $mapWorkshops : 0,
                 'map_states'    => count($mapStates),
 
                 /*
-                 * Usuarios
+                 * Usuarios: solo admin
                  */
                 'users_total'   => (int) ($userStats['total'] ?? count($users)),
                 'users_admin'   => (int) ($userStats['admin'] ?? 0),
@@ -206,13 +304,68 @@ class Dashboard extends Controller
                 'audit_total' => count($allAuditLogs),
             ],
 
-            'recentProjects'  => $recentProjects,
-            'recentMessages'  => $recentMessages,
-            'jumbotronSlides' => $jumbotronSlides,
-            'auditLogs'       => $auditLogs,
-            'mapStates'       => $mapStates,
-            'users'           => $users,
+            'recentProjects'       => $recentProjects,
+            'recentMessages'       => $recentMessages,
+            'newMessageAlert'      => $newMessageAlert,
+            'jumbotronSlides'      => $jumbotronSlides,
+            'associationSlides'    => $recentAssociationSlides,
+            'officeWorkshops'      => $recentOfficeWorkshops,
+            'auditLogs'            => $auditLogs,
+            'mapStates'            => $mapStates,
+            'users'                => $users,
         ], 'layouts/admin/layout');
+    }
+
+    private function newMessageAlert(array $newMessages): ?array
+    {
+        $count = count($newMessages);
+
+        if ($count <= 0) {
+            return null;
+        }
+
+        $firstMessage = $newMessages[0] ?? [];
+        $firstId      = (int) ($firstMessage['id'] ?? 0);
+
+        if ($count === 1) {
+            $name = trim((string) ($firstMessage['name'] ?? 'Contacto'));
+            $subject = trim((string) ($firstMessage['subject'] ?? ''));
+
+            if ($subject === '') {
+                $subject = trim((string) ($firstMessage['service'] ?? 'Mensaje de contacto'));
+            }
+
+            return [
+                'count'       => 1,
+                'url'         => $firstId > 0 ? '/admin/mensajes/' . $firstId : '/admin/mensajes',
+                'title'       => 'Tienes 1 mensaje nuevo',
+                'description' => $this->joinNonEmpty([
+                    $name !== '' ? 'De ' . $name : '',
+                    $subject,
+                ]),
+                'cta'         => $firstId > 0 ? 'Abrir mensaje' : 'Ver mensajes',
+                'is_single'   => $firstId > 0,
+            ];
+        }
+
+        return [
+            'count'       => $count,
+            'url'         => '/admin/mensajes',
+            'title'       => 'Tienes ' . $count . ' mensajes nuevos',
+            'description' => 'Revisa la bandeja de mensajes para dar seguimiento a los contactos recientes.',
+            'cta'         => 'Ver mensajes',
+            'is_single'   => false,
+        ];
+    }
+
+    private function joinNonEmpty(array $parts, string $separator = ' · '): string
+    {
+        $parts = array_values(array_filter(array_map(
+            fn($part) => trim((string) $part),
+            $parts
+        ), fn(string $part) => $part !== ''));
+
+        return implode($separator, $parts);
     }
 
     private function safeRows(callable $loader): array
@@ -297,5 +450,48 @@ class Dashboard extends Controller
         natcasesort($states);
 
         return array_values($states);
+    }
+
+    private function currentUserIsAdmin(): bool
+    {
+        return $this->currentUserRole() === User::ROLE_ADMIN;
+    }
+
+    private function currentUserRole(): string
+    {
+        return strtolower(trim((string) $this->currentUserValue('role', '')));
+    }
+
+    private function currentUserValue(string $key, mixed $default = null): mixed
+    {
+        $user = auth();
+
+        if (! $user) {
+            return $default;
+        }
+
+        if (is_array($user)) {
+            return $user[$key] ?? $default;
+        }
+
+        if (is_object($user)) {
+            if (method_exists($user, 'toArray')) {
+                $data = $user->toArray();
+
+                if (is_array($data) && array_key_exists($key, $data)) {
+                    return $data[$key];
+                }
+            }
+
+            try {
+                $value = $user->{$key};
+
+                return $value ?? $default;
+            } catch (\Throwable $th) {
+                return $default;
+            }
+        }
+
+        return $default;
     }
 }

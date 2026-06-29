@@ -1,0 +1,870 @@
+// ==========================================================
+// Admin Forms Enhanced - L+E Ingeniería
+// Pegar / importar DESPUÉS de _forms.scss y _dashboard.scss.
+// No modifica forms.scss ni ajax-form.js.
+// Mejora formularios admin: jumbotron, proyectos, oficinas/talleres,
+// usuarios, clientes y asociaciones/certificaciones.
+// ==========================================================
+
+$admin-form-primary: $color-logo-red !default;
+$admin-form-text: $color-dark !default;
+$admin-form-surface: $color-white !default;
+$admin-form-muted: rgba($color-dark, 0.58) !default;
+$admin-form-field-bg: #f6f7f8 !default;
+$admin-form-border: rgba($color-dark, 0.1) !default;
+$admin-form-radius: 1.4rem !default;
+$admin-form-field-radius: 1.05rem !default;
+
+.admin-dashboard {
+  .admin-jumbotron-form-panel,
+  .admin-project-form-panel,
+  .admin-user-form-panel,
+  .admin-client-form-panel {
+    overflow: hidden;
+    border: 0.1rem solid rgba($admin-form-text, 0.08);
+    border-radius: 2rem;
+    background:
+      linear-gradient(180deg, rgba($admin-form-surface, 0.98), rgba($admin-form-surface, 0.94)),
+      radial-gradient(circle at 0% 0%, rgba($admin-form-primary, 0.055), transparent 34%);
+    box-shadow:
+      0 1.8rem 4.4rem rgba($color-black, 0.08),
+      inset 0 0 0 0.1rem rgba($admin-form-surface, 0.72);
+  }
+
+  .admin-panel__header {
+    align-items: center;
+    gap: 1.4rem;
+    padding: clamp(1.5rem, 2vw, 2rem);
+    border-bottom: 0.1rem solid rgba($admin-form-text, 0.08);
+    background:
+      linear-gradient(135deg, rgba($admin-form-surface, 0.96), rgba($admin-form-field-bg, 0.92));
+
+    p {
+      color: rgba($admin-form-primary, 0.9);
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      color: $admin-form-text;
+      font-size: clamp(1.8rem, 2vw, 2.4rem);
+      font-weight: 900;
+      line-height: 1.05;
+    }
+  }
+}
+
+.admin-jumbotron-form,
+.admin-project-form,
+.admin-user-form,
+.admin-client-form {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+
+  .form__status {
+    margin: 1.8rem 1.8rem 0;
+    width: calc(100% - 3.6rem);
+    border-radius: 1.2rem;
+    font-size: 1.35rem;
+    font-weight: 750;
+  }
+
+  .form__fieldset,
+  .admin-jumbotron-form__fieldset {
+    position: relative;
+    gap: 1.5rem;
+    margin: 0;
+    padding: clamp(1.6rem, 2.4vw, 2.4rem);
+    border: 0;
+    border-bottom: 0.1rem solid rgba($admin-form-text, 0.08);
+    background: transparent;
+
+    &:last-of-type {
+      border-bottom: 0;
+    }
+
+    legend {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin: 0 0 0.3rem;
+      padding: 0;
+      color: $admin-form-text;
+      font-size: clamp(1.55rem, 1.7vw, 1.9rem);
+      font-weight: 900;
+      line-height: 1.15;
+
+      &::before {
+        content: "";
+        width: 0.7rem;
+        height: 2.2rem;
+        border-radius: 999rem;
+        background: linear-gradient(180deg, $admin-form-primary, rgba($admin-form-primary, 0.48));
+        box-shadow: 0 0.5rem 1.4rem rgba($admin-form-primary, 0.18);
+      }
+    }
+  }
+
+  .admin-form-note {
+    margin: 0;
+    padding: 1.15rem 1.25rem;
+    border: 0.1rem solid rgba($admin-form-primary, 0.13);
+    border-left: 0.42rem solid rgba($admin-form-primary, 0.72);
+    border-radius: 1.2rem;
+    background-color: rgba($admin-form-primary, 0.045);
+    color: rgba($admin-form-text, 0.68);
+    font-size: 1.25rem;
+    font-weight: 750;
+    line-height: 1.55;
+  }
+
+  .admin-form-grid {
+    display: grid;
+    align-items: start;
+    gap: 1.55rem;
+
+    > .form-group,
+    > .admin-check,
+    > .admin-button,
+    > .admin-panel {
+      margin-top: 0;
+      align-self: start;
+    }
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .admin-form-grid__full {
+    @include tablet {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .form-group,
+  .mb-3 {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
+  }
+
+  .form-control,
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    border: 0.1rem solid rgba($admin-form-text, 0.12);
+    border-radius: $admin-form-field-radius;
+    background-color: $admin-form-field-bg;
+    color: $admin-form-text;
+    font-size: 1.52rem;
+    font-weight: 700;
+    box-shadow:
+      inset 0 0 0 0.1rem rgba($admin-form-surface, 0.72),
+      0 0.6rem 1.4rem rgba($color-black, 0.035);
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    &:hover {
+      border-color: rgba($admin-form-text, 0.18);
+      background-color: #fafbfc;
+    }
+
+    &:focus {
+      border-color: rgba($admin-form-primary, 0.42);
+      background-color: $admin-form-surface;
+      box-shadow:
+        0 0 0 0.35rem rgba($admin-form-primary, 0.085),
+        0 1rem 2rem rgba($color-black, 0.055),
+        inset 0 0 0 0.1rem rgba($admin-form-surface, 0.9);
+      outline: none;
+      transform: translateY(-0.05rem);
+    }
+
+    &[aria-invalid="true"] {
+      border-color: rgba(#c62828, 0.5);
+      box-shadow:
+        0 0 0 0.35rem rgba(#c62828, 0.075),
+        inset 0 0 0 0.1rem rgba($admin-form-surface, 0.82);
+    }
+  }
+
+  .form-group input,
+  .form-group select,
+  input.form-control,
+  select.form-control {
+    height: 5.8rem;
+    min-height: 5.8rem;
+    padding: 1.85rem 1.1rem 0.62rem;
+    line-height: 1.15;
+  }
+
+  .form-group textarea,
+  textarea.form-control {
+    min-height: 14.2rem;
+    padding: 2.25rem 1.1rem 1rem;
+    line-height: 1.45;
+    resize: vertical;
+  }
+
+  .form-group select,
+  select.form-control {
+    padding-right: 3.7rem;
+    cursor: pointer;
+    background-position:
+      calc(100% - 1.9rem) 50%,
+      calc(100% - 1.35rem) 50%;
+  }
+
+  .form-label,
+  .form-group label {
+    color: $admin-form-muted;
+    font-size: 1.52rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  // Floating labels corregidos: se centran respecto al input, no respecto al grupo completo.
+  .form-group > input.form-control + .form-label,
+  .form-group > select.form-control + .form-label,
+  .form-group > textarea.form-control + .form-label {
+    position: absolute;
+    left: 1.1rem;
+    z-index: 3;
+    max-width: calc(100% - 2.2rem);
+    padding: 0 0.22rem;
+    background: transparent;
+    pointer-events: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition:
+      top 180ms ease,
+      transform 180ms ease,
+      color 180ms ease,
+      font-size 180ms ease,
+      letter-spacing 180ms ease;
+  }
+
+  .form-group > input.form-control + .form-label,
+  .form-group > select.form-control + .form-label {
+    top: 2.9rem;
+    transform: translateY(-50%);
+  }
+
+  .form-group--textarea > textarea.form-control + .form-label {
+    top: 1.65rem;
+    transform: translateY(0);
+  }
+
+  .form-group > input.form-control:focus + .form-label,
+  .form-group > input.form-control:not(:placeholder-shown) + .form-label,
+  .form-group > select.form-control:focus + .form-label,
+  .form-group > select.form-control:required:valid + .form-label,
+  .form-group > textarea.form-control:focus + .form-label,
+  .form-group > textarea.form-control:not(:placeholder-shown) + .form-label,
+  .form-group > input[type="date"].form-control + .form-label,
+  .form-group > input[type="datetime-local"].form-control + .form-label,
+  .form-group > input[type="time"].form-control + .form-label {
+    top: 0.75rem;
+    transform: translateY(0);
+    color: $admin-form-primary;
+    font-size: 1.12rem;
+    letter-spacing: 0.04em;
+  }
+
+  .form-group--select > select.form-control + .form-label {
+    top: 0.75rem;
+    transform: translateY(0);
+    color: $admin-form-primary;
+    font-size: 1.12rem;
+    letter-spacing: 0.04em;
+  }
+
+  .form-group__help {
+    display: block;
+    min-height: 1.55rem;
+    margin-top: 0.55rem;
+    color: rgba($admin-form-text, 0.55);
+    font-size: 1.16rem;
+    font-weight: 750;
+    line-height: 1.38;
+  }
+
+  .form-group__error,
+  .form .text-danger {
+    display: block;
+    min-height: 1.45rem;
+    margin-top: 0.45rem;
+    color: #b42318;
+    font-size: 1.12rem;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .form-group.has-error {
+    .form-control,
+    input,
+    select,
+    textarea {
+      border-color: rgba(#c62828, 0.5);
+      background-color: rgba(#c62828, 0.035);
+    }
+
+    .form-label {
+      color: #b42318;
+    }
+  }
+
+  .form-group.has-character-counter {
+    .form-control {
+      padding-right: 7.2rem;
+    }
+  }
+
+  .form-group__counter {
+    position: absolute;
+    right: 1rem;
+    bottom: 2.1rem;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.8rem;
+    min-height: 2.2rem;
+    padding: 0.35rem 0.75rem;
+    border: 0.1rem solid rgba($admin-form-text, 0.08);
+    border-radius: 999rem;
+    background-color: rgba($admin-form-surface, 0.82);
+    color: rgba($admin-form-text, 0.56);
+    box-shadow: 0 0.4rem 1rem rgba($color-black, 0.055);
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .form-group.has-character-counter--textarea .form-group__counter,
+  .form-group--textarea .form-group__counter {
+    bottom: 2.25rem;
+  }
+
+  .form-group__counter.is-near-limit {
+    color: #730000;
+    border-color: rgba($admin-form-primary, 0.2);
+    background-color: rgba($admin-form-primary, 0.08);
+  }
+
+  .form-group__counter.is-over-limit,
+  .form-group__counter.is-under-min {
+    color: #b42318;
+    border-color: rgba(#c62828, 0.22);
+    background-color: rgba(#c62828, 0.08);
+  }
+
+  // File inputs: label estático, caja premium y botón con acento institucional.
+  .form-group--file {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+
+    > .form-label,
+    > label {
+      position: static;
+      transform: none;
+      max-width: none;
+      color: rgba($admin-form-text, 0.78);
+      font-size: 1.32rem;
+      font-weight: 900;
+      line-height: 1.25;
+      white-space: normal;
+      overflow: visible;
+      pointer-events: auto;
+    }
+
+    input[type="file"],
+    input[type="file"].form-control {
+      height: auto;
+      min-height: 6.2rem;
+      padding: 1rem;
+      border-style: dashed;
+      border-color: rgba($admin-form-primary, 0.22);
+      background:
+        linear-gradient(135deg, rgba($admin-form-primary, 0.045), rgba($admin-form-surface, 0.92)),
+        $admin-form-field-bg;
+      cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+      margin-right: 1rem;
+      padding: 0.85rem 1.25rem;
+      border: 0;
+      border-radius: 999rem;
+      background-color: $admin-form-primary;
+      color: $admin-form-surface;
+      font-size: 1.12rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition:
+        background-color 180ms ease,
+        transform 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background-color: #700000;
+      box-shadow: 0 0.8rem 1.8rem rgba($admin-form-primary, 0.18);
+      transform: translateY(-0.05rem);
+    }
+  }
+
+  .admin-file-current,
+  .admin-file-current--link {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 0.45rem;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999rem;
+    background-color: rgba($admin-form-text, 0.055);
+    color: rgba($admin-form-text, 0.68);
+    font-size: 1.08rem;
+    font-weight: 850;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .admin-file-current--link {
+    gap: 0.45rem;
+    color: $admin-form-primary;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba($admin-form-primary, 0.08);
+      outline: none;
+    }
+  }
+
+  .admin-jumbotron-form__actions {
+    padding: clamp(1.6rem, 2.4vw, 2.4rem);
+    gap: 1rem;
+    border-top: 0.1rem solid rgba($admin-form-text, 0.08);
+    background:
+      linear-gradient(135deg, rgba($admin-form-field-bg, 0.7), rgba($admin-form-surface, 0.94));
+  }
+
+  .button__submit,
+  button[type="submit"].admin-button,
+  .admin-button[type="submit"] {
+    min-height: 4.8rem;
+    border-radius: 999rem;
+    font-size: 1.25rem;
+    font-weight: 900;
+    box-shadow: 0 0.9rem 2rem rgba($admin-form-primary, 0.16);
+  }
+}
+
+// Checkboxes estilo admin, consistente para proyectos, oficinas/talleres, clientes y asociaciones.
+.admin-jumbotron-form,
+.admin-project-form,
+.admin-user-form,
+.admin-client-form {
+  .admin-check,
+  .form-checkbox {
+    position: relative;
+    width: 100%;
+    min-height: 6.1rem;
+    margin: 0;
+    padding: 1.2rem 1.35rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border: 0.1rem solid rgba($admin-form-text, 0.1);
+    border-radius: 1.2rem;
+    background:
+      linear-gradient(135deg, rgba($admin-form-surface, 0.96), rgba($admin-form-field-bg, 0.9));
+    color: rgba($admin-form-text, 0.76);
+    box-shadow:
+      0 0.8rem 2rem rgba($color-black, 0.04),
+      inset 0 0 0 0.1rem rgba($admin-form-surface, 0.72);
+    font-size: 1.28rem;
+    font-weight: 850;
+    line-height: 1.25;
+    cursor: pointer;
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+
+    input[type="checkbox"],
+    input[type="radio"] {
+      position: relative;
+      flex: 0 0 2.15rem;
+      width: 2.15rem;
+      height: 2.15rem;
+      margin: 0;
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0.18rem solid rgba($admin-form-text, 0.25);
+      background-color: $admin-form-surface;
+      cursor: pointer;
+      transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease;
+    }
+
+    input[type="checkbox"] {
+      border-radius: 0.55rem;
+    }
+
+    input[type="radio"] {
+      border-radius: 50%;
+    }
+
+    input[type="checkbox"]::after {
+      content: "";
+      position: absolute;
+      left: 0.58rem;
+      top: 0.24rem;
+      width: 0.55rem;
+      height: 1.05rem;
+      border: solid $admin-form-surface;
+      border-width: 0 0.22rem 0.22rem 0;
+      opacity: 0;
+      transform: rotate(45deg) scale(0.7);
+      transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+    }
+
+    input[type="radio"]::after {
+      content: "";
+      position: absolute;
+      inset: 0.45rem;
+      border-radius: 50%;
+      background-color: $admin-form-surface;
+      opacity: 0;
+      transform: scale(0.6);
+      transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+    }
+
+    input[type="checkbox"]:checked,
+    input[type="radio"]:checked {
+      border-color: $admin-form-primary;
+      background-color: $admin-form-primary;
+      box-shadow: 0 0 0 0.35rem rgba($admin-form-primary, 0.1);
+    }
+
+    input[type="checkbox"]:checked::after,
+    input[type="radio"]:checked::after {
+      opacity: 1;
+      transform: rotate(45deg) scale(1);
+    }
+
+    input[type="radio"]:checked::after {
+      transform: scale(1);
+    }
+
+    input[type="checkbox"]:focus-visible,
+    input[type="radio"]:focus-visible {
+      outline: none;
+      box-shadow:
+        0 0 0 0.35rem rgba($admin-form-primary, 0.14),
+        0 0.5rem 1.2rem rgba($admin-form-primary, 0.16);
+    }
+
+    span {
+      min-width: 0;
+    }
+
+    strong {
+      display: block;
+      color: rgba($admin-form-text, 0.86);
+      font-size: 1.32rem;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    small {
+      display: block;
+      margin-top: 0.28rem;
+      color: rgba($admin-form-text, 0.55);
+      font-size: 1.08rem;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    &:hover,
+    &:focus-within {
+      border-color: rgba($admin-form-primary, 0.28);
+      box-shadow:
+        0 1.1rem 2.4rem rgba($color-black, 0.065),
+        0 0 0 0.35rem rgba($admin-form-primary, 0.05),
+        inset 0 0 0 0.1rem rgba($admin-form-surface, 0.88);
+      transform: translateY(-0.08rem);
+    }
+  }
+}
+
+.admin-jumbotron-delete-form {
+  padding: 0 clamp(1.6rem, 2.4vw, 2.4rem) clamp(1.6rem, 2.4vw, 2.4rem);
+}
+
+@media (max-width: $tablet) {
+  .admin-jumbotron-form,
+  .admin-project-form,
+  .admin-user-form,
+  .admin-client-form {
+    .form__status {
+      margin-inline: 1.2rem;
+      width: calc(100% - 2.4rem);
+    }
+
+    .form__fieldset,
+    .admin-jumbotron-form__fieldset {
+      padding: 1.35rem;
+    }
+
+    .admin-form-grid {
+      gap: 1.25rem;
+    }
+
+    .form-group > input.form-control + .form-label,
+    .form-group > select.form-control + .form-label {
+      top: 2.9rem;
+    }
+
+    .form-group > input.form-control,
+    .form-group > select.form-control,
+    input.form-control,
+    select.form-control {
+      font-size: 1.42rem;
+    }
+
+    .form-group textarea,
+    textarea.form-control {
+      font-size: 1.42rem;
+    }
+
+    .admin-check,
+    .form-checkbox {
+      align-items: flex-start;
+
+      input[type="checkbox"],
+      input[type="radio"] {
+        margin-top: 0.1rem;
+      }
+    }
+  }
+}
+// ==========================================================
+// Admin Checkbox Fix - L+E Ingeniería
+// Pegar DESPUÉS de _forms.scss, _dashboard.scss y admin-forms-enhanced.scss.
+// No modifica forms.scss ni ajax-form.js.
+// ==========================================================
+
+.admin-jumbotron-form,
+.admin-project-form,
+.admin-user-form,
+.admin-client-form {
+  .form-group input[type="hidden"],
+  input[type="hidden"] {
+    display: none !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .form-group--checkbox > input[type="hidden"] + .admin-check,
+  .form-group--checkbox > input[type="hidden"] + .form-checkbox {
+    position: relative !important;
+    inset: auto !important;
+    left: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  .form-group--checkbox {
+    position: relative;
+    margin-top: 0;
+  }
+
+  .form-group--checkbox > .admin-check,
+  .form-group--checkbox > .form-checkbox,
+  .admin-form-grid > .admin-check,
+  .admin-form-grid > .form-checkbox {
+    position: relative;
+    inset: auto;
+    transform: none;
+    pointer-events: auto;
+
+    width: 100%;
+    min-height: 5.8rem;
+    margin: 0;
+    padding: 1.15rem 1.25rem;
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    border: 0.1rem solid rgba($color-dark, 0.1);
+    border-radius: 1.15rem;
+    background:
+      linear-gradient(135deg, rgba($color-white, 0.98), rgba(#f6f7f8, 0.92));
+
+    color: rgba($color-dark, 0.78);
+    cursor: pointer;
+
+    box-shadow:
+      0 0.7rem 1.7rem rgba($color-black, 0.04),
+      inset 0 0 0 0.1rem rgba($color-white, 0.74);
+
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+
+    &:hover,
+    &:focus-within {
+      border-color: rgba($color-logo-red, 0.3);
+      box-shadow:
+        0 1rem 2rem rgba($color-black, 0.06),
+        0 0 0 0.32rem rgba($color-logo-red, 0.055),
+        inset 0 0 0 0.1rem rgba($color-white, 0.88);
+      transform: translateY(-0.06rem);
+    }
+
+    span {
+      min-width: 0;
+    }
+
+    strong {
+      display: block;
+      color: rgba($color-dark, 0.86);
+      font-size: 1.32rem;
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    small {
+      display: block;
+      margin-top: 0.25rem;
+      color: rgba($color-dark, 0.55);
+      font-size: 1.08rem;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+  }
+
+  .admin-check input[type="checkbox"],
+  .form-checkbox input[type="checkbox"] {
+    position: relative;
+    flex: 0 0 2.2rem;
+
+    width: 2.2rem !important;
+    height: 2.2rem !important;
+    min-width: 2.2rem !important;
+    min-height: 2.2rem !important;
+    max-width: 2.2rem !important;
+    max-height: 2.2rem !important;
+
+    margin: 0;
+    padding: 0 !important;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: 0.18rem solid rgba($color-dark, 0.28);
+    border-radius: 0.38rem;
+    background: $color-white;
+    box-shadow: none;
+
+    cursor: pointer;
+
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  .admin-check input[type="checkbox"]::after,
+  .form-checkbox input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    left: 0.63rem;
+    top: 0.28rem;
+
+    width: 0.55rem;
+    height: 1.05rem;
+
+    border: solid $color-white;
+    border-width: 0 0.22rem 0.22rem 0;
+
+    opacity: 0;
+    transform: rotate(45deg) scale(0.72);
+
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
+  }
+
+  .admin-check input[type="checkbox"]:checked,
+  .form-checkbox input[type="checkbox"]:checked {
+    border-color: $color-logo-red;
+    background-color: $color-logo-red;
+    box-shadow: 0 0 0 0.32rem rgba($color-logo-red, 0.11);
+  }
+
+  .admin-check input[type="checkbox"]:checked::after,
+  .form-checkbox input[type="checkbox"]:checked::after {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+
+  .admin-check input[type="checkbox"]:focus-visible,
+  .form-checkbox input[type="checkbox"]:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 0.34rem rgba($color-logo-red, 0.15),
+      0 0.5rem 1.2rem rgba($color-logo-red, 0.14);
+  }
+
+  .admin-check:has(input[type="checkbox"]:checked),
+  .form-checkbox:has(input[type="checkbox"]:checked) {
+    border-color: rgba($color-logo-red, 0.34);
+    background:
+      linear-gradient(135deg, rgba($color-logo-red, 0.08), rgba($color-white, 0.96));
+
+    strong,
+    span {
+      color: $color-logo-red;
+    }
+  }
+}

@@ -1,0 +1,75 @@
+	2026-06-27 01:57:10: PDOException by 192.168.68.71
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 11'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Models\Project.php(152): Whis\Database\Drivers\PdoDriver->statement('SELECT *\n      ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Home.php(287): App\Models\Project::search2('FFFFFF', 10)
+#3 [internal function]: App\Controllers\Home->searchProjectsJson(Object(Whis\Http\Request))
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-27 01:57:13: PDOException by 192.168.68.71
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 11'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Models\Project.php(152): Whis\Database\Drivers\PdoDriver->statement('SELECT *\n      ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Home.php(287): App\Models\Project::search2('FF', 10)
+#3 [internal function]: App\Controllers\Home->searchProjectsJson(Object(Whis\Http\Request))
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-27 01:57:14: PDOException by 192.168.68.71
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 11'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Models\Project.php(152): Whis\Database\Drivers\PdoDriver->statement('SELECT *\n      ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Home.php(287): App\Models\Project::search2('F', 10)
+#3 [internal function]: App\Controllers\Home->searchProjectsJson(Object(Whis\Http\Request))
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-27 01:59:28: PDOException by 192.168.68.71
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 11'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Models\Project.php(152): Whis\Database\Drivers\PdoDriver->statement('SELECT *\n      ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Home.php(287): App\Models\Project::search2('a', 10)
+#3 [internal function]: App\Controllers\Home->searchProjectsJson(Object(Whis\Http\Request))
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
+	2026-06-27 01:59:29: PDOException by 192.168.68.71
+Uncaught exception: 'PDOException' with message 'SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''10'' at line 11'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php(39): PDOStatement->execute(Array)
+#1 E:\F22_LMASE-V2\app\Models\Project.php(152): Whis\Database\Drivers\PdoDriver->statement('SELECT *\n      ...', Array)
+#2 E:\F22_LMASE-V2\app\Controllers\Home.php(287): App\Models\Project::search2('aC', 10)
+#3 [internal function]: App\Controllers\Home->searchProjectsJson(Object(Whis\Http\Request))
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array, Object(Whis\Http\Request))
+#5 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#6 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#8 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#9 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Database\Drivers\PdoDriver.php' on line 39
+
+
