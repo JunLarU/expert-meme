@@ -1,205 +1,167 @@
 <?php
 namespace Whis\Http;
 
+use InvalidArgumentException;
+use JsonException;
 use Whis\View\ViewEngine;
 
 class Response
 {
-
-    /**
-     * response HTTP status code
-     *
-     * @var integer
-     */
     protected int $status = 200;
 
-    /**
-     * response HTTP headers
-     *
-     * @var array<string,string>
-     */
+    /** @var array<string,string> */
     protected array $headers = [];
 
-    /**
-     * response content
-     *
-     * @var string
-     */
     protected ?string $content = null;
 
-    //Getter and Setter for status
-
-    /**
-     * Get response HTTP status code
-     *
-     * @return integer
-     */
     public function status(): int
     {
         return $this->status;
     }
 
-    /**
-     * Set response HTTP status code
-     *
-     * @param integer $status
-     * @return self
-     */
     public function setStatus(int $status): self
     {
+        if ($status < 100 || $status > 599) {
+            throw new InvalidArgumentException("Invalid HTTP status code [{$status}].");
+        }
+
         $this->status = $status;
         return $this;
     }
 
-    /**
-     * Get response HTTP headers
-     *
-     * @return self
-     */
-    public function headers(?string $key = null): array | string | null
+    public function headers(?string $key = null): array|string|null
     {
-        if (is_null($key)) {
+        if ($key === null) {
             return $this->headers;
         }
 
         return $this->headers[strtolower($key)] ?? null;
     }
 
-    /**
-     * Set response HTTP header
-     *
-     * @param string $header
-     * @param string $value
-     * @return self
-     */
     public function setHeader(string $header, string $value): self
     {
+        $header = trim($header);
+
+        if ($header === '' || preg_match('/^[!#$%&\'*+.^_`|~0-9A-Za-z-]+$/', $header) !== 1) {
+            throw new InvalidArgumentException('Invalid HTTP header name.');
+        }
+
+        if (str_contains($value, "\r") || str_contains($value, "\n")) {
+            throw new InvalidArgumentException("Invalid value for HTTP header [{$header}].");
+        }
+
         $this->headers[strtolower($header)] = $value;
         return $this;
     }
 
-    /**
-     * Remove response HTTP header
-     * @param string $header
-     * @return void
-     */
-    public function removeHeader(string $header)
+    public function removeHeader(string $header): self
     {
         unset($this->headers[strtolower($header)]);
-    }
-
-    /**
-     * Set HTTP header Content-Type
-     *
-     * @return self
-     */
-    public function setContentType(string $value): self
-    {
-        $this->setHeader('Content-Type', $value);
         return $this;
     }
 
-    /**
-     * Get response content
-     *
-     * @return string
-     */
+    public function setContentType(string $value): self
+    {
+        return $this->setHeader('Content-Type', $value);
+    }
+
     public function content(): ?string
     {
         return $this->content;
     }
 
-    /**
-     * Set response content
-     *
-     * @param string $content
-     * @return self
-     */
-    public function setContent(string $content): self
+    public function setContent(?string $content): self
     {
         $this->content = $content;
         return $this;
     }
 
-    /**
-     * Prepare response to be sent, setting default Content-Type header
-     * @return void
-     */
-    public function prepare()
+    public function prepare(): void
     {
-        $this->removeHeader("Pragma");
-        if (is_null($this->content)) {
+        if ($this->content === null) {
             $this->removeHeader('Content-Type');
             $this->removeHeader('Content-Length');
-        } else {
-            $this->setHeader('Content-length', strlen($this->content));
+            return;
         }
+
+        $this->setHeader('Content-Length', (string) strlen($this->content));
     }
 
-    /**
-     * Create a new response with Content-Type: json
-     *
-     * @param array $data
-     * @return self
-     */
+    public function noStore(): self
+    {
+        return $this
+            ->setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->setHeader('Pragma', 'no-cache')
+            ->setHeader('Expires', '0');
+    }
+
+    public function publicCache(int $seconds, int $staleWhileRevalidate = 0): self
+    {
+        $seconds = max(0, $seconds);
+        $staleWhileRevalidate = max(0, $staleWhileRevalidate);
+
+        $value = "public, max-age={$seconds}";
+
+        if ($staleWhileRevalidate > 0) {
+            $value .= ", stale-while-revalidate={$staleWhileRevalidate}";
+        }
+
+        return $this->setHeader('Cache-Control', $value);
+    }
+
     public static function json(array $data): self
     {
-        array_walk_recursive($data, function (&$item) {
-            if (is_string($item)) {
-                $encoding = mb_detect_encoding($item, mb_detect_order(), true) ?: 'UTF-8';
-                $item     = mb_convert_encoding($item, 'UTF-8', $encoding);
-            }
-        });
+        try {
+            $content = json_encode(
+                $data,
+                JSON_UNESCAPED_UNICODE
+                | JSON_UNESCAPED_SLASHES
+                | JSON_INVALID_UTF8_SUBSTITUTE
+                | JSON_THROW_ON_ERROR
+            );
+        } catch (JsonException $e) {
+            throw new InvalidArgumentException('Could not encode JSON response.', 0, $e);
+        }
 
         return (new self())
             ->setContentType('application/json; charset=UTF-8')
-            ->setContent(json_encode($data, JSON_UNESCAPED_UNICODE));
+            ->setContent($content);
     }
 
-    /**
-     * Create a new response with Content-Type: text/plain
-     *
-     * @param string $text
-     * @return self
-     */
     public static function text(string $text): self
     {
-        $encoding = mb_detect_encoding($text, mb_detect_order(), true) ?: 'UTF-8';
-        $text     = mb_convert_encoding($text, 'UTF-8', $encoding);
-
         return (new self())
             ->setContentType('text/plain; charset=UTF-8')
-            ->setContent($text);
+            ->setContent(self::toUtf8($text));
     }
-    /**
-     * Redirect to another URL or URI
-     *
-     * @param string $uri
-     * @return self
-     */
-    public static function redirect(string $uri): self
+
+    public static function html(string $html): self
     {
         return (new self())
-            ->setStatus(302)
-            ->setHeader('Location', $uri);
+            ->setContentType('text/html; charset=UTF-8')
+            ->setContent(self::toUtf8($html));
+    }
+
+    public static function redirect(string $uri, int $status = 302): self
+    {
+        if (! in_array($status, [301, 302, 303, 307, 308], true)) {
+            throw new InvalidArgumentException('Invalid redirect status code.');
+        }
+
+        return (new self())
+            ->setStatus($status)
+            ->setHeader('Location', $uri)
+            ->noStore();
     }
 
     public static function view(
         string $view,
-        array | string $parameters = [],
+        array|string $parameters = [],
         ?string $layout = null,
         ?string $pageName = null
     ): self {
-        /*
-     * Permite:
-     *
-     * view('home', 'Inicio')
-     *
-     * En ese caso, el segundo argumento NO son parameters,
-     * sino el pageName.
-     */
         if (is_string($parameters)) {
-            $pageName   = $parameters;
+            $pageName = $parameters;
             $parameters = [];
         }
 
@@ -210,13 +172,9 @@ class Response
             $pageName
         );
 
-        return (new self())
-            ->setStatus(200)
-            ->setHeader('Content-Type', 'text/html; charset=utf-8')
-            ->setContentType('text/html')
-            ->setHeader("Keep-Alive", "timeout=5, max=100")
-            ->setHeader("Cache-Control", "private, max-age=86400, stale-while-revalidate=604800")
-            ->setContent($content);
+        // Las vistas son dinámicas por defecto. Las páginas realmente públicas
+        // pueden habilitar caché explícitamente con ->publicCache(...).
+        return self::html($content)->noStore();
     }
 
     public function withErrors(array $errors, int $status = 400): self
@@ -224,8 +182,11 @@ class Response
         $this->setStatus($status);
         session()->flash('_errors', $errors);
         session()->flash('_old', request()->data());
+
         return $this;
-    }public static function file(
+    }
+
+    public static function file(
         string $path,
         bool $download = false,
         ?string $downloadName = null,
@@ -234,34 +195,54 @@ class Response
         $realPath = realpath($path);
 
         if ($realPath === false || ! is_file($realPath) || ! is_readable($realPath)) {
-            return self::text('404 Not Found')->setStatus(404);
+            return self::text('404 Not Found')->setStatus(404)->noStore();
         }
 
         $content = file_get_contents($realPath);
 
         if ($content === false) {
-            return self::text('404 Not Found')->setStatus(404);
+            return self::text('404 Not Found')->setStatus(404)->noStore();
         }
 
         $response = (new self())
             ->setStatus(200)
             ->setContentType(self::mimeType($realPath))
-            ->setContent($content)
-            ->setHeader(
-                'Cache-Control',
-                $cache
-                    ? 'public, max-age=86400, stale-while-revalidate=604800'
-                    : 'private, no-store, max-age=0'
-            );
+            ->setContent($content);
+
+        $cache
+            ? $response->publicCache(86400, 604800)
+            : $response->noStore();
 
         if ($download) {
+            $filename = self::safeDownloadName($downloadName ?: basename($realPath));
+            $encoded = rawurlencode($filename);
+
             $response->setHeader(
                 'Content-Disposition',
-                'attachment; filename="' . addslashes($downloadName ?: basename($realPath)) . '"'
+                "attachment; filename=\"{$filename}\"; filename*=UTF-8''{$encoded}"
             );
         }
 
         return $response;
+    }
+
+    private static function safeDownloadName(string $name): string
+    {
+        $name = basename(str_replace('\\', '/', $name));
+        $name = preg_replace('/[\x00-\x1F\x7F"]+/u', '_', $name) ?: 'download';
+
+        return trim($name) !== '' ? trim($name) : 'download';
+    }
+
+    private static function toUtf8(string $value): string
+    {
+        if (! function_exists('mb_detect_encoding') || ! function_exists('mb_convert_encoding')) {
+            return $value;
+        }
+
+        $encoding = mb_detect_encoding($value, mb_detect_order(), true) ?: 'UTF-8';
+
+        return mb_convert_encoding($value, 'UTF-8', $encoding);
     }
 
     private static function mimeType(string $path): string
@@ -270,7 +251,7 @@ class Response
 
         return match ($extension) {
             'css'   => 'text/css; charset=UTF-8',
-            'js'    => 'text/javascript; charset=UTF-8',
+            'js',
             'mjs'   => 'text/javascript; charset=UTF-8',
             'html'  => 'text/html; charset=UTF-8',
             'xml'   => 'application/xml; charset=UTF-8',
@@ -294,10 +275,15 @@ class Response
 
     private static function detectMimeType(string $path): string
     {
+        if (! class_exists(\finfo::class)) {
+            return 'application/octet-stream';
+        }
+
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $mime  = $finfo->file($path);
+        $mime = $finfo->file($path);
 
-        return $mime ?: 'application/octet-stream';
+        return is_string($mime) && $mime !== ''
+            ? $mime
+            : 'application/octet-stream';
     }
-
 }

@@ -49,7 +49,7 @@ class Request
         return $this;
     }
 
-    public function data(?string $key = null): array | string | null
+    public function data(?string $key = null): mixed
     {
         if ($key === null) {
             return $this->data;
@@ -64,7 +64,7 @@ class Request
         return $this;
     }
 
-    public function query(?string $key = null): array | string | null
+    public function query(?string $key = null): mixed
     {
         if ($key === null) {
             return $this->query;
@@ -79,7 +79,7 @@ class Request
         return $this;
     }
 
-    public function headers(?string $key = null): array | string | null
+    public function headers(?string $key = null): mixed
     {
         if ($key === null) {
             return $this->headers;
@@ -106,11 +106,10 @@ class Request
         return str_contains($accept, 'application/json')
         || str_contains($accept, '+json')
         || str_contains($contentType, 'application/json')
-        || $requestedWith === 'xmlhttprequest'
-        || $this->headers('x-csrf-token') !== null;
+        || $requestedWith === 'xmlhttprequest';
     }
 
-    public function routeParameters(?string $key = null): array | string | null
+    public function routeParameters(?string $key = null): mixed
     {
         $parameters = $this->route->parseParameters($this->uri);
 

@@ -10,6 +10,8 @@ interface SessionStorage
 
     public function id(): string;
 
+    public function regenerate(bool $deleteOldSession = true): bool;
+
     public function get(string $key, mixed $default = null): mixed;
 
     public function set(string $key, mixed $value): void;

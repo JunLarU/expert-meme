@@ -2,7 +2,6 @@
 namespace Whis\View;
 
 use Whis\App;
-use Whis\Exceptions\HttpNotFoundException;
 
 class StencilEngine implements ViewEngine
 {
@@ -82,18 +81,32 @@ class StencilEngine implements ViewEngine
 
     protected function phpFileOutput(string $phpFile, array $parameters = []): string
     {
-        foreach ($parameters as $parameter => $value) {
-            $$parameter = $value;
+        if (! is_file($phpFile) || ! is_readable($phpFile)) {
+            throw new \RuntimeException("Compiled view not readable: {$phpFile}");
         }
 
+        $initialBufferLevel = ob_get_level();
         ob_start();
 
         try {
-            include $phpFile;
+            /*
+             * Render aislado: los parámetros de la vista no pueden sobrescribir
+             * $phpFile, $parameters ni variables internas del motor.
+             */
+            (static function (string $__whisViewFile, array $__whisViewData): void {
+                extract($__whisViewData, EXTR_SKIP);
+                include $__whisViewFile;
+            })($phpFile, $parameters);
 
-            return ob_get_clean();
+            $output = ob_get_clean();
+
+            if (! is_string($output)) {
+                throw new \RuntimeException("Could not capture compiled view output: {$phpFile}");
+            }
+
+            return $output;
         } catch (\Throwable $e) {
-            if (ob_get_level() > 0) {
+            while (ob_get_level() > $initialBufferLevel) {
                 ob_end_clean();
             }
 
@@ -106,14 +119,15 @@ class StencilEngine implements ViewEngine
         $compiledFile = $this->compiledFilePath($view);
         $isDev        = $this->isDevEnvironment();
 
-        if (! $isDev && file_exists($compiledFile)) {
+        if (! $isDev && is_file($compiledFile) && is_readable($compiledFile)) {
             return;
         }
 
-        if (! $isDev && ! file_exists($compiledFile)) {
-            throw new HttpNotFoundException("Compiled view not found: {$compiledFile}");
-        }
-
+        /*
+         * En producción se permite crear la vista PHP si todavía no existe.
+         * La escritura es atómica para evitar archivos parciales cuando llegan
+         * dos peticiones al mismo tiempo durante un despliegue.
+         */
         $sourceFile = $this->resolveViewPath($view);
 
         $this->blocks       = [];
@@ -136,16 +150,15 @@ class StencilEngine implements ViewEngine
 
         $this->ensureDirectory(dirname($compiledFile));
 
-        $this->deleteViewsNotUsed();
-
-        $result = file_put_contents(
-            $compiledFile,
-            '<?php class_exists(\'' . __CLASS__ . '\') or exit; ?>' . PHP_EOL . $code
-        );
-
-        if ($result === false || ! is_file($compiledFile)) {
-            throw new \RuntimeException("Could not write compiled view: {$compiledFile}");
+        if ($isDev) {
+            $this->deleteViewsNotUsed();
         }
+
+        $this->atomicWrite(
+            $compiledFile,
+            '<?php class_exists(\'' . __CLASS__ . '\') or exit; ?>' . PHP_EOL . $code,
+            replaceExisting: $isDev
+        );
     }
 
     /**
@@ -716,16 +729,66 @@ class StencilEngine implements ViewEngine
 
     protected function ensureDirectory(string $directory): void
     {
-        if (! is_dir($directory)) {
-            mkdir($directory, 0775, true);
+        if (
+            ! is_dir($directory)
+            && ! @mkdir($directory, 0775, true)
+            && ! is_dir($directory)
+        ) {
+            throw new \RuntimeException("Could not create compiled views directory: {$directory}");
+        }
+    }
+
+    protected function atomicWrite(
+        string $destination,
+        string $content,
+        bool $replaceExisting = true
+    ): void {
+        $lockPath = $destination . '.lock';
+        $lock = fopen($lockPath, 'c');
+
+        if ($lock === false) {
+            throw new \RuntimeException("Could not lock compiled view: {$destination}");
+        }
+
+        try {
+            if (! flock($lock, LOCK_EX)) {
+                throw new \RuntimeException("Could not lock compiled view: {$destination}");
+            }
+
+            // Otra petición de producción pudo haber publicado la vista mientras esperábamos.
+            if (! $replaceExisting && is_file($destination) && is_readable($destination)) {
+                return;
+            }
+
+            $temporary = $destination . '.' . bin2hex(random_bytes(6)) . '.tmp';
+            $written = file_put_contents($temporary, $content, LOCK_EX);
+
+            if ($written === false || $written !== strlen($content)) {
+                @unlink($temporary);
+                throw new \RuntimeException("Could not write compiled view: {$destination}");
+            }
+
+            @chmod($temporary, 0664);
+
+            if (DIRECTORY_SEPARATOR === '\\' && is_file($destination)) {
+                @unlink($destination);
+            }
+
+            if (! @rename($temporary, $destination)) {
+                @unlink($temporary);
+                throw new \RuntimeException("Could not publish compiled view: {$destination}");
+            }
+        } finally {
+            @flock($lock, LOCK_UN);
+            @fclose($lock);
         }
     }
 
     protected function isDevEnvironment(): bool
     {
-        $env = strtolower((string) config('app.env'));
+        $env = strtolower(trim((string) config('app.env')));
 
-        return str_contains($env, 'dev') || str_contains($env, 'local');
+        return in_array($env, ['dev', 'development', 'local'], true);
     }
 
     protected function deleteViewsNotUsed(): void

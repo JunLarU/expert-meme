@@ -2,6 +2,8 @@
 
 namespace Whis\Http;
 
+use InvalidArgumentException;
+
 class Controller
 {
     protected array $middlewares = [];
@@ -13,23 +15,33 @@ class Controller
 
     public function setMiddlewares(array $middlewares): self
     {
-        $this->middlewares = array_map(function ($middleware) {
-            /*
-             * Permite:
-             * - AuthMiddleware::class
-             * - new ApiAbilityMiddleware('projects:read')
-             * - cualquier middleware ya instanciado
-             */
-            if (is_object($middleware)) {
-                return $middleware;
+        $resolved = [];
+
+        foreach ($middlewares as $middleware) {
+            if ($middleware instanceof Middleware) {
+                $resolved[] = $middleware;
+                continue;
             }
 
             if (is_string($middleware) && class_exists($middleware)) {
-                return new $middleware();
+                $instance = new $middleware();
+
+                if (! $instance instanceof Middleware) {
+                    throw new InvalidArgumentException(
+                        "Middleware [{$middleware}] must implement " . Middleware::class . '.'
+                    );
+                }
+
+                $resolved[] = $instance;
+                continue;
             }
 
-            return $middleware;
-        }, $middlewares);
+            $name = is_string($middleware) ? $middleware : get_debug_type($middleware);
+
+            throw new InvalidArgumentException("Invalid middleware [{$name}].");
+        }
+
+        $this->middlewares = $resolved;
 
         return $this;
     }
@@ -54,7 +66,7 @@ class Controller
                 'ok'      => false,
                 'message' => $message,
                 'errors'  => $errors,
-            ])->setStatus($status);
+            ])->setStatus($status)->noStore();
         }
 
         return back()->withErrors($errors, $status);
@@ -85,7 +97,7 @@ class Controller
             'ok'      => false,
             'message' => $message,
             'errors'  => $errors,
-        ])->setStatus($status);
+        ])->setStatus($status)->noStore();
     }
 
     protected function jsonSuccess(

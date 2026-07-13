@@ -2,10 +2,13 @@
 namespace Whis\Routing;
 
 use Closure;
+use InvalidArgumentException;
 use ReflectionFunction;
+use RuntimeException;
 use Whis\Container\DependencyInjection;
 use Whis\Exceptions\HttpNotFoundException;
 use Whis\Http\HttpMethod;
+use Whis\Http\Middleware;
 use Whis\Http\Request;
 use Whis\Http\Response;
 
@@ -69,14 +72,23 @@ class Router
         $middlewares = $route->middlewares();
 
         if (is_array($action)) {
-            $controller = new $action[0]();
+            [$controllerClass, $method] = $action;
 
+            if (! class_exists($controllerClass) || ! method_exists($controllerClass, $method)) {
+                throw new RuntimeException(
+                    "Route action [{$controllerClass}::{$method}] is not callable."
+                );
+            }
+
+            $controller = new $controllerClass();
             $action[0] = $controller;
 
-            $middlewares = array_merge(
-                $middlewares,
-                $controller->middlewares()
-            );
+            if (method_exists($controller, 'middlewares')) {
+                $middlewares = array_merge(
+                    $middlewares,
+                    $controller->middlewares()
+                );
+            }
         }
 
         $parameters = DependencyInjection::resolveParameters(
@@ -93,13 +105,29 @@ class Router
 
     protected function runMiddlewares(Request $request, array $middlewares, Closure $target): Response
     {
-        if (count($middlewares) === 0) {
-            return $target();
+        if ($middlewares === []) {
+            $response = $target();
+
+            if (! $response instanceof Response) {
+                throw new RuntimeException(
+                    'Route actions must return an instance of ' . Response::class . '.'
+                );
+            }
+
+            return $response;
         }
 
-        return $middlewares[0]->handle(
+        $middleware = $middlewares[0];
+
+        if (! $middleware instanceof Middleware) {
+            throw new RuntimeException(
+                'Invalid middleware in route pipeline: ' . get_debug_type($middleware) . '.'
+            );
+        }
+
+        $response = $middleware->handle(
             $request,
-            function (Request $request) use ($middlewares, $target) {
+            function (Request $request) use ($middlewares, $target): Response {
                 return $this->runMiddlewares(
                     $request,
                     array_slice($middlewares, 1),
@@ -107,10 +135,19 @@ class Router
                 );
             }
         );
+
+        if (! $response instanceof Response) {
+            throw new RuntimeException(
+                'Middlewares must return an instance of ' . Response::class . '.'
+            );
+        }
+
+        return $response;
     }
 
     protected function registerRoute(HttpMethod $method, string $uri, Closure | array $action): Route
     {
+        $this->assertValidAction($action);
         $uri = $this->applyCurrentGroupPrefix($uri);
 
         $route = new Route($uri, $action);
@@ -124,6 +161,26 @@ class Router
         $this->routes[$method->value][] = $route;
 
         return $route;
+    }
+
+
+    protected function assertValidAction(Closure|array $action): void
+    {
+        if ($action instanceof Closure) {
+            return;
+        }
+
+        if (
+            count($action) !== 2
+            || ! is_string($action[0] ?? null)
+            || ! is_string($action[1] ?? null)
+            || ! class_exists($action[0])
+            || ! method_exists($action[0], $action[1])
+        ) {
+            throw new InvalidArgumentException(
+                'Controller route actions must use [Controller::class, method].'
+            );
+        }
     }
 
     protected function registerMany(HttpMethod $method, array $routes): array
@@ -141,11 +198,11 @@ class Router
         if ($this->isAssociativeArray($routes)) {
             foreach ($routes as $uri => $action) {
                 if (! is_string($uri)) {
-                    continue;
+                    throw new InvalidArgumentException('Route URI must be a string.');
                 }
 
                 if (! $action instanceof Closure && ! is_array($action)) {
-                    continue;
+                    throw new InvalidArgumentException('Route action must be a Closure or controller action array.');
                 }
 
                 $registered[] = $this->registerRoute($method, $uri, $action);
@@ -169,11 +226,11 @@ class Router
             $action = $routes[$i + 1] ?? null;
 
             if (! is_string($uri)) {
-                continue;
+                throw new InvalidArgumentException('Route URI must be a string.');
             }
 
             if (! $action instanceof Closure && ! is_array($action)) {
-                continue;
+                throw new InvalidArgumentException('Route action must be a Closure or controller action array.');
             }
 
             $registered[] = $this->registerRoute($method, $uri, $action);
