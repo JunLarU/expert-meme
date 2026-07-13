@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../F16_ISASITE"
+		},
+		{
+			"path": "C:/Users/juanj/Downloads/whis-api-token-auth"
+		}
+	],
+	"settings": {
+		"editor.tokenColorCustomizations": {
+			"comments": "",
+			"textMateRules": []
+		}
+	}
+}

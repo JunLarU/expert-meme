@@ -9,6 +9,9 @@ use App\Controllers\Admin\OfficeWorkshops as AdminOfficeWorkshops;
 use App\Controllers\Admin\Projects;
 use App\Controllers\Admin\Search as AdminSearch;
 use App\Controllers\Admin\Users;
+use App\Controllers\Admin\ValuationClients;
+use App\Controllers\Admin\ValuationMessages;
+use App\Controllers\Admin\ValuationUnits;
 use App\Controllers\Home;
 use App\Controllers\Proyectos;
 use App\Middlewares\AuthMiddleware;
@@ -23,7 +26,8 @@ CONTROLLER(Home::class, '', [
         ''                              => 'home',
         'nosotros'                      => 'nosotros',
         'proyectos'                     => 'proyectos',
-        'servicios'                     => 'servicios',
+        'servicio/estructura'           => 'servicios',
+        'servicio/valuacion'            => 'valuacion',
         'contacto'                      => 'contacto',
         'site-api/projects'             => 'projectsJson',
         'site-api/map/projects'         => 'projectsMapJson',
@@ -32,7 +36,8 @@ CONTROLLER(Home::class, '', [
         'site-api/search/projects' => 'searchProjectsJson',
     ],
     'post' => [
-        'contact/send' => 'contactSend',
+        'contact/send'           => 'contactSend',
+        'valuacion/contact/send' => 'valuationContactSend',
     ],
 
 ]);
@@ -83,6 +88,19 @@ GROUP('/admin', function () {
     POST('/mensajes/{id:\d+}/archivar', [Messages::class, 'archive']);
     POST('/mensajes/{id:\d+}/spam', [Messages::class, 'spam']);
     POST('/mensajes/{id:\d+}/eliminar', [Messages::class, 'destroy']);
+
+    GET('/valuacion/mensajes', [ValuationMessages::class, 'index']);
+    GET('/valuacion/mensajes/{id:\d+}', [ValuationMessages::class, 'show']);
+    GET('/valuacion/mensajes/{id:\d+}/eliminar', [ValuationMessages::class, 'delete']);
+
+    POST('/valuacion/mensajes/{id:\d+}/actualizar', [ValuationMessages::class, 'update']);
+    POST('/valuacion/mensajes/{id:\d+}/leer', [ValuationMessages::class, 'markRead']);
+    POST('/valuacion/mensajes/{id:\d+}/seguimiento', [ValuationMessages::class, 'markInProgress']);
+    POST('/valuacion/mensajes/{id:\d+}/respondido', [ValuationMessages::class, 'markAnswered']);
+    POST('/valuacion/mensajes/{id:\d+}/archivar', [ValuationMessages::class, 'archive']);
+    POST('/valuacion/mensajes/{id:\d+}/spam', [ValuationMessages::class, 'spam']);
+    POST('/valuacion/mensajes/{id:\d+}/eliminar', [ValuationMessages::class, 'destroy']);
+
 
     GET('/usuarios', [Users::class, 'index']);
     GET('/usuarios/crear', [Users::class, 'create']);
@@ -165,7 +183,25 @@ GROUP('/admin', function () {
 //     POST('/contact/send', [SiteContactController::class, 'send']);
 
 // }, [SiteApiMiddleware::class]);
+Route::controller(ValuationUnits::class, '/admin/valuacion/unidades', function () {
+    get('', 'index');
+    get('/crear', 'create');
+    post('', 'store');
+    get('/{id:\\d+}/editar', 'edit');
+    post('/{id:\\d+}/actualizar', 'update');
+    get('/{id:\\d+}/eliminar', 'delete');
+    post('/{id:\\d+}/eliminar', 'destroy');
+}, [AuthMiddleware::class]);
 
+Route::controller(ValuationClients::class, '/admin/valuacion/clientes', function () {
+    get('', 'index');
+    get('/crear', 'create');
+    post('', 'store');
+    get('/{id:\\d+}/editar', 'edit');
+    post('/{id:\\d+}/actualizar', 'update');
+    get('/{id:\\d+}/eliminar', 'delete');
+    post('/{id:\\d+}/eliminar', 'destroy');
+}, [AuthMiddleware::class]);
 Route::get('/form', [Home::class, 'store']);
 //  Route::get('/{id:\d+}', function (int $id) {
 //      return json(['id' => $id]);

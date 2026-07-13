@@ -1,0 +1,638 @@
+{%
+$valuationClients = $valuationClients ?? ($clients ?? []);
+$valuationCarouselClients = $valuationCarouselClients ?? $valuationClients;
+$valuationCarouselClients = is_array($valuationCarouselClients ?? null) ? array_values($valuationCarouselClients) : [];
+$valuationCarouselClientCount = count($valuationCarouselClients);
+$valuationUnits = is_array($valuationUnits ?? null) ? $valuationUnits : [];
+$primaryValuationUnit = $primaryValuationUnit ?? null;
+$secondaryValuationUnits = is_array($secondaryValuationUnits ?? null) ? $secondaryValuationUnits : [];
+
+$valuationDisplayUnits = $valuationUnits;
+
+if (empty($valuationDisplayUnits)) {
+    if (is_array($primaryValuationUnit) && !empty($primaryValuationUnit)) {
+        $valuationDisplayUnits[] = $primaryValuationUnit;
+    }
+
+    if (!empty($secondaryValuationUnits)) {
+        $valuationDisplayUnits = array_merge($valuationDisplayUnits, $secondaryValuationUnits);
+    }
+}
+
+$valuationDisplayUnits = array_values(array_filter($valuationDisplayUnits, fn($unit) => is_array($unit) && !empty($unit)));
+%}
+
+<section class="about-hero valuation-hero lazy-bg" data-background-src="/images/JTRON.jpg"
+    aria-labelledby="valuation-hero-title">
+    <div class="about-hero__overlay">
+        <div class="about-hero__content valuation-hero__content">
+            <p class="about-hero__eyebrow">Servicios</p>
+
+            <h1 id="valuation-hero-title">TE DAMOS EL VALOR</h1>
+
+            <p class="about-hero__copy">
+                En L+E Ingeniería integramos criterios técnicos, conocimiento del mercado y análisis documental; para desarrollar avaluos y estudios de valor que sean la herramienta en la toma de decisiones patrimoniales, comerciales y de inversión.
+            </p>
+
+            <div class="valuation-hero__actions" aria-label="Acciones principales de valuación">
+                <a href="#servicios-valuacion" data-smooth-scroll
+                    class="button__primary button__primary--light about-hero__button">
+                    Ver servicios <span aria-hidden="true">→</span>
+                </a>
+
+                <!-- <a href="#cobertura-valuacion" data-smooth-scroll class="valuation-hero__secondary">
+                    Ver cobertura
+                </a> -->
+            </div>
+
+            <!-- <ul class="valuation-hero__meta" aria-label="Cobertura de servicio de valuación">
+                <li>Querétaro</li>
+                <li>San Miguel de Allende</li>
+                <li>Celaya</li>
+                <li>Apaseo el Grande</li>
+            </ul> -->
+        </div>
+    </div>
+</section>
+
+<section class="valuation-page" id="valuacion" aria-labelledby="valuation-title">
+    <div class="valuation-page__gradient-bg" aria-hidden="true"></div>
+
+    <div class="valuation-page__inner">
+        <section class="valuation-representatives" aria-labelledby="valuation-representatives-title">
+            <div class="valuation-representatives__content">
+                <div class="section-heading valuation-representatives__heading">
+                    <p>Representación</p>
+                    <h2 id="valuation-representatives-title">Unidades de valuación aliadas</h2>
+                </div>
+
+                <p>
+                    Te acompañamos en una parte clave para conseguir tu casa: nos encargamos de hacer el avalúo comercial de tu próxima vivienda. Trabajamos de la mano con tu banco, Infonavit o Fovissste para certificar el valor del inmueble en garantía, facilitando que tu proceso de crédito avance con éxito.
+                </p>
+            </div>
+
+            <div class="valuation-representatives__grid" role="list">
+                {% foreach ($valuationDisplayUnits as $unit): %}
+                {%
+                $unitId = (int) ($unit['id'] ?? 0);
+                $unitName = trim((string) ($unit['name'] ?? 'Unidad de valuación'));
+                $unitShortName = trim((string) (($unit['short_name'] ?? '') ?: $unitName));
+                $unitRole = trim((string) ($unit['role_label'] ?? ''));
+                $unitRole = $unitRole !== '' ? $unitRole : 'Unidad de valuación';
+
+                if (preg_match('/principal|primaria|primary|main|secundaria|secundario|secondary/i', $unitRole)) {
+                    $unitRole = 'Unidad de valuación';
+                }
+                $unitDescription = trim((string) (($unit['description'] ?? '') ?: 'Respaldo técnico y documental para servicios de valuación.'));
+                $unitUrl = trim((string) ($unit['url'] ?? ''));
+                $unitLogoUrl = trim((string) ($unit['logo_url'] ?? ''));
+                $unitLogoAlt = trim((string) (($unit['logo_alt'] ?? '') ?: ('Logotipo de ' . $unitName)));
+                $unitIsPrimary = (int) ($unit['is_primary'] ?? 0) === 1;
+
+                if (!$unitIsPrimary && is_array($primaryValuationUnit ?? null)) {
+                    $unitIsPrimary = $unitId > 0 && (int) ($primaryValuationUnit['id'] ?? 0) === $unitId;
+                }
+
+                $unitClass = $unitIsPrimary ? ' valuation-unit-card--accent' : '';
+                $unitInitialsSource = $unitShortName !== '' ? $unitShortName : $unitName;
+                $unitWords = preg_split('/\s+/', trim($unitInitialsSource)) ?: [];
+                $unitWords = array_values(array_filter($unitWords));
+
+                if (count($unitWords) > 1) {
+                    $unitInitials = mb_substr($unitWords[0], 0, 1) . mb_substr($unitWords[1], 0, 1);
+                } else {
+                    $unitInitials = mb_substr($unitInitialsSource, 0, 2);
+                }
+
+                $unitInitials = strtoupper($unitInitials ?: 'UV');
+                %}
+
+                <article class="valuation-unit-card{{{ ($unitClass) }}}" role="listitem">
+                    <div class="valuation-unit-card__topline">
+                        <span class="valuation-unit-card__logo" aria-hidden="true">
+                            {% if ($unitLogoUrl !== ''): %}
+                            <img class="lazy-image" data-src="{{{ ($unitLogoUrl) }}}" alt="{{{ ($unitLogoAlt) }}}"
+                                loading="lazy" decoding="async" width="260" height="120">
+                            {% else: %}
+                            <span class="valuation-unit-card__placeholder">{{{ ($unitInitials) }}}</span>
+                            {% endif; %}
+                        </span>
+
+                        <p class="valuation-unit-card__tag">{{{ ($unitRole) }}}</p>
+                    </div>
+
+                    <h3>{{{ ($unitShortName) }}}</h3>
+                    <p>{{{ ($unitDescription) }}}</p>
+
+                    {% if ($unitUrl !== ''): %}
+                    <a class="valuation-unit-card__link" href="{{{ ($unitUrl) }}}" target="_blank" rel="noopener noreferrer">
+                        Ver unidad <span aria-hidden="true">→</span>
+                    </a>
+                    {% endif; %}
+                </article>
+                {% endforeach; %}
+
+                {% if (empty($valuationDisplayUnits)): %}
+                <article class="valuation-unit-card valuation-unit-card--empty" role="listitem">
+                    <div class="valuation-unit-card__topline">
+                        <span class="valuation-unit-card__logo" aria-hidden="true">
+                            <span class="valuation-unit-card__placeholder">UV</span>
+                        </span>
+
+                        <p class="valuation-unit-card__tag">Sin unidades activas</p>
+                    </div>
+
+                    <h3>No se han encontrado unidades de valuación</h3>
+                    <p>
+                        Pronto tendremos más unidades de valuación, sigue atento a nuestras actualizaciones para conocer los servicios disponibles.
+                    </p>
+                </article>
+                {% endif; %}
+            </div>
+        </section>
+        
+        <header class="valuation-page__header">
+            <div class="section-heading section-heading--center valuation-page__heading">
+                <p>Valuación L+E Ingeniería</p>
+                <h2 id="valuation-title">Avalúos con respaldo técnico y enfoque comercial</h2>
+            </div>
+
+            <p class="valuation-page__lead">
+                La valuación no es solamente asignar un monto: es entender el activo, su contexto, su documentación,
+                sus condiciones físicas y su potencial de uso. Por eso, L+E Ingeniería (Valuación) acompaña cada
+                servicio con una lectura técnica clara, ordenada y orientada a decisiones reales.
+            </p>
+        </header>
+
+        <div class="valuation-page__summary" aria-label="Diferenciadores de L+E Ingeniería Valuación">
+            <article class="valuation-page__summary-card">
+                <span>01</span>
+                <strong>Representación especializada</strong>
+                <p>Atención respaldada por unidades de valuación aliadas para integrar entregables profesionales.</p>
+            </article>
+
+            <article class="valuation-page__summary-card">
+                <span>02</span>
+                <strong>Criterio de ingeniería</strong>
+                <p>Análisis del inmueble, maquinaria, proyecto o activo desde una visión técnica y de mercado.</p>
+            </article>
+
+            <article class="valuation-page__summary-card">
+                <span>03</span>
+                <strong>Entrega clara</strong>
+                <p>Reportes ordenados, sustentados y comprensibles para propietarios, empresas e inversionistas.</p>
+            </article>
+        </div>
+
+        
+    </div>
+</section>
+
+<section class="valuation-services" aria-labelledby="valuation-services-title" id="servicios-valuacion">
+    <div class="valuation-services__inner">
+        <header class="valuation-services__header">
+            <div class="section-heading section-heading--center valuation-services__heading">
+                <p>Servicios de valuación</p>
+                <h2 id="valuation-services-title">Soluciones para inmuebles, activos, proyectos y decisiones comerciales</h2>
+            </div>
+
+            <p class="valuation-services__lead">
+                Desarrollamos servicios para clientes que necesitan conocer, sustentar o comparar el valor de un activo,
+                ya sea para compraventa, negociación, planeación patrimonial, inversión, garantías, control interno o
+                evaluación de proyectos.
+            </p>
+        </header>
+
+        <div class="valuation-services__grid" role="list">
+            <article class="valuation-card valuation-card--featured" role="listitem">
+                <span class="valuation-card__number">01</span>
+
+                <div class="valuation-card__content">
+                    <div class="valuation-card__icon" aria-hidden="true">AI</div>
+                    <p class="valuation-card__eyebrow">Valor comercial</p>
+                    <h3>Avalúos inmobiliarios comerciales</h3>
+                    <p>
+                        Avalúos para casas, terrenos, locales, bodegas, naves, oficinas y activos inmobiliarios que
+                        requieren una opinión de valor sustentada con información física, documental y de mercado.
+                    </p>
+
+                    <ul class="valuation-card__list">
+                        <li>Inspección y levantamiento de características del inmueble.</li>
+                        <li>Análisis de ubicación, estado físico, uso y entorno.</li>
+                        <li>Soporte para compraventa, inversión o toma de decisiones.</li>
+                    </ul>
+
+                    <a href="#cotizar-valuacion" data-smooth-scroll class="valuation-card__link">
+                        Solicitar servicio <span>→</span>
+                    </a>
+                </div>
+            </article>
+
+            <article class="valuation-card" role="listitem">
+                <span class="valuation-card__number">02</span>
+
+                <div class="valuation-card__content">
+                    <div class="valuation-card__icon" aria-hidden="true">EV</div>
+                    <p class="valuation-card__eyebrow">Análisis patrimonial</p>
+                    <h3>Estudios de valor</h3>
+                    <p>
+                        Estudios útiles cuando se requiere una aproximación técnica y comercial del valor de un bien,
+                        proyecto o alternativa, antes de avanzar hacia una negociación, inversión o regularización.
+                    </p>
+
+                    <ul class="valuation-card__list">
+                        <li>Investigación comparativa y lectura del mercado.</li>
+                        <li>Integración de antecedentes y condiciones del activo.</li>
+                        <li>Reporte ejecutivo para evaluación interna.</li>
+                    </ul>
+
+                    <a href="#cotizar-valuacion" data-smooth-scroll class="valuation-card__link">
+                        Solicitar servicio <span>→</span>
+                    </a>
+                </div>
+            </article>
+
+            <article class="valuation-card" role="listitem">
+                <span class="valuation-card__number">03</span>
+
+                <div class="valuation-card__content">
+                    <div class="valuation-card__icon" aria-hidden="true">ME</div>
+                    <p class="valuation-card__eyebrow">Activos productivos</p>
+                    <h3>Avalúos de maquinaria y equipo</h3>
+                    <p>
+                        Valuación de equipos, maquinaria, herramientas, líneas de proceso y activos productivos para
+                        operaciones industriales, comerciales o empresariales.
+                    </p>
+
+                    <ul class="valuation-card__list">
+                        <li>Identificación, estado físico y características relevantes.</li>
+                        <li>Soporte para inventario, garantía, venta o control de activos.</li>
+                        <li>Lectura técnica apoyada en experiencia de ingeniería.</li>
+                    </ul>
+
+                    <a href="#cotizar-valuacion" data-smooth-scroll class="valuation-card__link">
+                        Solicitar servicio <span>→</span>
+                    </a>
+                </div>
+            </article>
+
+            <article class="valuation-card" role="listitem">
+                <span class="valuation-card__number">04</span>
+
+                <div class="valuation-card__content">
+                    <div class="valuation-card__icon" aria-hidden="true">VP</div>
+                    <p class="valuation-card__eyebrow">Factibilidad y desarrollo</p>
+                    <h3>Valuación de proyectos</h3>
+                    <p>
+                        Análisis para proyectos en planeación, desarrollo, ampliación o inversión, considerando el
+                        potencial del activo, su alcance técnico, contexto comercial y condiciones de ejecución.
+                    </p>
+
+                    <ul class="valuation-card__list">
+                        <li>Evaluación de alternativas y escenarios de valor.</li>
+                        <li>Revisión de información técnica y documental disponible.</li>
+                        <li>Acompañamiento para decisiones de inversión o desarrollo.</li>
+                    </ul>
+
+                    <a href="#cotizar-valuacion" data-smooth-scroll class="valuation-card__link">
+                        Solicitar servicio <span>→</span>
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="valuation-coverage" id="cobertura-valuacion" aria-labelledby="valuation-coverage-title">
+    <div class="valuation-coverage__inner">
+        <div class="valuation-coverage__media">
+            <img class="lazy-image" data-src="/images/STATS.jpg"
+                alt="Análisis técnico de inmueble para valuación en Querétaro y Guanajuato" loading="lazy"
+                decoding="async" width="1200" height="900">
+        </div>
+
+        <div class="valuation-coverage__content">
+            <div class="section-heading valuation-coverage__heading">
+                <p>Cobertura</p>
+                <h2 id="valuation-coverage-title">Atención en Querétaro y zonas específicas de Guanajuato</h2>
+            </div>
+
+            <p>
+                L+E Ingeniería (Valuación) se ubica en Santiago de Querétaro. Desde esta base se atienden avalúos en
+                Querétaro y, de manera puntual, en municipios seleccionados de Guanajuato para mantener control de
+                visitas, tiempos de respuesta y calidad documental.
+            </p>
+
+            <div class="valuation-coverage__lists" aria-label="Zonas donde L+E Ingeniería realiza avalúos">
+                <article>
+                    <strong>Querétaro</strong>
+                    <ul>
+                        <li>Santiago de Querétaro.</li>
+                        <li>Zona metropolitana.</li>
+                        <li>Municipios del estado según alcance y disponibilidad.</li>
+                    </ul>
+                </article>
+
+                <article>
+                    <strong>Guanajuato</strong>
+                    <ul>
+                        <li>San Miguel de Allende.</li>
+                        <li>Celaya.</li>
+                        <li>Apaseo el Grande.</li>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="valuation-process" id="metodologia-valuacion" aria-labelledby="valuation-process-title">
+    <div class="valuation-process__inner">
+        <div class="valuation-process__intro">
+            <div class="section-heading valuation-process__heading">
+                <p>Metodología</p>
+                <h2 id="valuation-process-title">Proceso claro desde la solicitud hasta la entrega</h2>
+            </div>
+
+            <p>
+                Cada avalúo se desarrolla con una ruta ordenada: entendemos la necesidad, revisamos documentación,
+                visitamos el activo cuando corresponde, integramos el análisis y entregamos un resultado claro para el
+                uso previsto.
+            </p>
+
+            <a href="#cotizar-valuacion" data-smooth-scroll class="button__primary valuation-process__button">
+                Iniciar solicitud <span aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <ol class="valuation-process__steps">
+            <li>
+                <span>01</span>
+                <h3>Solicitud y alcance</h3>
+                <p>Identificamos el tipo de bien, ubicación, objetivo del avalúo y documentación disponible.</p>
+            </li>
+
+            <li>
+                <span>02</span>
+                <h3>Revisión documental</h3>
+                <p>Ordenamos antecedentes, datos generales, uso, medidas, características y restricciones relevantes.</p>
+            </li>
+
+            <li>
+                <span>03</span>
+                <h3>Inspección y análisis</h3>
+                <p>Realizamos levantamiento, lectura técnica, investigación de mercado y evaluación del activo.</p>
+            </li>
+
+            <li>
+                <span>04</span>
+                <h3>Entrega y seguimiento</h3>
+                <p>Presentamos el resultado, aclaramos observaciones y damos seguimiento a la necesidad del cliente.</p>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="valuation-clients" id="clientes-valuacion" aria-labelledby="valuation-clients-title">
+    <div class="valuation-clients__inner">
+        <div class="section-heading section-heading--center valuation-clients__heading">
+            <p>Clientes y sectores</p>
+            <h2 id="valuation-clients-title">Confianza para valorar activos con claridad</h2>
+        </div>
+
+        <p class="valuation-clients__lead">
+            Atendemos solicitudes para propietarios, desarrolladores, empresas, inversionistas, despachos y clientes que
+            requieren información de valor para decidir con fundamento.
+        </p>
+
+        <div class="valuation-logo-slider" data-valuation-clients-carousel data-speed="58" data-min-cycles="4"
+            data-client-count="{{ ($valuationCarouselClientCount) }}" aria-label="Carrusel de clientes de L+E Ingeniería Valuación">
+            <div class="valuation-logo-slider__viewport">
+                <div class="valuation-logo-slider__track" data-valuation-clients-track role="list">
+                    {% foreach ($valuationCarouselClients as $client): %}
+                    {%
+                    $clientName = trim((string) ($client['name'] ?? 'Cliente de valuación'));
+                    $clientUrl = trim((string) ($client['url'] ?? ''));
+                    $logoUrl = trim((string) ($client['logo_url'] ?? ''));
+                    $logoAlt = trim((string) (($client['logo_alt'] ?? '') ?: ('Logotipo de ' . $clientName)));
+                    $clientInitials = trim((string) ($client['initials'] ?? ''));
+                    $clientIndustry = trim((string) ($client['industry'] ?? ''));
+                    $clientCity = trim((string) ($client['city'] ?? ''));
+                    $clientState = trim((string) ($client['state'] ?? ''));
+
+                    if ($clientInitials === '') {
+                        $clientInitials = mb_substr($clientName, 0, 2);
+                    }
+
+                    $clientMeta = $clientIndustry;
+
+                    if ($clientMeta === '') {
+                        $clientMeta = trim(implode(', ', array_filter([$clientCity, $clientState])));
+                    }
+
+                    if ($clientMeta === '') {
+                        $clientMeta = 'Cliente de valuación';
+                    }
+                    %}
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="{{{ ($clientName) }}}">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true">
+                                {% if ($logoUrl !== ''): %}
+                                <img src="{{{ ($logoUrl) }}}" alt="{{{ ($logoAlt) }}}"
+                                    loading="eager" decoding="async" width="250" height="100">
+                                {% else: %}
+                                <span class="valuation-logo-slider__placeholder">{{{ (strtoupper($clientInitials)) }}}</span>
+                                {% endif; %}
+                            </span>
+
+                            <span class="valuation-logo-slider__overlay">
+                                <strong>{{{ ($clientName) }}}</strong>
+                                <small>{{{ ($clientMeta) }}}</small>
+                            </span>
+                        </div>
+                    </article>
+                    {% endforeach; %}
+
+                    {% if (empty($valuationCarouselClients)): %}
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Inmobiliario">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">IN</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Inmobiliario</strong><small>Avalúos comerciales</small></span>
+                        </div>
+                    </article>
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Industrial">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">ID</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Industrial</strong><small>Maquinaria y equipo</small></span>
+                        </div>
+                    </article>
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Comercial">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">CO</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Comercial</strong><small>Estudios de valor</small></span>
+                        </div>
+                    </article>
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Patrimonial">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">PA</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Patrimonial</strong><small>Decisiones con soporte</small></span>
+                        </div>
+                    </article>
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Desarrollo">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">DE</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Desarrollo</strong><small>Valuación de proyectos</small></span>
+                        </div>
+                    </article>
+
+                    <article class="valuation-logo-slider__item" data-valuation-logo-item role="listitem" tabindex="0">
+                        <div class="valuation-logo-slider__card" role="group" aria-label="Inversión">
+                            <span class="valuation-logo-slider__logo" aria-hidden="true"><span class="valuation-logo-slider__placeholder">IV</span></span>
+                            <span class="valuation-logo-slider__overlay"><strong>Inversión</strong><small>Análisis de activos</small></span>
+                        </div>
+                    </article>
+                    {% endif; %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services-quote services-quote--valuation lazy-bg" id="cotizar-valuacion" data-background-src="/images/JTRON.jpg"
+    aria-labelledby="valuation-quote-title">
+    <div class="services-quote__overlay">
+        <div class="services-quote__inner">
+            <div class="services-quote__content">
+                <div class="section-heading section-heading--light services-quote__heading">
+                    <p>Solicitud</p>
+                    <h2 id="valuation-quote-title">Cuéntanos qué necesitas valuar</h2>
+                </div>
+
+                <p>
+                    Comparte los datos principales de tu inmueble, maquinaria, equipo o proyecto. Revisaremos el tipo
+                    de valuación, alcance y documentación necesaria para darte una ruta de atención clara.
+                </p>
+
+                <div class="services-quote__contact contacto__links" aria-label="Medios de contacto directo">
+                    <a href="mailto:construye@leingenieria.com" class="button__mail services-quote__contact-button"
+                        title="Enviar correo a L+E Ingeniería" aria-label="Enviar correo a L+E Ingeniería">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                d="M4 5h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V7c0-1.1.9-2 2-2Zm0 3.2v8.8h16V8.2l-7.35 5.15a1.1 1.1 0 0 1-1.3 0L4 8.2Zm1.2-1.2L12 11.75 18.8 7H5.2Z" />
+                        </svg>
+
+                        <span class="button__mail__text">
+                            <span class="button__mail__text-default">Correo Electrónico</span>
+                            <span class="button__mail__text-hover">construye@leingenieria.com</span>
+                        </span>
+                    </a>
+
+                    <a href="tel:+524422014627" class="button__mail services-quote__contact-button"
+                        title="Llamar a L+E Ingeniería" aria-label="Llamar a L+E Ingeniería">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path
+                                d="M6.62 10.79c1.44 2.83 3.76 5.15 6.59 6.59l2.2-2.2c.28-.28.69-.36 1.05-.24 1.16.38 2.4.59 3.67.59.57 0 1.02.45 1.02 1.02V20c0 .57-.45 1.02-1.02 1.02C10.67 21.02 2.98 13.33 2.98 3.87c0-.57.45-1.02 1.02-1.02h3.47c.57 0 1.02.45 1.02 1.02 0 1.27.2 2.51.59 3.67.11.36.03.76-.25 1.05l-2.21 2.2Z" />
+                        </svg>
+
+                        <span class="button__mail__text">
+                            <span class="button__mail__text-default">Teléfono</span>
+                            <span class="button__mail__text-hover">+52 442 201 4627</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <form class="services-quote__form form form--default" id="valuationQuoteForm"
+                action="@url/valuacion/contact/send" method="post" data-ajax-form data-validation="contact"
+                data-send-as="urlencoded" data-csrf="true" data-csrf-field="_token" data-reset-on-success="true"
+                data-character-counter="true" data-success-message="Tu solicitud de valuación fue enviada correctamente."
+                data-error-message="No se pudo enviar la solicitud. Intenta nuevamente." novalidate
+                aria-labelledby="valuation-form-title">
+                @csrf('valuation-contact-send')
+
+                <fieldset class="form__fieldset services-quote__fieldset">
+                    <legend id="valuation-form-title">Formulario de solicitud de valuación</legend>
+
+                    <div class="form__status services-quote__status" id="valuationQuoteFormStatus" data-form-status
+                        role="status" aria-live="polite"></div>
+
+                    <div class="form-group services-quote__field" data-field="email">
+                        <input type="email" id="valuation-email" name="email" class="form-control" placeholder=" "
+                            autocomplete="email" inputmode="email" required maxlength="150"
+                            data-label="correo electrónico" data-normalize="trim" data-character-counter="true"
+                            aria-describedby="error-valuation-email">
+
+                        <label class="form-label" for="valuation-email">Correo electrónico</label>
+
+                        <span class="form-group__error text-danger" id="error-valuation-email" data-field-error
+                            data-error-for="email" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group services-quote__field" data-field="name">
+                        <input type="text" id="valuation-name" name="name" class="form-control" placeholder=" "
+                            autocomplete="name" required minlength="3" maxlength="120" data-label="nombre o empresa"
+                            data-normalize="spaces" data-no-links="true" data-no-phones="true" data-no-emails="true"
+                            data-character-counter="true" aria-describedby="error-valuation-name">
+
+                        <label class="form-label" for="valuation-name">Nombre o empresa</label>
+
+                        <span class="form-group__error text-danger" id="error-valuation-name" data-field-error
+                            data-error-for="name" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group services-quote__field" data-field="phone">
+                        <input type="tel" id="valuation-phone" name="phone" class="form-control" placeholder=" "
+                            autocomplete="tel" inputmode="tel" minlength="8" maxlength="20" data-label="teléfono"
+                            data-normalize="spaces" data-character-counter="true"
+                            aria-describedby="error-valuation-phone">
+
+                        <label class="form-label" for="valuation-phone">Teléfono</label>
+
+                        <span class="form-group__error text-danger" id="error-valuation-phone" data-field-error
+                            data-error-for="phone" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group form-group--select services-quote__field" data-field="asunto">
+                        <select id="valuation-asunto" name="asunto" class="form-control" required
+                            data-label="tipo de valuación" aria-describedby="error-valuation-asunto">
+                            <option value="" disabled selected hidden></option>
+                            <option value="avaluo-inmobiliario-comercial">Avalúo inmobiliario comercial</option>
+                            <option value="estudio-de-valor">Estudio de valor</option>
+                            <option value="maquinaria-y-equipo">Avalúo de maquinaria y equipo</option>
+                            <option value="valuacion-de-proyectos">Valuación de proyectos</option>
+                        </select>
+
+                        <label class="form-label" for="valuation-asunto">Tipo de valuación</label>
+
+                        <span class="form-group__error text-danger" id="error-valuation-asunto" data-field-error
+                            data-error-for="asunto" aria-live="polite"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea services-quote__field services-quote__field--full"
+                        data-field="message">
+                        <textarea id="valuation-message" name="message" class="form-control" placeholder=" " rows="6"
+                            required minlength="10" maxlength="3000" data-label="mensaje" data-normalize="trim"
+                            data-character-counter="true" aria-describedby="error-valuation-message"></textarea>
+
+                        <label class="form-label" for="valuation-message">Cuéntanos</label>
+
+                        <span class="form-group__error text-danger" id="error-valuation-message" data-field-error
+                            data-error-for="message" aria-live="polite"></span>
+                    </div>
+
+                    <div class="services-quote__submit">
+                        <button class="button__submit" type="submit">
+                            <span class="button__submit__text">Enviar solicitud</span>
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</section>

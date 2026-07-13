@@ -15,6 +15,9 @@ use App\Models\ProjectResultStat;
 use App\Models\ProjectScopeItem;
 use App\Models\ProjectTag;
 use App\Models\User;
+use App\Models\ValuationClient;
+use App\Models\ValuationMessage;
+use App\Models\ValuationUnit;
 use Whis\Http\Controller;
 
 class Dashboard extends Controller
@@ -78,6 +81,19 @@ class Dashboard extends Controller
         $activeClients = [];
         $featuredClients = [];
 
+        $valuationUnits = [];
+        $activeValuationUnits = [];
+        $primaryValuationUnits = [];
+        $valuationClients = [];
+        $activeValuationClients = [];
+        $featuredValuationClients = [];
+        $carouselValuationClients = [];
+        $pageValuationClients = [];
+        $valuationMessages = [];
+        $valuationMessageStats = [];
+        $recentValuationMessages = [];
+        $newValuationMessageAlert = null;
+
         $associationSlides = [];
         $activeAssociationSlides = [];
         $associationSlidesForHome = [];
@@ -101,6 +117,27 @@ class Dashboard extends Controller
             $clients = $this->safeRows(fn() => Client::ordered());
             $activeClients = $this->safeRows(fn() => Client::active());
             $featuredClients = $this->safeRows(fn() => Client::featured());
+
+            /*
+             * ===============================
+             * VALUACIÓN
+             * ===============================
+             */
+            $valuationUnits = $this->safeRows(fn() => ValuationUnit::ordered());
+            $activeValuationUnits = array_values(array_filter($valuationUnits, fn(array $unit) => (int) ($unit['is_active'] ?? 0) === 1));
+            $primaryValuationUnits = array_values(array_filter($valuationUnits, fn(array $unit) => (int) ($unit['is_primary'] ?? 0) === 1));
+
+            $valuationClients = $this->safeRows(fn() => ValuationClient::ordered());
+            $activeValuationClients = $this->safeRows(fn() => ValuationClient::active());
+            $featuredValuationClients = $this->safeRows(fn() => ValuationClient::featured());
+            $carouselValuationClients = $this->safeRows(fn() => ValuationClient::carousel());
+            $pageValuationClients = $this->safeRows(fn() => ValuationClient::visibleInValuation());
+
+            $valuationMessages = $this->safeRows(fn() => ValuationMessage::forAdmin());
+            $valuationMessageStats = $this->safeStats(fn() => ValuationMessage::stats());
+            $recentValuationMessages = $this->limitRows($valuationMessages, self::DASHBOARD_LIMIT);
+            $newValuationMessages = $this->sortByDateDesc(array_values(array_filter($valuationMessages, fn(array $message) => (string) ($message['status'] ?? '') === ValuationMessage::STATUS_NEW)));
+            $newValuationMessageAlert = $this->newValuationMessageAlert($newValuationMessages);
 
             /*
              * ===============================
@@ -250,6 +287,28 @@ class Dashboard extends Controller
                 'clients_inactive' => max(0, count($clients) - count($activeClients)),
 
                 /*
+                 * Valuación: solo admin
+                 */
+                'valuation_units_total'    => count($valuationUnits),
+                'valuation_units_active'   => count($activeValuationUnits),
+                'valuation_units_primary'  => count($primaryValuationUnits),
+                'valuation_units_inactive' => max(0, count($valuationUnits) - count($activeValuationUnits)),
+                'valuation_clients_total'    => count($valuationClients),
+                'valuation_clients_active'   => count($activeValuationClients),
+                'valuation_clients_featured' => count($featuredValuationClients),
+                'valuation_clients_carousel' => count($carouselValuationClients),
+                'valuation_clients_page'     => count($pageValuationClients),
+                'valuation_clients_inactive' => max(0, count($valuationClients) - count($activeValuationClients)),
+                'valuation_messages_total'       => (int) ($valuationMessageStats['total'] ?? count($valuationMessages)),
+                'valuation_messages_new'         => (int) ($valuationMessageStats['new'] ?? 0),
+                'valuation_messages_read'        => (int) ($valuationMessageStats['read'] ?? 0),
+                'valuation_messages_in_progress' => (int) ($valuationMessageStats['in_progress'] ?? 0),
+                'valuation_messages_answered'    => (int) ($valuationMessageStats['answered'] ?? 0),
+                'valuation_messages_archived'    => (int) ($valuationMessageStats['archived'] ?? 0),
+                'valuation_messages_spam'        => (int) ($valuationMessageStats['spam'] ?? 0),
+                'valuation_messages_urgent'      => (int) ($valuationMessageStats['urgent'] ?? 0),
+
+                /*
                  * Asociaciones y certificaciones: solo admin
                  */
                 'associations_total'    => count($associationSlides),
@@ -305,11 +364,15 @@ class Dashboard extends Controller
             ],
 
             'recentProjects'       => $recentProjects,
-            'recentMessages'       => $recentMessages,
-            'newMessageAlert'      => $newMessageAlert,
-            'jumbotronSlides'      => $jumbotronSlides,
-            'associationSlides'    => $recentAssociationSlides,
-            'officeWorkshops'      => $recentOfficeWorkshops,
+            'recentMessages'          => $recentMessages,
+            'newMessageAlert'         => $newMessageAlert,
+            'recentValuationMessages' => $recentValuationMessages,
+            'newValuationMessageAlert'=> $newValuationMessageAlert,
+            'jumbotronSlides'         => $jumbotronSlides,
+            'associationSlides'       => $recentAssociationSlides,
+            'valuationUnits'          => $this->limitRows($valuationUnits, self::DASHBOARD_LIMIT),
+            'valuationClients'        => $this->limitRows($valuationClients, self::DASHBOARD_LIMIT),
+            'officeWorkshops'         => $recentOfficeWorkshops,
             'auditLogs'            => $auditLogs,
             'mapStates'            => $mapStates,
             'users'                => $users,
@@ -355,6 +418,41 @@ class Dashboard extends Controller
             'description' => 'Revisa la bandeja de mensajes para dar seguimiento a los contactos recientes.',
             'cta'         => 'Ver mensajes',
             'is_single'   => false,
+        ];
+    }
+
+    private function newValuationMessageAlert(array $newMessages): ?array
+    {
+        $count = count($newMessages);
+
+        if ($count <= 0) {
+            return null;
+        }
+
+        $firstMessage = $newMessages[0] ?? [];
+        $firstId = (int) ($firstMessage['id'] ?? 0);
+
+        if ($count === 1) {
+            $name = trim((string) ($firstMessage['name'] ?? 'Contacto'));
+            $type = trim((string) ($firstMessage['valuation_type_label'] ?? 'Solicitud de valuación'));
+
+            return [
+                'count' => 1,
+                'url' => $firstId > 0 ? '/admin/valuacion/mensajes/' . $firstId : '/admin/valuacion/mensajes',
+                'title' => 'Tienes 1 solicitud de valuación nueva',
+                'description' => $this->joinNonEmpty([$name !== '' ? 'De ' . $name : '', $type]),
+                'cta' => $firstId > 0 ? 'Abrir solicitud' : 'Ver solicitudes',
+                'is_single' => $firstId > 0,
+            ];
+        }
+
+        return [
+            'count' => $count,
+            'url' => '/admin/valuacion/mensajes',
+            'title' => 'Tienes ' . $count . ' solicitudes de valuación nuevas',
+            'description' => 'Revisa la bandeja de valuación para dar seguimiento a los contactos recientes.',
+            'cta' => 'Ver solicitudes',
+            'is_single' => false,
         ];
     }
 

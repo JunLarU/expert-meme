@@ -1,0 +1,206 @@
+{%
+$clients = $clients ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$active = (int) ($stats['active'] ?? 0);
+$featured = (int) ($stats['featured'] ?? 0);
+$carousel = (int) ($stats['carousel'] ?? 0);
+$valuation = (int) ($stats['valuation'] ?? 0);
+$queretaro = (int) ($stats['queretaro'] ?? 0);
+$guanajuato = (int) ($stats['guanajuato'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-valuation-clients-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Valuación</p>
+            <h2 id="admin-valuation-clients-title">Clientes de valuación</h2>
+            <span>
+                Administra logos y referencias exclusivas para la página de valuación. Estos clientes no se mezclan con los clientes generales del home.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+            <a href="@url/admin/valuacion/unidades" class="admin-button admin-button--secondary">Unidades</a>
+            <a href="@url/admin/valuacion/clientes/crear" class="admin-button admin-button--primary">Nuevo cliente</a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de clientes de valuación">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Total</span>
+                <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+                <small>Clientes registrados</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Activos</span>
+                <strong data-admin-count data-value="{{ ($active) }}">0</strong>
+                <small>Visibles para administración</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Carrusel</span>
+                <strong data-admin-count data-value="{{ ($carousel) }}">0</strong>
+                <small>Logos visibles en valuación</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">⇄</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Destacados</span>
+                <strong data-admin-count data-value="{{ ($featured) }}">0</strong>
+                <small>Referencias prioritarias</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">★</span>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Cobertura</span>
+                <strong data-admin-count data-value="{{ ($queretaro + $guanajuato) }}">0</strong>
+                <small>{{ ($queretaro) }} Qro · {{ ($guanajuato) }} Gto</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">⌖</span>
+        </article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header">
+            <div>
+                <p>Logos y referencias</p>
+                <h3>Listado de clientes de valuación</h3>
+            </div>
+
+            <a href="@url/admin/valuacion/clientes/crear" class="admin-panel__link">
+                Crear cliente <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Unidad</th>
+                        <th>Servicios</th>
+                        <th>Cobertura</th>
+                        <th>Estado</th>
+                        <th>Carrusel</th>
+                        <th>Orden</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% foreach ($clients as $client): %}
+                    {%
+                    $id = (int) ($client['id'] ?? 0);
+                    $name = $client['name'] ?? 'Cliente sin nombre';
+                    $slug = $client['slug'] ?? '';
+                    $industry = $client['industry'] ?? '—';
+                    $url = $client['url'] ?? '';
+                    $logoUrl = $client['logo_url'] ?? '';
+                    $initials = $client['initials'] ?? 'VC';
+                    $unitName = ($client['valuation_unit_short_name'] ?? '') ?: (($client['valuation_unit_name'] ?? '') ?: '—');
+                    $services = trim((string) ($client['valuation_services'] ?? ''));
+                    $serviceSummary = $client['service_summary'] ?? '';
+                    $city = $client['city'] ?? '';
+                    $state = $client['state'] ?? '';
+                    $coverageArea = $client['coverage_area'] ?? '';
+                    $sortOrder = $client['sort_order'] ?? 0;
+                    $isActive = (int) ($client['is_active'] ?? 0) === 1;
+                    $isFeatured = (int) ($client['is_featured'] ?? 0) === 1;
+                    $showInCarousel = (int) ($client['show_in_carousel'] ?? 0) === 1;
+                    $showInValuation = (int) ($client['show_in_valuation'] ?? 0) === 1;
+                    %}
+                    <tr>
+                        <td>
+                            <strong>{{{ ($name) }}}</strong>
+                            <small>{{{ ($slug ?: $industry) }}}</small>
+                            {% if (!empty($logoUrl)): %}
+                            <small><a href="{{{ ($logoUrl) }}}" target="_blank" rel="noopener noreferrer">Ver logo actual</a></small>
+                            {% else: %}
+                            <small>Sin logo · {{{ ($initials) }}}</small>
+                            {% endif; %}
+                            {% if ($url !== ''): %}
+                            <small><a href="{{{ ($url) }}}" target="_blank" rel="noopener noreferrer">Ver sitio</a></small>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($unitName) }}}</td>
+                        <td>
+                            {% if ($serviceSummary !== ''): %}
+                            {{{ ($serviceSummary) }}}
+                            {% elseif ($services !== ''): %}
+                            {{{ ($services) }}}
+                            {% else: %}
+                            —
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($coverageArea !== ''): %}
+                            {{{ ($coverageArea) }}}
+                            {% else: %}
+                            {{{ (trim($city . ', ' . $state, ', ')) }}}
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($isActive): %}
+                            <span class="admin-badge admin-badge--success">Activo</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Inactivo</span>
+                            {% endif; %}
+
+                            {% if ($isFeatured): %}
+                            <span class="admin-badge admin-badge--neutral">Destacado</span>
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($showInCarousel): %}
+                            <span class="admin-badge admin-badge--success">Carrusel</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Oculto</span>
+                            {% endif; %}
+
+                            {% if ($showInValuation): %}
+                            <span class="admin-badge admin-badge--neutral">Página</span>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($sortOrder) }}}</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <a href="@url/admin/valuacion/clientes/{{ ($id) }}/editar"
+                                    class="admin-button admin-button--xs admin-button--secondary">Editar</a>
+                                <a href="@url/admin/valuacion/clientes/{{ ($id) }}/eliminar"
+                                    class="admin-button admin-button--xs admin-button--danger"
+                                    onclick="return confirm('¿Eliminar este cliente de valuación? También se borrará su logo del servidor.');">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endforeach; %}
+
+                    {% if (empty($clients)): %}
+                    <tr>
+                        <td colspan="8">
+                            <strong>No hay clientes de valuación registrados todavía.</strong>
+                            <small>Agrega logos o referencias para alimentar el carrusel de la página de valuación.</small>
+                        </td>
+                    </tr>
+                    {% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

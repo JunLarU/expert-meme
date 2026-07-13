@@ -1,8 +1,8 @@
 export default function initStats(customStats = null) {
   const stats = customStats ?? [
     { value: "+20 años", label: "de trayectoria en diseño, fabricación y montaje" },
-    { value: "+500 obras", label: "ejecutadas en estructura metálica" },
-    { value: "+12 estados", label: "con presencia operativa en la República Mexicana" },
+    { value: "+2,500 proyectos", label: "diseño estructural" },
+    { value: "+30 estados", label: "con proyectos desarrollados" },
     { value: "+1’000,000m²", label: "de estructura diseñada, fabricada y montada" },
   ];
 

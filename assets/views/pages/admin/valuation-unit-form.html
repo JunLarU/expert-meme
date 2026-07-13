@@ -1,0 +1,187 @@
+{%
+$mode = $mode ?? 'create';
+$unit = $unit ?? [];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($unit['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/valuacion/unidades/' . $id . '/actualizar'
+: '/admin/valuacion/unidades';
+
+$pageTitle = $isEdit ? 'Editar unidad de valuación' : 'Nueva unidad de valuación';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear unidad';
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+
+$name = $unit['name'] ?? '';
+$slug = $unit['slug'] ?? '';
+$shortName = $unit['short_name'] ?? '';
+$roleLabel = $unit['role_label'] ?? '';
+$url = $unit['url'] ?? '';
+$logoUrl = $unit['logo_url'] ?? '';
+$logoAlt = $unit['logo_alt'] ?? '';
+$description = $unit['description'] ?? '';
+$isPrimary = (int) ($unit['is_primary'] ?? 0);
+$isActive = (int) ($unit['is_active'] ?? 1);
+$sortOrder = (int) ($unit['sort_order'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-valuation-unit-form-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Valuación</p>
+            <h2 id="admin-valuation-unit-form-title">{{{ ($pageTitle) }}}</h2>
+            <span>
+                Registra las unidades que L+E Ingeniería representa para la operación de avalúos y estudios de valor.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/valuacion/unidades" class="admin-button admin-button--secondary">Volver</a>
+            <a href="@url/admin/valuacion/clientes" class="admin-button admin-button--secondary">Clientes de valuación</a>
+        </div>
+    </header>
+
+    <article class="admin-panel admin-jumbotron-form-panel admin-client-form-panel">
+        <header class="admin-panel__header">
+            <div>
+                <p>Formulario</p>
+                <h3>{{{ ($pageTitle) }}}</h3>
+            </div>
+        </header>
+
+        <form class="form form--default admin-jumbotron-form admin-client-form" action="@url{{{ ($formAction) }}}"
+            method="post" enctype="multipart/form-data" data-ajax-form data-validation="html" data-send-as="formdata"
+            data-csrf="true" data-csrf-field="_token" data-reset-on-success="false"
+            data-loading-text="{{{ ($loadingText) }}}" novalidate>
+            @csrf
+
+            <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+            <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+            <input type="hidden" name="logo_url" value="{{{ ($logoUrl) }}}">
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Datos de la unidad</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group admin-form-grid__full" data-field="name">
+                        <input type="text" id="valuation-unit-name" name="name" class="form-control"
+                            value="{{{ ($name) }}}" placeholder=" " required maxlength="255"
+                            data-label="nombre de la unidad">
+                        <label class="form-label" for="valuation-unit-name">Nombre de la unidad *</label>
+                        <span class="form-group__error" data-field-error data-error-for="name"></span>
+                    </div>
+
+                    <div class="form-group" data-field="short_name">
+                        <input type="text" id="valuation-unit-short-name" name="short_name" class="form-control"
+                            value="{{{ ($shortName) }}}" placeholder=" " maxlength="120" data-label="nombre corto">
+                        <label class="form-label" for="valuation-unit-short-name">Nombre corto</label>
+                        <span class="form-group__error" data-field-error data-error-for="short_name"></span>
+                    </div>
+
+                    <div class="form-group" data-field="role_label">
+                        <input type="text" id="valuation-unit-role" name="role_label" class="form-control"
+                            value="{{{ ($roleLabel) }}}" placeholder=" " maxlength="160" data-label="rol de la unidad">
+                        <label class="form-label" for="valuation-unit-role">Rol / etiqueta</label>
+                        <span class="form-group__help">Ejemplo: Unidad de valuación principal.</span>
+                        <span class="form-group__error" data-field-error data-error-for="role_label"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="url">
+                        <input type="url" id="valuation-unit-url" name="url" class="form-control"
+                            value="{{{ ($url) }}}" placeholder=" " maxlength="600" data-label="sitio web">
+                        <label class="form-label" for="valuation-unit-url">Sitio web</label>
+                        <span class="form-group__error" data-field-error data-error-for="url"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
+                        <textarea id="valuation-unit-description" name="description" class="form-control" placeholder=" "
+                            maxlength="1200" data-label="descripción">{{{ ($description) }}}</textarea>
+                        <label class="form-label" for="valuation-unit-description">Descripción</label>
+                        <span class="form-group__error" data-field-error data-error-for="description"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Logo</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="logo_file">
+                        <label class="form-label" for="valuation-unit-logo-file">Logo de la unidad</label>
+
+                        <input type="file" id="valuation-unit-logo-file" name="logo_file" class="form-control"
+                            accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg+xml"
+                            data-label="logo">
+
+                        {% if ($isEdit && !empty($logoUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($logoUrl) }}}" target="_blank"
+                            rel="noopener noreferrer">
+                            Ver logo actual
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__help">Formatos permitidos: PNG, JPG, WEBP o SVG. Máximo 4 MB.</span>
+                        <span class="form-group__error" data-field-error data-error-for="logo_file"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="logo_alt">
+                        <input type="text" id="valuation-unit-logo-alt" name="logo_alt" class="form-control"
+                            value="{{{ ($logoAlt) }}}" placeholder=" " maxlength="255"
+                            data-label="texto alternativo del logo">
+                        <label class="form-label" for="valuation-unit-logo-alt">Texto alternativo del logo</label>
+                        <span class="form-group__error" data-field-error data-error-for="logo_alt"></span>
+                    </div>
+
+                    {% if ($isEdit && !empty($logoUrl)): %}
+                    <div class="admin-form-grid__full">
+                        <label class="admin-check">
+                            <input type="checkbox" name="remove_logo" value="1">
+                            <span>Quitar logo actual</span>
+                        </label>
+                    </div>
+                    {% endif; %}
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Visibilidad</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group" data-field="sort_order">
+                        <input type="number" id="valuation-unit-sort-order" name="sort_order" class="form-control"
+                            value="{{ ($sortOrder) }}" placeholder=" " min="0" step="1" data-label="orden">
+                        <label class="form-label" for="valuation-unit-sort-order">Orden</label>
+                        <span class="form-group__error" data-field-error data-error-for="sort_order"></span>
+                    </div>
+
+                    <input type="hidden" name="is_primary" value="0">
+                    <label class="admin-check">
+                        {% if ($isPrimary === 1): %}
+                        <input type="checkbox" name="is_primary" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_primary" value="1">
+                        {% endif; %}
+                        <span>Unidad principal</span>
+                    </label>
+
+                    <input type="hidden" name="is_active" value="0">
+                    <label class="admin-check">
+                        {% if ($isActive === 1): %}
+                        <input type="checkbox" name="is_active" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_active" value="1">
+                        {% endif; %}
+                        <span>Activa</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="admin-form-actions">
+                <a href="@url/admin/valuacion/unidades" class="admin-button admin-button--secondary">Cancelar</a>
+                <button type="submit" class="admin-button admin-button--primary">{{{ ($submitText) }}}</button>
+            </div>
+        </form>
+    </article>
+</section>

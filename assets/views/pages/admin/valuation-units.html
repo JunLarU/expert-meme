@@ -1,0 +1,160 @@
+{%
+$units = $units ?? [];
+$stats = $stats ?? [];
+
+$total = (int) ($stats['total'] ?? 0);
+$active = (int) ($stats['active'] ?? 0);
+$inactive = (int) ($stats['inactive'] ?? 0);
+$primary = (int) ($stats['primary'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-valuation-units-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Valuación</p>
+            <h2 id="admin-valuation-units-title">Unidades de valuación</h2>
+            <span>
+                Administra las unidades representadas por L+E Ingeniería. Valor Comercial Avalúos puede quedar como unidad principal y UVA Abalkan como unidad secundaria.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+            <a href="@url/admin/valuacion/clientes" class="admin-button admin-button--secondary">Clientes de valuación</a>
+            <a href="@url/admin/valuacion/unidades/crear" class="admin-button admin-button--primary">Nueva unidad</a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de unidades de valuación">
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Total</span>
+                <strong data-admin-count data-value="{{ ($total) }}">0</strong>
+                <small>Unidades registradas</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◇</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Activas</span>
+                <strong data-admin-count data-value="{{ ($active) }}">0</strong>
+                <small>Visibles para valuación</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">✓</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Principal</span>
+                <strong data-admin-count data-value="{{ ($primary) }}">0</strong>
+                <small>Unidad prioritaria</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">★</span>
+        </article>
+
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Inactivas</span>
+                <strong data-admin-count data-value="{{ ($inactive) }}">0</strong>
+                <small>No se muestran</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">—</span>
+        </article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header">
+            <div>
+                <p>Representación</p>
+                <h3>Listado de unidades</h3>
+            </div>
+
+            <a href="@url/admin/valuacion/unidades/crear" class="admin-panel__link">
+                Crear unidad <span aria-hidden="true">→</span>
+            </a>
+        </header>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead>
+                    <tr>
+                        <th>Unidad</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Principal</th>
+                        <th>Orden</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% foreach ($units as $unit): %}
+                    {%
+                    $id = (int) ($unit['id'] ?? 0);
+                    $name = $unit['name'] ?? 'Unidad sin nombre';
+                    $shortName = ($unit['short_name'] ?? '') ?: $name;
+                    $slug = $unit['slug'] ?? '';
+                    $roleLabel = ($unit['role_label'] ?? '') ?: 'Unidad de valuación';
+                    $url = $unit['url'] ?? '';
+                    $logoUrl = $unit['logo_url'] ?? '';
+                    $sortOrder = $unit['sort_order'] ?? 0;
+                    $isActive = (int) ($unit['is_active'] ?? 0) === 1;
+                    $isPrimary = (int) ($unit['is_primary'] ?? 0) === 1;
+                    %}
+                    <tr>
+                        <td>
+                            <strong>{{{ ($name) }}}</strong>
+                            <small>{{{ ($shortName ?: $slug) }}}</small>
+                            {% if (!empty($logoUrl)): %}
+                            <small><a href="{{{ ($logoUrl) }}}" target="_blank" rel="noopener noreferrer">Ver logo actual</a></small>
+                            {% else: %}
+                            <small>Sin logo</small>
+                            {% endif; %}
+                            {% if ($url !== ''): %}
+                            <small><a href="{{{ ($url) }}}" target="_blank" rel="noopener noreferrer">Ver sitio</a></small>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($roleLabel) }}}</td>
+                        <td>
+                            {% if ($isActive): %}
+                            <span class="admin-badge admin-badge--success">Activa</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Inactiva</span>
+                            {% endif; %}
+                        </td>
+                        <td>
+                            {% if ($isPrimary): %}
+                            <span class="admin-badge admin-badge--neutral">Principal</span>
+                            {% else: %}
+                            <span class="admin-badge admin-badge--muted">Secundaria</span>
+                            {% endif; %}
+                        </td>
+                        <td>{{{ ($sortOrder) }}}</td>
+                        <td>
+                            <div class="admin-table__actions">
+                                <a href="@url/admin/valuacion/unidades/{{ ($id) }}/editar"
+                                    class="admin-button admin-button--xs admin-button--secondary">Editar</a>
+                                <a href="@url/admin/valuacion/unidades/{{ ($id) }}/eliminar"
+                                    class="admin-button admin-button--xs admin-button--danger"
+                                    onclick="return confirm('¿Eliminar esta unidad de valuación? También se borrará su logo del servidor.');">
+                                    Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endforeach; %}
+
+                    {% if (empty($units)): %}
+                    <tr>
+                        <td colspan="6">
+                            <strong>No hay unidades de valuación registradas todavía.</strong>
+                            <small>Crea la primera unidad para alimentar la página de valuación.</small>
+                        </td>
+                    </tr>
+                    {% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

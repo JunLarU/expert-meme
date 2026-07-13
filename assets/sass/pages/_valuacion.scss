@@ -1,0 +1,1399 @@
+.valuation-hero {
+  &::before {
+    background-color: rgba($color-logo-red, 0.6);
+  }
+
+  &__content {
+    width: min(100%, 98rem);
+  }
+
+  &__actions {
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+
+    .about-hero__button {
+      margin-top: 0;
+    }
+  }
+
+  &__secondary {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.8rem;
+    padding: 0.95rem 2.35rem;
+    border: 0.15rem solid rgba($color-light, 0.42);
+    border-radius: 9999px;
+    background-color: rgba($color-dark, 0.18);
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: clamp(1.25rem, 1.7vw, 1.55rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    backdrop-filter: blur(0.9rem);
+    transition:
+      background-color 220ms ease,
+      border-color 220ms ease,
+      transform 220ms ease,
+      box-shadow 220ms ease;
+
+    &:hover,
+    &:focus {
+      background-color: rgba($color-logo-red, 0.74);
+      border-color: rgba($color-light, 0.72);
+      color: $color-light;
+      transform: translateY(-0.2rem);
+      box-shadow: 0 1.2rem 2.8rem rgba($color-black, 0.24);
+    }
+  }
+
+  &__meta {
+    width: min(100%, 86rem);
+    margin: clamp(2rem, 4vw, 3.2rem) auto 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.85rem;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      min-height: 3.4rem;
+      padding: 0.65rem 1.35rem;
+      border: 0.1rem solid rgba($color-light, 0.28);
+      border-radius: 9999px;
+      background-color: rgba($color-dark, 0.24);
+      color: rgba($color-light, 0.94);
+      font-size: clamp(1.2rem, 2vw, 1.42rem);
+      font-weight: 750;
+      line-height: 1.2;
+      backdrop-filter: blur(0.8rem);
+    }
+  }
+}
+
+.valuation-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 8% 8%, rgba($color-serenity, 0.34), transparent 32rem),
+    radial-gradient(circle at 92% 22%, rgba($color-logo-red, 0.12), transparent 38rem),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  &__gradient-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg, rgba($color-logo-red, 0.06), transparent 34%),
+      radial-gradient(circle at 50% 30%, rgba($color-logo-red, 0.08), transparent 36rem);
+  }
+
+  &__inner {
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: 5.5rem 1.5rem 0rem;
+  }
+
+  &__header {
+    width: min(100%, 92rem);
+    margin: clamp(3.5rem, 6vw, 6rem) auto clamp(3.5rem, 6vw, 6rem);
+  }
+
+  &__lead {
+    width: min(100%, 82rem);
+    margin: clamp(1.5rem, 3vw, 2.4rem) auto 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.5rem, 2vw, 1.82rem);
+    line-height: 1.75;
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  &__summary {
+    display: grid;
+    gap: 1.4rem;
+    margin-bottom: 0rem;
+    @include tablet {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  &__summary-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 15rem;
+    padding: clamp(1.8rem, 3vw, 2.4rem);
+    border: 0.1rem solid rgba($color-logo-red, 0.12);
+    border-radius: 1.4rem;
+    background-color: rgba($color-white, 0.84);
+    box-shadow: 0 1.2rem 3rem rgba($color-black, 0.07);
+
+    span {
+      display: inline-flex;
+      width: 3.8rem;
+      height: 3.8rem;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      border-radius: 50%;
+      background-color: rgba($color-logo-red, 0.1);
+      color: darken($color-logo-red, 7);
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 0.65rem;
+      color: $color-dark;
+      font-family: $font-montserrat;
+      font-size: clamp(1.65rem, 2.1vw, 2rem);
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    p {
+      margin: 0;
+      color: rgba($color-dark, 0.68);
+      font-size: clamp(1.35rem, 1.7vw, 1.52rem);
+      line-height: 1.58;
+    }
+  }
+}
+
+.valuation-representatives {
+  display: grid;
+  gap: clamp(2.4rem, 5vw, 4.5rem);
+  align-items: center;
+
+  @include desktop {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  &__heading {
+    margin-inline: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+  }
+
+  &__content > p {
+    margin: clamp(1.4rem, 3vw, 2.2rem) 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.45rem, 1.9vw, 1.72rem);
+    line-height: 1.75;
+  }
+
+  &__grid {
+    display: grid;
+    gap: 1.4rem;
+  }
+}
+
+.valuation-unit-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.2rem, 3vw, 3rem);
+  border: 0.1rem solid rgba($color-dark, 0.1);
+  border-radius: 1.2rem;
+  background-color: rgba($color-white, 0.88);
+  box-shadow: 0 1.2rem 3rem rgba($color-black, 0.08);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 2.2rem;
+    width: 1.4rem;
+    height: 7rem;
+    background-color: rgba($color-logo-red, 0.18);
+    transform: skewX(-18deg);
+  }
+
+  &--accent {
+    border-color: rgba($color-logo-red, 0.16);
+    background:
+      linear-gradient(135deg, rgba($color-logo-red, 0.035), transparent 54%),
+      rgba($color-white, 0.92);
+    box-shadow: 0 1.3rem 3.2rem rgba($color-black, 0.09);
+  }
+
+  &--accent::before {
+    height: 7.6rem;
+    background-color: rgba($color-logo-red, 0.24);
+  }
+
+  &--accent .valuation-unit-card__logo {
+    border-color: rgba($color-logo-red, 0.14);
+    box-shadow: 0 0.9rem 2.2rem rgba($color-logo-red, 0.08);
+  }
+
+  &--empty {
+    border-style: dashed;
+    background-color: rgba($color-white, 0.72);
+  }
+
+  &__topline {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    margin-bottom: clamp(1.35rem, 2vw, 1.9rem);
+  }
+
+  &__logo {
+    width: clamp(9.4rem, 12vw, 13rem);
+    height: clamp(6.4rem, 8vw, 8.8rem);
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.9rem;
+    border: 0.1rem solid rgba($color-dark, 0.08);
+    border-radius: 1rem;
+    background:
+      linear-gradient(135deg, rgba($color-white, 0.96), rgba($color-light, 0.78)),
+      rgba($color-white, 0.9);
+    box-shadow: 0 0.8rem 2rem rgba($color-black, 0.06);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__placeholder {
+    width: 5.2rem;
+    height: 5.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: $color-logo-red;
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: 1.35rem;
+    font-weight: 950;
+    line-height: 1;
+    letter-spacing: 0.08em;
+  }
+
+  &__tag {
+    margin: 0;
+    color: darken($color-logo-red, 7);
+    font-family: $font-montserrat;
+    font-size: 1.18rem;
+    font-weight: 900;
+    letter-spacing: 0.13rem;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  h3 {
+    margin: 0;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(2.1rem, 3vw, 2.8rem);
+    font-weight: 850;
+    line-height: 1.1;
+    text-align: left;
+  }
+
+  p:not(.valuation-unit-card__tag) {
+    margin: 1rem 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.38rem, 1.7vw, 1.55rem);
+    line-height: 1.62;
+  }
+
+  &__link {
+    margin-top: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: darken($color-logo-red, 7);
+    font-family: $font-montserrat;
+    font-size: 1.28rem;
+    font-weight: 900;
+    letter-spacing: 0.08rem;
+    line-height: 1.1;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    span {
+      transition: transform 220ms ease;
+    }
+
+    &:hover,
+    &:focus {
+      color: darken($color-logo-red, 13);
+
+      span {
+        transform: translateX(0.25rem);
+      }
+    }
+  }
+}
+
+.valuation-services {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, $color-light 0%, rgb(242, 246, 248) 100%);
+
+  &__inner {
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+  }
+
+  &__header {
+    width: min(100%, 92rem);
+    margin: 0 auto clamp(3.5rem, 6vw, 6rem);
+  }
+
+  &__lead {
+    width: min(100%, 82rem);
+    margin: clamp(1.5rem, 3vw, 2.4rem) auto 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.5rem, 2vw, 1.82rem);
+    line-height: 1.75;
+    text-align: center;
+    text-wrap: pretty;
+  }
+
+  &__grid {
+    display: grid;
+    gap: clamp(1.6rem, 3vw, 2.4rem);
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+.valuation-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 43rem;
+  padding: clamp(2.2rem, 3.5vw, 3.4rem);
+  border: 0.1rem solid rgba($color-dark, 0.1);
+  border-radius: 0.35rem;
+  background-color: rgba($color-white, 0.92);
+  box-shadow:
+    0 1rem 2.8rem rgba($color-black, 0.07),
+    inset 0 0 0 0.1rem rgba($color-white, 0.5);
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    z-index: -1;
+    height: 0;
+    background: linear-gradient(135deg, lighten($color-logo-red, 4), darken($color-logo-red, 9));
+    transition: height 320ms ease;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 2.2rem;
+    width: 1.4rem;
+    height: 7rem;
+    background-color: rgba($color-logo-red, 0.18);
+    transform: skewX(-18deg);
+    transition:
+      background-color 260ms ease,
+      height 260ms ease;
+  }
+
+  &--featured {
+    border-color: rgba($color-logo-red, 0.24);
+    box-shadow:
+      0 1.4rem 3.8rem rgba($color-logo-red, 0.13),
+      inset 0 0 0 0.1rem rgba($color-white, 0.58);
+  }
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-0.6rem);
+    border-color: rgba($color-logo-red, 0.34);
+    box-shadow: 0 1.6rem 4rem rgba($color-black, 0.14);
+
+    &::before {
+      height: 100%;
+    }
+
+    &::after {
+      height: 9.5rem;
+      background-color: rgba($color-light, 0.2);
+    }
+
+    .valuation-card__number,
+    .valuation-card__eyebrow,
+    h3,
+    p,
+    li,
+    .valuation-card__link {
+      color: $color-light;
+    }
+
+    .valuation-card__icon {
+      border-color: rgba($color-light, 0.56);
+      background-color: rgba($color-light, 0.14);
+      color: $color-light;
+    }
+
+    .valuation-card__list li::before {
+      background-color: $color-light;
+    }
+
+    .valuation-card__link span {
+      transform: translateX(0.25rem);
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__number {
+    position: absolute;
+    top: clamp(1.6rem, 3vw, 2.4rem);
+    right: clamp(1.6rem, 3vw, 2.6rem);
+    z-index: 1;
+    color: rgba($color-dark, 0.16);
+    font-family: $font-montserrat;
+    font-size: clamp(3.4rem, 6vw, 5.6rem);
+    font-weight: 900;
+    line-height: 1;
+    transition: color 260ms ease;
+  }
+
+  &__icon {
+    width: 6.6rem;
+    height: 6.6rem;
+    margin-bottom: clamp(1.8rem, 3vw, 2.5rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.2rem solid rgba($color-logo-red, 0.26);
+    border-radius: 50%;
+    background-color: rgba($color-logo-red, 0.06);
+    color: darken($color-logo-red, 8);
+    font-family: $font-montserrat;
+    font-size: 1.45rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    transition:
+      background-color 260ms ease,
+      border-color 260ms ease,
+      color 260ms ease;
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.6rem;
+    color: darken($color-logo-red, 5);
+    font-family: $font-montserrat;
+    font-size: 1.15rem;
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: 0.13rem;
+    text-transform: uppercase;
+    transition: color 260ms ease;
+  }
+
+  h3 {
+    margin: 0;
+    padding-right: 5rem;
+    color: $color-dark;
+    font-family: $font-montserrat;
+    font-size: clamp(2.05rem, 3vw, 2.65rem);
+    font-weight: 850;
+    line-height: 1.12;
+    text-align: left;
+    text-wrap: balance;
+    transition: color 260ms ease;
+  }
+
+  p {
+    margin: 1.35rem 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.38rem, 1.7vw, 1.55rem);
+    line-height: 1.62;
+    transition: color 260ms ease;
+  }
+
+  &__list {
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.8rem;
+
+    li {
+      position: relative;
+      padding-left: 1.8rem;
+      color: rgba($color-dark, 0.72);
+      font-size: clamp(1.3rem, 1.6vw, 1.45rem);
+      font-weight: 650;
+      line-height: 1.38;
+      transition: color 260ms ease;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.85rem;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        background-color: $color-logo-red;
+        transition:
+          background-color 260ms ease,
+          box-shadow 260ms ease;
+      }
+    }
+  }
+
+  &__link {
+    margin-top: auto;
+    padding-top: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: fit-content;
+    color: darken($color-logo-red, 7);
+    font-family: $font-montserrat;
+    font-size: 1.32rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      color 260ms ease,
+      gap 260ms ease;
+
+    span {
+      transition: transform 260ms ease;
+    }
+  }
+}
+
+.valuation-coverage {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 86% 16%, rgba($color-logo-red, 0.12), transparent 34rem),
+    linear-gradient(180deg, $color-light 0%, rgb(242, 246, 248) 100%);
+
+  &__inner {
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+    display: grid;
+    gap: clamp(2.8rem, 6vw, 6rem);
+    align-items: center;
+
+    @include desktop {
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    }
+  }
+
+  &__media {
+    position: relative;
+    overflow: hidden;
+    min-height: clamp(32rem, 50vw, 52rem);
+    border-radius: 1.4rem;
+    background-color: rgba($color-dark, 0.08);
+    box-shadow: 0 1.6rem 4rem rgba($color-black, 0.14);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 2rem -8% auto auto;
+      width: 44%;
+      height: 0.9rem;
+      z-index: 2;
+      background-color: rgba($color-logo-red, 0.8);
+      transform: skewX(-22deg);
+      pointer-events: none;
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  &__heading {
+    margin-inline: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+  }
+
+  &__content > p {
+    margin: clamp(1.4rem, 3vw, 2.2rem) 0 0;
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.45rem, 1.9vw, 1.72rem);
+    line-height: 1.75;
+  }
+
+  &__lists {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: clamp(2rem, 4vw, 3rem);
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    article {
+      padding: clamp(1.8rem, 3vw, 2.4rem);
+      border-radius: 1.2rem;
+      background-color: rgba($color-white, 0.78);
+      box-shadow: 0 0.8rem 2rem rgba($color-black, 0.06);
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 1rem;
+      color: $color-dark;
+      font-family: $font-montserrat;
+      font-size: clamp(1.8rem, 2.4vw, 2.25rem);
+      font-weight: 900;
+      line-height: 1.15;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 1rem;
+    }
+
+    li {
+      position: relative;
+      padding-left: 2.3rem;
+      color: rgba($color-dark, 0.78);
+      font-size: clamp(1.35rem, 1.6vw, 1.52rem);
+      font-weight: 700;
+      line-height: 1.38;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0.85rem;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        background-color: $color-logo-red;
+      }
+    }
+  }
+}
+
+.valuation-process {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, $color-dark 0%, darken($color-logo-red, 22) 100%);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -30% auto auto -12%;
+    width: clamp(32rem, 42vw, 58rem);
+    height: clamp(32rem, 42vw, 58rem);
+    border-radius: 50%;
+    background: rgba($color-logo-red, 0.28);
+    filter: blur(0.2rem);
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 122rem);
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 10rem) 1.5rem;
+    display: grid;
+    gap: clamp(3rem, 6vw, 6rem);
+
+    @include desktop {
+      grid-template-columns: minmax(28rem, 0.82fr) minmax(0, 1.18fr);
+      align-items: center;
+    }
+  }
+
+  &__heading {
+    margin-inline: 0;
+
+    p,
+    h2 {
+      text-align: left;
+    }
+
+    p {
+      color: rgba($color-light, 0.78);
+    }
+
+    h2 {
+      color: $color-light;
+    }
+  }
+
+  &__intro > p {
+    margin: clamp(1.5rem, 3vw, 2.4rem) 0 0;
+    color: rgba($color-light, 0.78);
+    font-size: clamp(1.45rem, 1.9vw, 1.7rem);
+    line-height: 1.75;
+  }
+
+  &__button {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  &__steps {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 1.4rem;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 2.4rem;
+      top: 1.5rem;
+      bottom: 1.5rem;
+      width: 0.1rem;
+      background-color: rgba($color-light, 0.2);
+
+      @include tablet {
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    @include tablet {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    li {
+      position: relative;
+      min-height: 17rem;
+      padding: clamp(2rem, 3vw, 2.8rem);
+      padding-left: 7.2rem;
+      border: 0.1rem solid rgba($color-light, 0.13);
+      border-radius: 1.1rem;
+      background-color: rgba($color-white, 0.08);
+      box-shadow: 0 1rem 2.8rem rgba($color-black, 0.16);
+      backdrop-filter: blur(0.8rem);
+
+      @include tablet {
+        padding-left: clamp(2rem, 3vw, 2.8rem);
+      }
+    }
+
+    span {
+      position: absolute;
+      left: 2rem;
+      top: 2rem;
+      width: 4.4rem;
+      height: 4.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: $color-logo-red;
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+      box-shadow: 0 0 0 0.6rem rgba($color-logo-red, 0.18);
+
+      @include tablet {
+        position: static;
+        margin-bottom: 1.5rem;
+      }
+    }
+
+    h3 {
+      margin: 0;
+      color: $color-light;
+      font-family: $font-montserrat;
+      font-size: clamp(1.85rem, 2.5vw, 2.4rem);
+      font-weight: 850;
+      line-height: 1.14;
+      text-align: left;
+    }
+
+    p {
+      margin: 0.9rem 0 0;
+      color: rgba($color-light, 0.76);
+      font-size: clamp(1.35rem, 1.6vw, 1.52rem);
+      line-height: 1.58;
+    }
+  }
+}
+
+.valuation-clients {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 22%, rgba($color-serenity, 0.28), transparent 35rem),
+    radial-gradient(circle at 82% 18%, rgba($color-logo-red, 0.12), transparent 35rem),
+    linear-gradient(180deg, rgb(242, 246, 248) 0%, $color-light 100%);
+
+  &__inner {
+    width: 100%;
+    margin-inline: auto;
+    padding: clamp(5.5rem, 9vw, 9rem) 0;
+  }
+
+  &__heading,
+  &__lead {
+    width: min(calc(100% - 3rem), 122rem);
+    margin-inline: auto;
+  }
+
+  &__lead {
+    margin-top: clamp(1.4rem, 3vw, 2.2rem);
+    margin-bottom: clamp(2.8rem, 5vw, 4.8rem);
+    color: rgba($color-dark, 0.68);
+    font-size: clamp(1.45rem, 1.9vw, 1.72rem);
+    line-height: 1.75;
+    text-align: center;
+  }
+}
+
+@keyframes valuationClientsMarqueeScroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(calc(-1 * var(--valuation-marquee-cycle-width, 100rem)), 0, 0);
+  }
+}
+
+.valuation-logo-slider {
+  --valuation-logo-width: clamp(27rem, 25.5vw, 42rem);
+  //--valuation-logo-height: clamp(15.75rem, 16.5vw, 20.25rem);
+  --valuation-logo-gap: clamp(1.2rem, 2vw, 2.4rem);
+  --valuation-marquee-duration: 42s;
+  --valuation-marquee-cycle-width: 100rem;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: 100%;
+  //min-height: calc(var(--valuation-logo-height) + 4rem);
+  height: 40vh;
+  margin-inline: auto;
+  padding-block: 2rem;
+  //border-block: 0.1rem solid rgba($color-dark, 0.08);
+  // background:
+  //   linear-gradient(90deg, rgba($color-light, 0.82), rgba($color-white, 0.92), rgba($color-light, 0.82)),
+  //   rgba($color-white, 0.72);
+  // box-shadow:
+  //   inset 0 0.1rem 0 rgba($color-white, 0.78),
+  //   inset 0 -0.1rem 0 rgba($color-white, 0.62);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 3;
+    width: min(16vw, 18rem);
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba($color-light, 0.98), rgba($color-light, 0));
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba($color-light, 0.98), rgba($color-light, 0));
+  }
+
+  &__viewport {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__track {
+    width: max-content;
+    min-width: 100%;
+    //min-height: var(--valuation-logo-height);
+    display: flex;
+    align-items: center;
+    gap: var(--valuation-logo-gap);
+    transform: translate3d(0, 0, 0);
+    animation: none;
+    animation-play-state: paused;
+    will-change: transform;
+    height: 100%;
+  }
+
+  &[data-valuation-clients-ready="true"] &__track {
+    animation-duration: var(--valuation-marquee-duration);
+  }
+
+  /*
+   * Si por HTML mal balanceado una tarjeta queda fuera del track,
+   * no debe aparecer abajo del slider. El JS corregido la regresa al track.
+   */
+  &__viewport > &__item,
+  > &__item {
+    display: none;
+  }
+
+  &:hover &__track,
+  &:focus-within &__track {
+    animation-play-state: paused;
+  }
+
+  &__item {
+    width: var(--valuation-logo-width);
+    //height: var(--valuation-logo-height);
+    height: 17rem;
+    flex: 0 0 var(--valuation-logo-width);
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  &__card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //border: 0.1rem solid rgba($color-dark, 0.09);
+    border-radius: 1.6rem;
+    background:
+      linear-gradient(135deg, rgba($color-white, 0.96), rgba($color-light, 0.82)),
+      rgba($color-white, 0.9);
+    color: $color-dark;
+    text-decoration: none;
+    box-shadow: 0 1.2rem 3rem rgba($color-black, 0.07);
+    transition:
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      transform 220ms ease;
+
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      border-color: rgba($color-logo-red, 0.34);
+      box-shadow: 0 1.6rem 4rem rgba($color-logo-red, 0.16);
+      transform: translateY(-0.25rem);
+      outline: none;
+    }
+  }
+
+  &__logo {
+    width: 95%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //padding: clamp(1.5rem, 2vw, 2.4rem);
+    transition:
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  img {
+    width: 100%;
+    //max-width: 28.5rem;
+    height: 100%;
+    max-height: 12rem;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.76;
+    transition:
+      filter 220ms ease,
+      opacity 220ms ease,
+      transform 220ms ease;
+  }
+
+  &__placeholder {
+    width: 10.8rem;
+    height: 10.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.1rem solid rgba($color-logo-red, 0.18);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 30% 24%, rgba($color-white, 0.36), transparent 48%),
+      rgba($color-logo-red, 0.92);
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: 2.45rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+    box-shadow: 0 1rem 2rem rgba($color-logo-red, 0.18);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    padding: clamp(1.6rem, 2.5vw, 2.4rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    background:
+      radial-gradient(circle at 30% 24%, rgba($color-white, 0.12), transparent 38%),
+      linear-gradient(135deg, rgba($color-dark, 0.9), rgba($color-logo-red, 0.94));
+    color: $color-light;
+    text-align: center;
+    transform: translateY(100%);
+    opacity: 0;
+    transition:
+      transform 240ms ease,
+      opacity 240ms ease;
+    pointer-events: none;
+  }
+
+  &__overlay strong {
+    display: block;
+    width: 100%;
+    color: $color-light;
+    font-family: $font-montserrat;
+    font-size: clamp(1.65rem, 1.8vw, 2.05rem);
+    font-weight: 900;
+    line-height: 1.18;
+  }
+
+  &__overlay small {
+    display: block;
+    width: 100%;
+    color: rgba($color-light, 0.82);
+    font-size: clamp(1.2rem, 1.35vw, 1.42rem);
+    line-height: 1.25;
+  }
+
+  &__card:hover img,
+  &__card:focus img,
+  &__card:focus-visible img,
+  &__item:focus-within img {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(0.98);
+  }
+
+  &__card:hover &__logo,
+  &__card:focus &__logo,
+  &__card:focus-visible &__logo,
+  &__item:focus-within &__logo {
+    opacity: 0.82;
+    transform: scale(0.98);
+  }
+
+  &__card:hover &__overlay,
+  &__card:focus &__overlay,
+  &__card:focus-visible &__overlay,
+  &__item:focus-within &__overlay {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.valuation-quote {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: $color-dark;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      linear-gradient(90deg, rgba($color-dark, 0.86), rgba($color-logo-red, 0.74)),
+      radial-gradient(circle at 16% 22%, rgba($color-logo-red, 0.44), transparent 34rem);
+  }
+
+  &__overlay {
+    position: relative;
+    z-index: 1;
+    background:
+      linear-gradient(135deg, rgba($color-black, 0.42), rgba($color-logo-red, 0.18)),
+      linear-gradient(180deg, rgba($color-black, 0.05), rgba($color-black, 0.28));
+  }
+
+  &__inner {
+    width: min(100%, 122rem);
+    min-height: clamp(62rem, 82vh, 86rem);
+    margin-inline: auto;
+    padding: clamp(5rem, 8vw, 8rem) 1.5rem;
+    display: grid;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+
+    @include desktop {
+      grid-template-columns: minmax(0, 0.9fr) minmax(48rem, 1.1fr);
+    }
+  }
+
+  &__content {
+    width: min(100%, 62rem);
+    color: $color-light;
+
+    p {
+      margin: clamp(1.6rem, 3vw, 2.6rem) 0 0;
+      color: rgba($color-light, 0.92);
+      font-size: clamp(1.6rem, 2vw, 2rem);
+      line-height: 1.75;
+    }
+  }
+
+  &__heading {
+    p,
+    h2 {
+      color: $color-light;
+      text-align: left;
+    }
+
+    p {
+      margin-bottom: 0.7rem;
+      font-size: clamp(1.25rem, 2vw, 1.55rem);
+      letter-spacing: 0.16rem;
+    }
+
+    h2 {
+      max-width: 62rem;
+      margin: 0;
+      font-size: clamp(3.8rem, 7vw, 7.4rem);
+      font-weight: 800;
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+  }
+
+  &__contact-button {
+    margin: 0;
+    width: auto;
+    min-width: min(100%, 24rem);
+    max-width: 100%;
+  }
+
+  &__form {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: clamp(2.2rem, 4vw, 4rem);
+    border: 0.1rem solid rgba($color-white, 0.52);
+    border-radius: 1.3rem;
+    background-color: rgba($color-light, 0.94);
+    box-shadow:
+      0 2rem 6rem rgba($color-black, 0.28),
+      inset 0 0 0 0.1rem rgba($color-white, 0.55);
+    backdrop-filter: blur(1rem);
+
+    .form__fieldset {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 1.6rem;
+
+      @include tablet {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      legend {
+        position: absolute;
+        width: 0.1rem;
+        height: 0.1rem;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+    }
+
+    .form__status {
+      margin: 0;
+    }
+
+    .form-group {
+      margin: 0;
+    }
+
+    .form-control {
+      background-color: transparent;
+      border: 0;
+      border-bottom: 0.16rem solid rgba($color-dark, 0.36);
+      border-radius: 0;
+      box-shadow: none;
+      color: $color-dark;
+      font-family: $font-roboto;
+      font-size: 1.58rem;
+
+      &:focus {
+        border-color: $color-logo-red;
+        background-color: transparent;
+        box-shadow: 0 0.7rem 0.9rem -0.8rem rgba($color-logo-red, 0.62);
+      }
+    }
+
+    .form-label {
+      font-family: $font-montserrat;
+      font-weight: 900;
+      letter-spacing: 0.1rem;
+      text-transform: uppercase;
+    }
+
+    .form-group > input:focus + label,
+    .form-group > input:not(:placeholder-shown) + label,
+    .form-group > textarea:focus + label,
+    .form-group > textarea:not(:placeholder-shown) + label,
+    .form-group > select:focus + label,
+    .form-group > select:required:valid + label {
+      color: $color-logo-red;
+    }
+
+    .form-group__error {
+      min-height: 1.4rem;
+      margin-top: 0.25rem;
+      color: darken($color-logo-red, 4);
+    }
+  }
+
+  &__status,
+  &__field--full,
+  &__submit {
+    @include tablet {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__submit {
+    display: flex;
+    justify-content: flex-start;
+
+    .button__submit {
+      margin: 0;
+      width: auto;
+      max-width: none;
+      min-width: 20rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      background-color: $color-logo-red;
+      color: $color-light;
+
+      &:hover,
+      &:focus {
+        background-color: darken($color-logo-red, 8);
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .valuation-logo-slider {
+    --valuation-logo-width: clamp(24.75rem, 78vw, 31.5rem);
+    --valuation-logo-height: 16.5rem;
+    --valuation-logo-gap: 1.2rem;
+
+    &::before,
+    &::after {
+      width: 5.8rem;
+    }
+
+    &__placeholder {
+      width: 9.45rem;
+      height: 9.45rem;
+      font-size: 2.1rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .valuation-card,
+  .valuation-logo-slider__track,
+  .valuation-logo-slider img,
+  .valuation-logo-slider__logo,
+  .valuation-logo-slider__card,
+  .valuation-logo-slider__overlay,
+  .valuation-hero__secondary {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .valuation-logo-slider__track {
+    width: 100%;
+    transform: none !important;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,57 @@
+{%
+$message = $message ?? [];
+$id = (int) ($message['id'] ?? 0);
+$name = $message['name'] ?? 'Contacto';
+$email = $message['email'] ?? '';
+$phone = $message['phone'] ?? '';
+$valuationTypeLabel = $message['valuation_type_label'] ?? 'Solicitud de valuación';
+$text = $message['message'] ?? '';
+$status = $message['status'] ?? 'new';
+$priority = $message['priority'] ?? 'normal';
+$sourceUrl = $message['source_url'] ?? '';
+$referrerUrl = $message['referrer_url'] ?? '';
+$ipAddress = $message['ip_address'] ?? '';
+$userAgent = $message['user_agent'] ?? '';
+$createdAt = $message['created_at'] ?? '';
+$readAt = $message['read_at'] ?? '';
+$answeredAt = $message['answered_at'] ?? '';
+$archivedAt = $message['archived_at'] ?? '';
+$createdLabel = $createdAt !== '' ? date('d-m-Y H:i', strtotime($createdAt)) : '—';
+$readLabel = $readAt !== '' ? date('d-m-Y H:i', strtotime($readAt)) : '—';
+$answeredLabel = $answeredAt !== '' ? date('d-m-Y H:i', strtotime($answeredAt)) : '—';
+$archivedLabel = $archivedAt !== '' ? date('d-m-Y H:i', strtotime($archivedAt)) : '—';
+$mailSubject = rawurlencode('Respuesta: ' . $valuationTypeLabel);
+%}
+
+<section class="admin-dashboard admin-messages-page admin-valuation-messages-page" aria-labelledby="admin-valuation-message-title">
+    <header class="admin-dashboard__hero">
+        <div><p class="admin-dashboard__eyebrow">Solicitud de valuación</p><h2 id="admin-valuation-message-title">{{{ ($valuationTypeLabel) }}}</h2><span>Solicitud enviada por {{{ ($name) }}} el {{{ ($createdLabel) }}}.</span></div>
+        <div class="admin-dashboard__actions"><a href="@url/admin/valuacion/mensajes" class="admin-button admin-button--secondary">Volver</a>{% if (!empty($email)): %}<a href="mailto:{{{ ($email) }}}?subject={{{ ($mailSubject) }}}" class="admin-button admin-button--primary">Responder por correo</a>{% endif; %}</div>
+    </header>
+
+    <section class="admin-dashboard__grid">
+        <article class="admin-panel admin-panel--wide"><header class="admin-panel__header"><div><p>Contenido</p><h3>Mensaje</h3></div></header><div class="admin-message-detail"><div class="admin-message"><span class="admin-avatar admin-avatar--sm" data-admin-initials data-admin-name="{{{ ($name) }}}"></span><div class="admin-message__content"><strong>{{{ ($name) }}}</strong>{% if (!empty($email)): %}<small>{{{ ($email) }}}</small>{% endif; %}<p>{{{ ($text) }}}</p></div></div></div></article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header"><div><p>Gestión</p><h3>Estado interno</h3></div></header>
+            <form class="form form--default admin-jumbotron-form" action="@url/admin/valuacion/mensajes/{{ ($id) }}/actualizar" method="post" data-ajax-form data-validation="html" data-send-as="urlencoded" data-csrf="true" data-csrf-field="_token" data-reset-on-success="false" data-loading-text="Guardando..." novalidate>
+                @csrf
+                <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+                <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                    <legend>Actualizar solicitud de valuación</legend>
+                    <div class="admin-form-grid">
+                        <div class="form-group form-group--select admin-form-grid__full" data-field="status"><select id="valuation-message-status" name="status" class="form-control" required data-label="estado">{% if ($status === 'new'): %}<option value="new" selected>Nueva</option>{% else: %}<option value="new">Nueva</option>{% endif; %}{% if ($status === 'read'): %}<option value="read" selected>Leída</option>{% else: %}<option value="read">Leída</option>{% endif; %}{% if ($status === 'in_progress'): %}<option value="in_progress" selected>Seguimiento</option>{% else: %}<option value="in_progress">Seguimiento</option>{% endif; %}{% if ($status === 'answered'): %}<option value="answered" selected>Respondida</option>{% else: %}<option value="answered">Respondida</option>{% endif; %}{% if ($status === 'archived'): %}<option value="archived" selected>Archivada</option>{% else: %}<option value="archived">Archivada</option>{% endif; %}{% if ($status === 'spam'): %}<option value="spam" selected>Spam</option>{% else: %}<option value="spam">Spam</option>{% endif; %}</select><label class="form-label" for="valuation-message-status">Estado</label><span class="form-group__error" data-field-error data-error-for="status"></span></div>
+                        <div class="form-group form-group--select admin-form-grid__full" data-field="priority"><select id="valuation-message-priority" name="priority" class="form-control" required data-label="prioridad">{% if ($priority === 'low'): %}<option value="low" selected>Baja</option>{% else: %}<option value="low">Baja</option>{% endif; %}{% if ($priority === 'normal'): %}<option value="normal" selected>Normal</option>{% else: %}<option value="normal">Normal</option>{% endif; %}{% if ($priority === 'high'): %}<option value="high" selected>Alta</option>{% else: %}<option value="high">Alta</option>{% endif; %}{% if ($priority === 'urgent'): %}<option value="urgent" selected>Urgente</option>{% else: %}<option value="urgent">Urgente</option>{% endif; %}</select><label class="form-label" for="valuation-message-priority">Prioridad</label><span class="form-group__error" data-field-error data-error-for="priority"></span></div>
+                    </div>
+                    <div class="admin-jumbotron-form__actions"><button type="submit" class="admin-button admin-button--primary button__submit"><span class="button__submit__text">Guardar cambios</span></button></div>
+                </fieldset>
+            </form>
+        </article>
+
+        <article class="admin-panel"><header class="admin-panel__header"><div><p>Contacto</p><h3>Datos del solicitante</h3></div></header><div class="admin-mini-list"><div class="admin-mini-item"><span class="admin-mini-item__icon">N</span><span><strong>Nombre</strong><small>{{{ ($name) }}}</small></span></div>{% if (!empty($email)): %}<a class="admin-mini-item" href="mailto:{{{ ($email) }}}"><span class="admin-mini-item__icon">@</span><span><strong>Correo</strong><small>{{{ ($email) }}}</small></span></a>{% endif; %}{% if (!empty($phone)): %}<a class="admin-mini-item" href="tel:{{{ ($phone) }}}"><span class="admin-mini-item__icon">T</span><span><strong>Teléfono</strong><small>{{{ ($phone) }}}</small></span></a>{% endif; %}<div class="admin-mini-item"><span class="admin-mini-item__icon">◇</span><span><strong>Tipo de valuación</strong><small>{{{ ($valuationTypeLabel) }}}</small></span></div></div></article>
+
+        <article class="admin-panel"><header class="admin-panel__header"><div><p>Sistema</p><h3>Origen y fechas</h3></div></header><div class="admin-mini-list"><div class="admin-mini-item"><span class="admin-mini-item__icon">F</span><span><strong>Recibida</strong><small>{{{ ($createdLabel) }}}</small></span></div><div class="admin-mini-item"><span class="admin-mini-item__icon">L</span><span><strong>Leída</strong><small>{{{ ($readLabel) }}}</small></span></div><div class="admin-mini-item"><span class="admin-mini-item__icon">R</span><span><strong>Respondida</strong><small>{{{ ($answeredLabel) }}}</small></span></div><div class="admin-mini-item"><span class="admin-mini-item__icon">A</span><span><strong>Archivada</strong><small>{{{ ($archivedLabel) }}}</small></span></div>{% if (!empty($sourceUrl)): %}<a class="admin-mini-item" href="{{{ ($sourceUrl) }}}" target="_blank" rel="noopener noreferrer"><span class="admin-mini-item__icon">U</span><span><strong>URL de origen</strong><small>{{{ ($sourceUrl) }}}</small></span></a>{% endif; %}{% if (!empty($referrerUrl)): %}<a class="admin-mini-item" href="{{{ ($referrerUrl) }}}" target="_blank" rel="noopener noreferrer"><span class="admin-mini-item__icon">R</span><span><strong>Referencia</strong><small>{{{ ($referrerUrl) }}}</small></span></a>{% endif; %}{% if (!empty($ipAddress)): %}<div class="admin-mini-item"><span class="admin-mini-item__icon">IP</span><span><strong>IP</strong><small>{{{ ($ipAddress) }}}</small></span></div>{% endif; %}{% if (!empty($userAgent)): %}<div class="admin-mini-item"><span class="admin-mini-item__icon">UA</span><span><strong>User Agent</strong><small>{{{ ($userAgent) }}}</small></span></div>{% endif; %}</div></article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide"><header class="admin-panel__header"><div><p>Peligro</p><h3>Eliminar solicitud</h3></div></header><div class="admin-form-actions"><a href="@url/admin/valuacion/mensajes/{{ ($id) }}/eliminar" class="admin-button admin-button--danger" onclick="return confirm('¿Eliminar esta solicitud de valuación definitivamente?');">Eliminar solicitud</a></div></article>
+</section>

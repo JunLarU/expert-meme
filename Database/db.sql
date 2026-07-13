@@ -689,5 +689,208 @@ ALTER TABLE projects ADD FULLTEXT INDEX ft_search (
     category, city, state, country, client_name,
     service, specialty, material_system
 );
+-- ==========================================================
+-- 13. valuation_units
+-- Unidades de valuación representadas por L+E Ingeniería
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS valuation_units (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(180) NOT NULL UNIQUE,
+
+    short_name VARCHAR(120) NULL,
+    role_label VARCHAR(160) NULL,
+
+    url TEXT NULL,
+    logo_url TEXT NULL,
+    logo_alt TEXT NULL,
+
+    description TEXT NULL,
+
+    is_primary TINYINT(1) NOT NULL DEFAULT 0,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    sort_order INT UNSIGNED NOT NULL DEFAULT 0,
+
+    created_by INT(11) NULL,
+    updated_by INT(11) NULL,
+    deleted_by INT(11) NULL,
+    deleted_at DATETIME NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_valuation_units_name (name),
+    INDEX idx_valuation_units_slug (slug),
+    INDEX idx_valuation_units_primary (is_primary),
+    INDEX idx_valuation_units_active (is_active),
+    INDEX idx_valuation_units_order (sort_order),
+    INDEX idx_valuation_units_deleted_at (deleted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- ==========================================================
+-- 14. valuation_clients
+-- Clientes específicos del área de valuación
+-- ==========================================================
+
+CREATE TABLE IF NOT EXISTS valuation_clients (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    valuation_unit_id BIGINT UNSIGNED NULL,
+
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(180) UNIQUE,
+
+    url TEXT NULL,
+    logo_url TEXT NULL,
+    logo_alt TEXT NULL,
+    initials VARCHAR(10) NULL,
+
+    description TEXT NULL,
+    industry VARCHAR(160) NULL,
+
+    client_type ENUM(
+        'empresa',
+        'desarrollador',
+        'particular',
+        'institucion',
+        'industria',
+        'comercio',
+        'notaria',
+        'despacho',
+        'gobierno',
+        'otro'
+    ) NOT NULL DEFAULT 'empresa',
+
+    represented_unit ENUM(
+        'valor_comercial_avaluos',
+        'uva_abalkan',
+        'ambas',
+        'no_aplica'
+    ) NOT NULL DEFAULT 'valor_comercial_avaluos',
+
+    valuation_services SET(
+        'avaluo_inmobiliario_comercial',
+        'estudio_de_valor',
+        'maquinaria_y_equipo',
+        'valuacion_de_proyectos',
+        'asesoria_tecnica',
+        'otro'
+    ) NULL,
+
+    service_summary TEXT NULL,
+
+    city VARCHAR(160) NULL,
+    state VARCHAR(120) NULL,
+    country VARCHAR(120) NOT NULL DEFAULT 'México',
+
+    coverage_area VARCHAR(255) NULL,
+    coverage_notes TEXT NULL,
+
+    testimonial TEXT NULL,
+    contact_reference VARCHAR(180) NULL,
+
+    show_in_valuation TINYINT(1) NOT NULL DEFAULT 1,
+    show_in_carousel TINYINT(1) NOT NULL DEFAULT 1,
+
+    is_featured TINYINT(1) NOT NULL DEFAULT 0,
+    is_active TINYINT(1) NOT NULL DEFAULT 1,
+    sort_order INT UNSIGNED NOT NULL DEFAULT 0,
+
+    created_by INT(11) NULL,
+    updated_by INT(11) NULL,
+    deleted_by INT(11) NULL,
+    deleted_at DATETIME NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_valuation_clients_unit (valuation_unit_id),
+    INDEX idx_valuation_clients_name (name),
+    INDEX idx_valuation_clients_slug (slug),
+    INDEX idx_valuation_clients_industry (industry),
+    INDEX idx_valuation_clients_type (client_type),
+    INDEX idx_valuation_clients_represented_unit (represented_unit),
+    INDEX idx_valuation_clients_state (state),
+    INDEX idx_valuation_clients_city (city),
+    INDEX idx_valuation_clients_featured (is_featured),
+    INDEX idx_valuation_clients_active (is_active),
+    INDEX idx_valuation_clients_valuation (show_in_valuation),
+    INDEX idx_valuation_clients_carousel (show_in_carousel),
+    INDEX idx_valuation_clients_order (sort_order),
+    INDEX idx_valuation_clients_deleted_at (deleted_at),
+
+    FULLTEXT KEY ft_valuation_clients_search (
+        name,
+        description,
+        industry,
+        service_summary,
+        city,
+        state,
+        coverage_area,
+        coverage_notes
+    ),
+
+    CONSTRAINT fk_valuation_clients_unit
+        FOREIGN KEY (valuation_unit_id)
+        REFERENCES valuation_units(id)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS valuation_messages (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(180) NOT NULL,
+    email VARCHAR(180) NOT NULL,
+    phone VARCHAR(80) NULL,
+
+    valuation_type ENUM(
+        'avaluo-inmobiliario-comercial',
+        'estudio-de-valor',
+        'maquinaria-y-equipo',
+        'valuacion-de-proyectos'
+    ) NOT NULL,
+
+    valuation_type_label VARCHAR(180) NOT NULL,
+    message LONGTEXT NOT NULL,
+
+    source_page VARCHAR(120) NOT NULL DEFAULT 'valuacion',
+    source_url TEXT NULL,
+    referrer_url TEXT NULL,
+
+    status ENUM('new', 'read', 'in_progress', 'answered', 'archived', 'spam') NOT NULL DEFAULT 'new',
+    priority ENUM('low', 'normal', 'high', 'urgent') NOT NULL DEFAULT 'normal',
+
+    assigned_to INT(11) NULL,
+
+    ip_address VARCHAR(45) NULL,
+    user_agent TEXT NULL,
+
+    read_at DATETIME NULL,
+    answered_at DATETIME NULL,
+    archived_at DATETIME NULL,
+
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_valuation_messages_email (email),
+    INDEX idx_valuation_messages_type (valuation_type),
+    INDEX idx_valuation_messages_status (status),
+    INDEX idx_valuation_messages_priority (priority),
+    INDEX idx_valuation_messages_assigned_to (assigned_to),
+    INDEX idx_valuation_messages_created_at (created_at),
+    INDEX idx_valuation_messages_read_at (read_at),
+    INDEX idx_valuation_messages_answered_at (answered_at),
+
+    FULLTEXT KEY ft_valuation_messages_search (
+        name,
+        email,
+        phone,
+        valuation_type_label,
+        message
+    )
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

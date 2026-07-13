@@ -1,0 +1,28 @@
+	2026-07-01 11:05:01: ReflectionException by 192.168.1.78
+Uncaught exception: 'ReflectionException' with message 'Method App\Controllers\Home::valuacion() does not exist'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Container\DependencyInjection.php(17): ReflectionMethod->__construct(Object(App\Controllers\Home), 'valuacion')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(82): Whis\Container\DependencyInjection::resolveParameters(Array, Array)
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#3 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#4 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Container\DependencyInjection.php' on line 17
+
+
+	2026-07-01 14:14:30: RuntimeException by 192.168.1.78
+Uncaught exception: 'RuntimeException' with message 'Template not found: pages/main/valuacion. Attempts: E:/F22_LMASE-V2/assets/views/compiled/pages/main/valuacion.html'
+Stack trace: #0 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(501): Whis\View\StencilEngine->resolveTemplatePath('pages/main/valu...', 'E:/F22_LMASE-V2...')
+#1 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(117): Whis\View\StencilEngine->resolveViewPath('pages/main/valu...')
+#2 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php(73): Whis\View\StencilEngine->compile('pages/main/valu...', 'layouts/main')
+#3 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Http\Response.php(206): Whis\View\StencilEngine->render('pages/main/valu...', Array, 'layouts/main', 'Valuaci\xC3\xB3n')
+#4 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Helpers\http.php(37): Whis\Http\Response::view('pages/main/valu...', Array, 'layouts/main', 'Valuaci\xC3\xB3n')
+#5 E:\F22_LMASE-V2\app\Controllers\Home.php(124): view('pages/main/valu...', 'Valuaci\xC3\xB3n', Array, 'layouts/main')
+#6 [internal function]: App\Controllers\Home->valuacion()
+#7 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(90): call_user_func(Array)
+#8 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(97): Whis\Routing\Router->{closure:Whis\Routing\Router::resolve():90}()
+#9 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\Routing\Router.php(87): Whis\Routing\Router->runMiddlewares(Object(Whis\Http\Request), Array, Object(Closure))
+#10 E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\App.php(148): Whis\Routing\Router->resolve(Object(Whis\Http\Request))
+#11 E:\F22_LMASE-V2\public\index.php(8): Whis\App->run()
+#12 {main}
+Thrown in 'E:\F22_LMASE-V2\vendor\junlar11\whis-core\src\View\StencilEngine.php' on line 547
+
+

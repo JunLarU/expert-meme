@@ -51,15 +51,15 @@ $topbarIsAdmin = $topbarRole === 'admin';
 $topbarSearchQuery = '';
 
 try {
-    if (function_exists('request')) {
-        $topbarSearchQuery = (string) (request()->query('q') ?? '');
-    }
+if (function_exists('request')) {
+$topbarSearchQuery = (string) (request()->query('q') ?? '');
+}
 } catch (\Throwable $th) {
-    $topbarSearchQuery = '';
+$topbarSearchQuery = '';
 }
 
 if ($topbarSearchQuery === '') {
-    $topbarSearchQuery = (string) ($_GET['q'] ?? '');
+$topbarSearchQuery = (string) ($_GET['q'] ?? '');
 }
 
 $topbarSearchQuery = str_replace("\0", '', $topbarSearchQuery);
@@ -73,7 +73,7 @@ $topbarSearchQuery = mb_substr($topbarSearchQuery, 0, 120);
 
 {%
 
-    
+
 $topbarInitials = 'AD';
 
 $topbarNameParts = preg_split('/\s+/', trim((string) $topbarName));
@@ -103,17 +103,17 @@ $topbarInitials = strtoupper($topbarInitials);
             <span class="admin-sidebar__logo-mark">L+E</span>
 
             <span class="admin-sidebar__logo-text">
-                <strong>Admin</strong>
+                <strong>{{{ ($topbarRoleLabel) }}}</strong>
                 <small>Panel interno</small>
             </span>
         </a>
     </div>
 
     <nav class="admin-sidebar__nav" aria-label="Menú administrativo">
-        <a class="admin-sidebar__link" href="@url/admin" aria-current="page">
+         <a class="admin-sidebar__link" href="@url/admin" aria-current="page">
             <span class="admin-sidebar__icon" aria-hidden="true">⌂</span>
             <span class="admin-sidebar__text">Dashboard</span>
-        </a>
+        </a> 
 
         <a class="admin-sidebar__link" href="@url/admin/jumbotron">
             <span class="admin-sidebar__icon" aria-hidden="true">▣</span>
@@ -131,8 +131,7 @@ $topbarInitials = strtoupper($topbarInitials);
         </a>
 
         {% if ($topbarIsAdmin): %}
-        <a class="admin-sidebar__link"
-            href="@url/admin/asociaciones-certificaciones">
+        <a class="admin-sidebar__link" href="@url/admin/asociaciones-certificaciones">
             <span class="admin-sidebar__icon" aria-hidden="true">▥</span>
             <span class="admin-sidebar__text">Asociaciones y certificaciones</span>
         </a>
@@ -142,18 +141,37 @@ $topbarInitials = strtoupper($topbarInitials);
             <span class="admin-sidebar__text">Clientes</span>
         </a>
 
-        <!-- Agrega este enlace en assets/views/includes/admin/navbar.html dentro de .admin-sidebar__nav -->
+        <a class="admin-sidebar__link" href="@url/admin/valuacion/mensajes">
+            <span class="admin-sidebar__icon" aria-hidden="true">✦</span>
+            <span class="admin-sidebar__text">Mensajes de valuación</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/valuacion/clientes">
+            <span class="admin-sidebar__icon" aria-hidden="true">◇</span>
+            <span class="admin-sidebar__text">Clientes de valuación</span>
+        </a>
+
+        <a class="admin-sidebar__link" href="@url/admin/valuacion/unidades">
+            <span class="admin-sidebar__icon" aria-hidden="true">◆</span>
+            <span class="admin-sidebar__text">Unidades de valuación</span>
+        </a>
+
         <a class="admin-sidebar__link" href="@url/admin/oficinas-talleres">
             <span class="admin-sidebar__icon" aria-hidden="true">⌖</span>
             <span class="admin-sidebar__text">Oficinas y talleres</span>
         </a>
-
 
         <a class="admin-sidebar__link" href="@url/admin/usuarios">
             <span class="admin-sidebar__icon" aria-hidden="true">◉</span>
             <span class="admin-sidebar__text">Usuarios</span>
         </a>
         {% endif; %}
+
+        <a class="admin-sidebar__link" href="https://drive.google.com/uc?export=download&id=1QqITfjAYgCm2RC6mlpp4ZW9ZBQ0H_yDM">
+            <span class="admin-sidebar__icon" aria-hidden="true">🗲</span>
+            <span class="admin-sidebar__text">Descargar App</span>
+        </a>
+
     </nav>
 
     <div class="admin-sidebar__footer">
@@ -181,8 +199,7 @@ $topbarInitials = strtoupper($topbarInitials);
         <label class="admin-topbar__search-label" for="admin-global-search">Buscar</label>
 
         <input id="admin-global-search" name="q" type="search" placeholder="Buscar proyectos, clientes, mensajes..."
-            value="{{{ ($topbarSearchQuery) }}}"
-            autocomplete="off" data-admin-search>
+            value="{{{ ($topbarSearchQuery) }}}" autocomplete="off" data-admin-search>
 
         <button type="submit" aria-label="Buscar">🔎</button>
     </form>

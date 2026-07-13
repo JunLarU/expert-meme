@@ -15,6 +15,7 @@ import initProjectsSearch from "./sections/projects-search";
 import initSmoothScrollLinks from "./sections/smooth-scroll";
 import initSplide from "./sections/splide";
 import initStats from "./sections/stats";
+import initValuationClientsCarousel from "./sections/valuation-clients-carousel";
 
 export {
   WHIS_DEFAULT_OPTIONS,
@@ -68,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initStats();
   initClientsHexGrid();
   initAssociationCertificationsCarousel();
+  initValuationClientsCarousel();
   initAboutMvv();
   initSmoothScrollLinks();
   initProjectsInfiniteScroll();

@@ -1,0 +1,69 @@
+{%
+$messages = $messages ?? [];
+$stats = $stats ?? [];
+$total = (int) ($stats['total'] ?? 0);
+$new = (int) ($stats['new'] ?? 0);
+$inProgress = (int) ($stats['in_progress'] ?? 0);
+$answered = (int) ($stats['answered'] ?? 0);
+$urgent = (int) ($stats['urgent'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-messages-page admin-valuation-messages-page" aria-labelledby="admin-valuation-messages-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Valuación</p>
+            <h2 id="admin-valuation-messages-title">Mensajes de valuación</h2>
+            <span>Consulta las solicitudes recibidas desde el formulario de valuación. Puedes revisar, priorizar, archivar o eliminar cada solicitud.</span>
+        </div>
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin" class="admin-button admin-button--secondary">Dashboard</a>
+        </div>
+    </header>
+
+    <section class="admin-stats" aria-label="Resumen de mensajes de valuación">
+        <article class="admin-stat-card"><div class="admin-stat-card__content"><span>Total</span><strong data-admin-count data-value="{{ ($total) }}">0</strong><small>Solicitudes recibidas</small></div><span class="admin-stat-card__icon" aria-hidden="true">◇</span></article>
+        <article class="admin-stat-card admin-stat-card--alert"><div class="admin-stat-card__content"><span>Nuevas</span><strong data-admin-count data-value="{{ ($new) }}">0</strong><small>Pendientes de lectura</small></div><span class="admin-stat-card__icon" aria-hidden="true">●</span></article>
+        <article class="admin-stat-card"><div class="admin-stat-card__content"><span>Seguimiento</span><strong data-admin-count data-value="{{ ($inProgress) }}">0</strong><small>En atención</small></div><span class="admin-stat-card__icon" aria-hidden="true">↻</span></article>
+        <article class="admin-stat-card"><div class="admin-stat-card__content"><span>Respondidas</span><strong data-admin-count data-value="{{ ($answered) }}">0</strong><small>Cerradas</small></div><span class="admin-stat-card__icon" aria-hidden="true">✓</span></article>
+        <article class="admin-stat-card admin-stat-card--alert"><div class="admin-stat-card__content"><span>Urgentes</span><strong data-admin-count data-value="{{ ($urgent) }}">0</strong><small>Prioridad urgente</small></div><span class="admin-stat-card__icon" aria-hidden="true">!</span></article>
+    </section>
+
+    <article class="admin-panel admin-panel--wide">
+        <header class="admin-panel__header"><div><p>Inbox</p><h3>Listado de solicitudes</h3></div></header>
+        <div class="admin-table-wrap">
+            <table class="admin-table" data-admin-filterable>
+                <thead><tr><th>Contacto</th><th>Tipo de valuación</th><th>Estado</th><th>Prioridad</th><th>Fecha</th><th>Acciones</th></tr></thead>
+                <tbody>
+                    {% foreach ($messages as $message): %}
+                    {%
+                    $id = (int) ($message['id'] ?? 0);
+                    $name = $message['name'] ?? 'Contacto';
+                    $email = $message['email'] ?? '';
+                    $phone = $message['phone'] ?? '';
+                    $valuationType = $message['valuation_type_label'] ?? 'Solicitud de valuación';
+                    $text = $message['message'] ?? '';
+                    $status = $message['status'] ?? 'new';
+                    $priority = $message['priority'] ?? 'normal';
+                    $createdAt = $message['created_at'] ?? '';
+                    $dateLabel = $createdAt !== '' ? date('d-m-Y H:i', strtotime($createdAt)) : '—';
+                    $statusLabel = match ($status) {'read' => 'Leída','in_progress' => 'Seguimiento','answered' => 'Respondida','archived' => 'Archivada','spam' => 'Spam',default => 'Nueva'};
+                    $statusClass = match ($status) {'new' => 'admin-badge--warning','read' => 'admin-badge--neutral','in_progress' => 'admin-badge--neutral','answered' => 'admin-badge--success','archived', 'spam' => 'admin-badge--muted',default => 'admin-badge--warning'};
+                    $priorityLabel = match ($priority) {'low' => 'Baja','high' => 'Alta','urgent' => 'Urgente',default => 'Normal'};
+                    $priorityClass = match ($priority) {'urgent' => 'admin-badge--warning','high' => 'admin-badge--neutral','low' => 'admin-badge--muted',default => 'admin-badge--success'};
+                    $preview = mb_substr((string) $text, 0, 95); if (mb_strlen((string) $text) > 95) { $preview .= '...'; }
+                    %}
+                    <tr>
+                        <td><strong>{{{ ($name) }}}</strong>{% if (!empty($email)): %}<small>{{{ ($email) }}}</small>{% endif; %}{% if (!empty($phone)): %}<small>{{{ ($phone) }}}</small>{% endif; %}</td>
+                        <td><strong>{{{ ($valuationType) }}}</strong><small>{{{ ($preview) }}}</small></td>
+                        <td><span class="admin-badge {{ ($statusClass) }}">{{{ ($statusLabel) }}}</span></td>
+                        <td><span class="admin-badge {{ ($priorityClass) }}">{{{ ($priorityLabel) }}}</span></td>
+                        <td>{{{ ($dateLabel) }}}</td>
+                        <td><div class="admin-table__actions"><a href="@url/admin/valuacion/mensajes/{{ ($id) }}" class="admin-button admin-button--xs admin-button--secondary">Ver</a><a href="@url/admin/valuacion/mensajes/{{ ($id) }}/eliminar" class="admin-button admin-button--xs admin-button--danger" onclick="return confirm('¿Eliminar esta solicitud de valuación?');">Eliminar</a></div></td>
+                    </tr>
+                    {% endforeach; %}
+                    {% if (empty($messages)): %}<tr><td colspan="6"><strong>No hay solicitudes de valuación registradas todavía.</strong><small>Las solicitudes enviadas desde el formulario de valuación aparecerán aquí.</small></td></tr>{% endif; %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+</section>

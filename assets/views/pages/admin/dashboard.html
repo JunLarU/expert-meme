@@ -33,6 +33,18 @@ $clientsActive = (int) ($stats['clients_active'] ?? 0);
 $clientsFeatured = (int) ($stats['clients_featured'] ?? 0);
 $clientsInactive = (int) ($stats['clients_inactive'] ?? 0);
 
+$valuationUnitsTotal = (int) ($stats['valuation_units_total'] ?? 0);
+$valuationUnitsActive = (int) ($stats['valuation_units_active'] ?? 0);
+$valuationUnitsPrimary = (int) ($stats['valuation_units_primary'] ?? 0);
+$valuationUnitsInactive = (int) ($stats['valuation_units_inactive'] ?? 0);
+
+$valuationClientsTotal = (int) ($stats['valuation_clients_total'] ?? 0);
+$valuationClientsActive = (int) ($stats['valuation_clients_active'] ?? 0);
+$valuationClientsFeatured = (int) ($stats['valuation_clients_featured'] ?? 0);
+$valuationClientsCarousel = (int) ($stats['valuation_clients_carousel'] ?? 0);
+$valuationClientsPage = (int) ($stats['valuation_clients_page'] ?? 0);
+$valuationClientsInactive = (int) ($stats['valuation_clients_inactive'] ?? 0);
+
 $associationsTotal = (int) ($stats['associations_total'] ?? 0);
 $associationsActive = (int) ($stats['associations_active'] ?? 0);
 $associationsHome = (int) ($stats['associations_home'] ?? 0);
@@ -57,6 +69,12 @@ $messagesArchived = (int) ($stats['messages_archived'] ?? 0);
 $messagesSpam = (int) ($stats['messages_spam'] ?? 0);
 $messagesUrgent = (int) ($stats['messages_urgent'] ?? 0);
 
+$valuationMessagesTotal = (int) ($stats['valuation_messages_total'] ?? 0);
+$valuationMessagesNew = (int) ($stats['valuation_messages_new'] ?? 0);
+$valuationMessagesInProgress = (int) ($stats['valuation_messages_in_progress'] ?? 0);
+$valuationMessagesAnswered = (int) ($stats['valuation_messages_answered'] ?? 0);
+$valuationMessagesUrgent = (int) ($stats['valuation_messages_urgent'] ?? 0);
+
 $mapTotal = (int) ($stats['map_total'] ?? 0);
 $mapProjects = (int) ($stats['map_projects'] ?? 0);
 $mapOffices = (int) ($stats['map_offices'] ?? 0);
@@ -72,8 +90,12 @@ $auditTotal = (int) ($stats['audit_total'] ?? 0);
 $recentProjects = $recentProjects ?? [];
 $recentMessages = $recentMessages ?? [];
 $newMessageAlert = $newMessageAlert ?? null;
+$recentValuationMessages = $recentValuationMessages ?? [];
+$newValuationMessageAlert = $newValuationMessageAlert ?? null;
 $jumbotronSlides = $jumbotronSlides ?? [];
 $associationSlides = $associationSlides ?? [];
+$valuationUnits = $valuationUnits ?? [];
+$valuationClients = $valuationClients ?? [];
 $officeWorkshops = $officeWorkshops ?? [];
 $auditLogs = $auditLogs ?? [];
 $mapStates = $mapStates ?? [];
@@ -115,6 +137,24 @@ $users = $users ?? [];
     </a>
     {% endif; %}
 
+    {% if ($dashboardIsAdmin && !empty($newValuationMessageAlert)): %}
+    {%
+    $valuationAlertCount = (int) ($newValuationMessageAlert['count'] ?? 0);
+    $valuationAlertUrl = $newValuationMessageAlert['url'] ?? '/admin/valuacion/mensajes';
+    $valuationAlertTitle = $newValuationMessageAlert['title'] ?? 'Tienes solicitudes de valuación nuevas';
+    $valuationAlertDescription = $newValuationMessageAlert['description'] ?? 'Revisa la bandeja de valuación.';
+    $valuationAlertCta = $newValuationMessageAlert['cta'] ?? 'Ver solicitudes';
+    $valuationAlertIsSingle = (bool) ($newValuationMessageAlert['is_single'] ?? false);
+    %}
+
+    <a href="@url{{{ ($valuationAlertUrl) }}}" class="admin-message-alert" aria-label="{{{ ($valuationAlertTitle) }}}">
+        <span class="admin-message-alert__icon" aria-hidden="true">◇</span>
+        <span class="admin-message-alert__content"><strong>{{{ ($valuationAlertTitle) }}}</strong><small>{{{ ($valuationAlertDescription) }}}</small></span>
+        <span class="admin-message-alert__meta">{% if ($valuationAlertIsSingle): %}Nueva{% else: %}{{ ($valuationAlertCount) }} pendientes{% endif; %}</span>
+        <span class="admin-message-alert__cta">{{{ ($valuationAlertCta) }}} <span aria-hidden="true">→</span></span>
+    </a>
+    {% endif; %}
+
     <header class="admin-dashboard__hero">
         <div>
             <p class="admin-dashboard__eyebrow">Resumen general</p>
@@ -124,7 +164,7 @@ $users = $users ?? [];
             <span>
                 {% if ($dashboardIsAdmin): %}
                 Vista rápida de jumbotron, proyectos, multimedia, asociaciones y certificaciones,
-                clientes, oficinas y talleres, mensajes, mapa, usuarios internos y auditoría.
+                clientes, valuación, oficinas y talleres, mensajes, mapa, usuarios internos y auditoría.
                 {% else: %}
                 Vista rápida de jumbotron, proyectos, multimedia, mensajes y mapa de proyectos.
                 {% endif; %}
@@ -170,6 +210,17 @@ $users = $users ?? [];
             <span class="admin-stat-card__icon" aria-hidden="true">✉</span>
         </article>
 
+        {% if ($dashboardIsAdmin): %}
+        <article class="admin-stat-card admin-stat-card--alert">
+            <div class="admin-stat-card__content">
+                <span>Valuación nuevos</span>
+                <strong data-admin-count data-value="{{ ($valuationMessagesNew) }}">0</strong>
+                <small>{{ ($valuationMessagesTotal) }} solicitudes totales</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◇</span>
+        </article>
+        {% endif; %}
+
         <article class="admin-stat-card">
             <div class="admin-stat-card__content">
                 <span>Pines del mapa</span>
@@ -196,6 +247,24 @@ $users = $users ?? [];
                 <small>{{ ($clientsTotal) }} clientes registrados</small>
             </div>
             <span class="admin-stat-card__icon" aria-hidden="true">◈</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Clientes de valuación</span>
+                <strong data-admin-count data-value="{{ ($valuationClientsActive) }}">0</strong>
+                <small>{{ ($valuationClientsTotal) }} registros totales</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◇</span>
+        </article>
+
+        <article class="admin-stat-card">
+            <div class="admin-stat-card__content">
+                <span>Unidades valuación</span>
+                <strong data-admin-count data-value="{{ ($valuationUnitsActive) }}">0</strong>
+                <small>{{ ($valuationUnitsPrimary) }} unidad principal</small>
+            </div>
+            <span class="admin-stat-card__icon" aria-hidden="true">◆</span>
         </article>
 
         <article class="admin-stat-card">
@@ -313,6 +382,28 @@ $users = $users ?? [];
                 <div>
                     <strong data-admin-count data-value="{{ ($associationsInactive) }}">0</strong>
                     <span>Inactivas</span>
+                </div>
+            </div>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationUnitsActive) }}">0</strong>
+                    <span>Unidades activas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationUnitsPrimary) }}">0</strong>
+                    <span>Unidad principal</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationClientsCarousel) }}">0</strong>
+                    <span>Clientes en carrusel</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationClientsPage) }}">0</strong>
+                    <span>Visibles en valuación</span>
                 </div>
             </div>
 
@@ -467,6 +558,134 @@ $users = $users ?? [];
                     <strong data-admin-count data-value="{{ ($clientsInactive) }}">0</strong>
                     <span>Inactivos</span>
                 </div>
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Valuación</p>
+                    <h3>Clientes de valuación</h3>
+                </div>
+
+                <a href="@url/admin/valuacion/clientes" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationClientsActive) }}">0</strong>
+                    <span>Activos</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationClientsFeatured) }}">0</strong>
+                    <span>Destacados</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationClientsInactive) }}">0</strong>
+                    <span>Inactivos</span>
+                </div>
+            </div>
+
+            <div class="admin-mini-list" data-admin-filterable>
+                {% foreach ($valuationClients as $valuationClient): %}
+                {%
+                $valuationClientId = (int) ($valuationClient['id'] ?? 0);
+                $valuationClientName = $valuationClient['name'] ?? 'Cliente sin nombre';
+                $valuationClientIndustry = $valuationClient['industry'] ?? '';
+                $valuationClientUnit = $valuationClient['valuation_unit_short_name'] ?? ($valuationClient['valuation_unit_name'] ?? 'Sin unidad');
+                $valuationClientActive = (int) ($valuationClient['is_active'] ?? 0) === 1;
+                %}
+
+                <a href="@url/admin/valuacion/clientes/{{ ($valuationClientId) }}/editar" class="admin-mini-item">
+                    <span class="admin-mini-item__icon">◇</span>
+                    <span>
+                        <strong>{{{ ($valuationClientName) }}}</strong>
+                        <small>
+                            {{{ ($valuationClientUnit) }}}
+                            {% if ($valuationClientIndustry !== ''): %} · {{{ ($valuationClientIndustry) }}}{% endif; %}
+                            · {% if ($valuationClientActive): %}Activo{% else: %}Inactivo{% endif; %}
+                        </small>
+                    </span>
+                </a>
+                {% endforeach; %}
+
+                {% if (empty($valuationClients)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay clientes de valuación registrados.</strong>
+                        <small>Crea clientes específicos para alimentar la página de valuación.</small>
+                    </span>
+                </div>
+                {% endif; %}
+            </div>
+        </article>
+
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div>
+                    <p>Valuación</p>
+                    <h3>Unidades de valuación</h3>
+                </div>
+
+                <a href="@url/admin/valuacion/unidades" class="admin-panel__link">
+                    Ver <span aria-hidden="true">→</span>
+                </a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationUnitsActive) }}">0</strong>
+                    <span>Activas</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationUnitsPrimary) }}">0</strong>
+                    <span>Principales</span>
+                </div>
+
+                <div>
+                    <strong data-admin-count data-value="{{ ($valuationUnitsInactive) }}">0</strong>
+                    <span>Inactivas</span>
+                </div>
+            </div>
+
+            <div class="admin-mini-list" data-admin-filterable>
+                {% foreach ($valuationUnits as $valuationUnit): %}
+                {%
+                $valuationUnitId = (int) ($valuationUnit['id'] ?? 0);
+                $valuationUnitName = $valuationUnit['name'] ?? 'Unidad sin nombre';
+                $valuationUnitRole = $valuationUnit['role_label'] ?? '';
+                $valuationUnitPrimary = (int) ($valuationUnit['is_primary'] ?? 0) === 1;
+                $valuationUnitActive = (int) ($valuationUnit['is_active'] ?? 0) === 1;
+                %}
+
+                <a href="@url/admin/valuacion/unidades/{{ ($valuationUnitId) }}/editar" class="admin-mini-item">
+                    <span class="admin-mini-item__icon">◆</span>
+                    <span>
+                        <strong>{{{ ($valuationUnitName) }}}</strong>
+                        <small>
+                            {% if ($valuationUnitPrimary): %}Principal{% else: %}Secundaria{% endif; %}
+                            {% if ($valuationUnitRole !== ''): %} · {{{ ($valuationUnitRole) }}}{% endif; %}
+                            · {% if ($valuationUnitActive): %}Activa{% else: %}Inactiva{% endif; %}
+                        </small>
+                    </span>
+                </a>
+                {% endforeach; %}
+
+                {% if (empty($valuationUnits)): %}
+                <div class="admin-mini-item">
+                    <span class="admin-mini-item__icon">00</span>
+                    <span>
+                        <strong>No hay unidades de valuación registradas.</strong>
+                        <small>Registra Valor Comercial Avalúos y UVA Abalkan.</small>
+                    </span>
+                </div>
+                {% endif; %}
             </div>
         </article>
 
@@ -744,6 +963,42 @@ $users = $users ?? [];
                 {% endif; %}
             </div>
         </article>
+
+
+
+        {% if ($dashboardIsAdmin): %}
+        <article class="admin-panel">
+            <header class="admin-panel__header">
+                <div><p>Valuación</p><h3>Solicitudes recientes</h3></div>
+                <a href="@url/admin/valuacion/mensajes" class="admin-panel__link">Ver <span aria-hidden="true">→</span></a>
+            </header>
+
+            <div class="admin-map-summary">
+                <div><strong data-admin-count data-value="{{ ($valuationMessagesNew) }}">0</strong><span>Nuevas</span></div>
+                <div><strong data-admin-count data-value="{{ ($valuationMessagesInProgress) }}">0</strong><span>Seguimiento</span></div>
+                <div><strong data-admin-count data-value="{{ ($valuationMessagesAnswered) }}">0</strong><span>Respondidas</span></div>
+            </div>
+
+            <div class="admin-message-list" data-admin-filterable>
+                {% foreach ($recentValuationMessages as $valuationMessage): %}
+                {%
+                $valuationMessageId = (int) ($valuationMessage['id'] ?? 0);
+                $valuationMessageName = $valuationMessage['name'] ?? 'Contacto';
+                $valuationMessageType = $valuationMessage['valuation_type_label'] ?? 'Solicitud de valuación';
+                $valuationMessageText = $valuationMessage['message'] ?? '';
+                $valuationMessageStatus = $valuationMessage['status'] ?? 'new';
+                $valuationDotClass = match ($valuationMessageStatus) {'answered' => 'admin-dot--done','in_progress' => 'admin-dot--progress',default => 'admin-dot--new'};
+                %}
+                <a href="@url/admin/valuacion/mensajes/{{ ($valuationMessageId) }}" class="admin-message">
+                    <span class="admin-avatar admin-avatar--sm" data-admin-initials data-admin-name="{{{ ($valuationMessageName) }}}"></span>
+                    <span class="admin-message__content"><strong>{{{ ($valuationMessageName) }}}</strong><small>{{{ ($valuationMessageType) }}}</small><p>{{{ ($valuationMessageText) }}}</p></span>
+                    <span class="admin-dot {{ ($valuationDotClass) }}" aria-hidden="true"></span>
+                </a>
+                {% endforeach; %}
+                {% if (empty($recentValuationMessages)): %}<article class="admin-message"><div class="admin-message__content"><strong>No hay solicitudes de valuación recientes.</strong><p>Las solicitudes del formulario de valuación aparecerán aquí.</p></div></article>{% endif; %}
+            </div>
+        </article>
+        {% endif; %}
 
         <article class="admin-panel">
             <header class="admin-panel__header">

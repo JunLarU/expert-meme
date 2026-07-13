@@ -10,3 +10,7 @@ package-lock.json
 /resources
 /resources/
 .env
+
+/storage/
+/storage/*
+/storage

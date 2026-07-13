@@ -14,6 +14,9 @@ use App\Models\ProjectResultStat;
 use App\Models\ProjectScopeItem;
 use App\Models\ProjectTag;
 use App\Models\User;
+use App\Models\ValuationClient;
+use App\Models\ValuationMessage;
+use App\Models\ValuationUnit;
 use Whis\Http\Controller;
 use Whis\Http\Request;
 
@@ -163,6 +166,70 @@ class Search extends Controller
                     ]),
                     'url'      => '/admin/asociaciones-certificaciones/' . (int) ($row['id'] ?? 0),
                     'badge'    => (int) ($row['is_active'] ?? 0) === 1 ? 'Activa' : 'Inactiva',
+                ],
+                $query
+            ));
+
+            $this->addGroup($groups, $this->searchModule(
+                'valuation_messages',
+                'Mensajes de valuación',
+                '✦',
+                $this->safeRows(fn() => ValuationMessage::forAdmin()),
+                ['id', 'name', 'email', 'phone', 'valuation_type', 'valuation_type_label', 'message', 'status', 'priority', 'source_page'],
+                fn(array $row) => [
+                    'title'    => $this->text($row, 'valuation_type_label', 'Solicitud de valuación'),
+                    'subtitle' => $this->joinNonEmpty([
+                        $this->text($row, 'name', 'Contacto'),
+                        $this->text($row, 'email'),
+                        'Estado: ' . $this->messageStatusLabel($this->text($row, 'status', 'new')),
+                        'Prioridad: ' . $this->priorityLabel($this->text($row, 'priority', 'normal')),
+                    ]),
+                    'url'      => '/admin/valuacion/mensajes/' . (int) ($row['id'] ?? 0),
+                    'badge'    => $this->messageStatusLabel($this->text($row, 'status', 'new')),
+                ],
+                $query
+            ));
+
+            $this->addGroup($groups, $this->searchModule(
+                'valuation_clients',
+                'Clientes de valuación',
+                '◇',
+                $this->safeRows(fn() => ValuationClient::ordered()),
+                [
+                    'id', 'name', 'slug', 'url', 'logo_alt', 'initials', 'description', 'industry', 'client_type',
+                    'represented_unit', 'valuation_services', 'service_summary', 'city', 'state', 'country',
+                    'coverage_area', 'coverage_notes', 'testimonial', 'contact_reference',
+                    'valuation_unit_name', 'valuation_unit_short_name',
+                ],
+                fn(array $row) => [
+                    'title'    => $this->text($row, 'name', 'Cliente de valuación'),
+                    'subtitle' => $this->joinNonEmpty([
+                        (int) ($row['is_active'] ?? 0) === 1 ? 'Activo' : 'Inactivo',
+                        (int) ($row['show_in_carousel'] ?? 0) === 1 ? 'Carrusel' : '',
+                        $this->text($row, 'valuation_unit_short_name') ?: $this->text($row, 'valuation_unit_name'),
+                        $this->joinNonEmpty([$this->text($row, 'city'), $this->text($row, 'state')], ', '),
+                    ]),
+                    'url'      => '/admin/valuacion/clientes/' . (int) ($row['id'] ?? 0) . '/editar',
+                    'badge'    => (int) ($row['is_active'] ?? 0) === 1 ? 'Activo' : 'Inactivo',
+                ],
+                $query
+            ));
+
+            $this->addGroup($groups, $this->searchModule(
+                'valuation_units',
+                'Unidades de valuación',
+                '◆',
+                $this->safeRows(fn() => ValuationUnit::ordered()),
+                ['id', 'name', 'slug', 'short_name', 'role_label', 'url', 'logo_alt', 'description'],
+                fn(array $row) => [
+                    'title'    => $this->text($row, 'name', 'Unidad de valuación'),
+                    'subtitle' => $this->joinNonEmpty([
+                        (int) ($row['is_primary'] ?? 0) === 1 ? 'Principal' : 'Secundaria',
+                        (int) ($row['is_active'] ?? 0) === 1 ? 'Activa' : 'Inactiva',
+                        $this->text($row, 'role_label'),
+                    ]),
+                    'url'      => '/admin/valuacion/unidades/' . (int) ($row['id'] ?? 0) . '/editar',
+                    'badge'    => (int) ($row['is_primary'] ?? 0) === 1 ? 'Principal' : 'Unidad',
                 ],
                 $query
             ));

@@ -1,0 +1,376 @@
+{%
+$mode = $mode ?? 'create';
+$client = $client ?? [];
+$valuationUnits = $valuationUnits ?? [];
+$clientTypes = $clientTypes ?? [];
+$representedUnits = $representedUnits ?? [];
+$serviceOptions = $serviceOptions ?? [];
+$allowedStates = $allowedStates ?? ['Querétaro', 'Guanajuato'];
+$allowedGuanajuatoCities = $allowedGuanajuatoCities ?? ['San Miguel de Allende', 'Celaya', 'Apaseo el Grande'];
+
+$isEdit = $mode === 'edit';
+$id = (int) ($client['id'] ?? 0);
+
+$formAction = $isEdit
+? '/admin/valuacion/clientes/' . $id . '/actualizar'
+: '/admin/valuacion/clientes';
+
+$pageTitle = $isEdit ? 'Editar cliente de valuación' : 'Nuevo cliente de valuación';
+$submitText = $isEdit ? 'Guardar cambios' : 'Crear cliente';
+$loadingText = $isEdit ? 'Guardando...' : 'Creando...';
+
+$valuationUnitId = (int) ($client['valuation_unit_id'] ?? 0);
+$name = $client['name'] ?? '';
+$slug = $client['slug'] ?? '';
+$url = $client['url'] ?? '';
+$logoUrl = $client['logo_url'] ?? '';
+$logoAlt = $client['logo_alt'] ?? '';
+$initials = $client['initials'] ?? '';
+$description = $client['description'] ?? '';
+$industry = $client['industry'] ?? '';
+$clientType = $client['client_type'] ?? 'empresa';
+$representedUnit = $client['represented_unit'] ?? 'valor_comercial_avaluos';
+$valuationServicesRaw = $client['valuation_services'] ?? '';
+$valuationServices = is_array($valuationServicesRaw) ? $valuationServicesRaw : array_filter(array_map('trim', explode(',', (string) $valuationServicesRaw)));
+$serviceSummary = $client['service_summary'] ?? '';
+$city = $client['city'] ?? '';
+$state = $client['state'] ?? 'Querétaro';
+$country = $client['country'] ?? 'México';
+$coverageArea = $client['coverage_area'] ?? '';
+$coverageNotes = $client['coverage_notes'] ?? '';
+$testimonial = $client['testimonial'] ?? '';
+$contactReference = $client['contact_reference'] ?? '';
+$showInValuation = (int) ($client['show_in_valuation'] ?? 1);
+$showInCarousel = (int) ($client['show_in_carousel'] ?? 1);
+$isFeatured = (int) ($client['is_featured'] ?? 0);
+$isActive = (int) ($client['is_active'] ?? 1);
+$sortOrder = (int) ($client['sort_order'] ?? 0);
+%}
+
+<section class="admin-dashboard admin-clients-page" aria-labelledby="admin-valuation-client-form-title">
+    <header class="admin-dashboard__hero">
+        <div>
+            <p class="admin-dashboard__eyebrow">Valuación</p>
+            <h2 id="admin-valuation-client-form-title">{{{ ($pageTitle) }}}</h2>
+            <span>
+                Captura clientes, logos, unidad representada, servicios realizados y cobertura para la página de valuación.
+            </span>
+        </div>
+
+        <div class="admin-dashboard__actions">
+            <a href="@url/admin/valuacion/clientes" class="admin-button admin-button--secondary">Volver</a>
+            <a href="@url/admin/valuacion/unidades" class="admin-button admin-button--secondary">Unidades</a>
+        </div>
+    </header>
+
+    <article class="admin-panel admin-jumbotron-form-panel admin-client-form-panel">
+        <header class="admin-panel__header">
+            <div>
+                <p>Formulario</p>
+                <h3>{{{ ($pageTitle) }}}</h3>
+            </div>
+        </header>
+
+        <form class="form form--default admin-jumbotron-form admin-client-form" action="@url{{{ ($formAction) }}}"
+            method="post" enctype="multipart/form-data" data-ajax-form data-validation="html" data-send-as="formdata"
+            data-csrf="true" data-csrf-field="_token" data-reset-on-success="false"
+            data-loading-text="{{{ ($loadingText) }}}" novalidate>
+            @csrf
+
+            <div class="form__status" data-form-status role="status" aria-live="polite"></div>
+
+            <input type="hidden" name="slug" value="{{{ ($slug) }}}">
+            <input type="hidden" name="logo_url" value="{{{ ($logoUrl) }}}">
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Datos del cliente</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group admin-form-grid__full" data-field="name">
+                        <input type="text" id="valuation-client-name" name="name" class="form-control"
+                            value="{{{ ($name) }}}" placeholder=" " required maxlength="255"
+                            data-label="nombre del cliente">
+                        <label class="form-label" for="valuation-client-name">Nombre del cliente *</label>
+                        <span class="form-group__error" data-field-error data-error-for="name"></span>
+                    </div>
+
+                    <div class="form-group form-group--select" data-field="valuation_unit_id">
+                        <select id="valuation-client-unit" name="valuation_unit_id" class="form-control"
+                            data-label="unidad de valuación">
+                            <option value="">Sin unidad asignada</option>
+                            {% foreach ($valuationUnits as $unit): %}
+                            {%
+                            $unitId = (int) ($unit['id'] ?? 0);
+                            $unitName = ($unit['short_name'] ?? '') ?: ($unit['name'] ?? 'Unidad');
+                            %}
+                            {% if ($unitId === $valuationUnitId): %}
+                            <option value="{{ ($unitId) }}" selected>{{{ ($unitName) }}}</option>
+                            {% else: %}
+                            <option value="{{ ($unitId) }}">{{{ ($unitName) }}}</option>
+                            {% endif; %}
+                            {% endforeach; %}
+                        </select>
+                        <label class="form-label" for="valuation-client-unit">Unidad de valuación</label>
+                        <span class="form-group__error" data-field-error data-error-for="valuation_unit_id"></span>
+                    </div>
+
+                    <div class="form-group form-group--select" data-field="represented_unit">
+                        <select id="valuation-client-represented-unit" name="represented_unit" class="form-control"
+                            required data-label="unidad representada">
+                            {% foreach ($representedUnits as $value => $label): %}
+                            {% if ($value === $representedUnit): %}
+                            <option value="{{{ ($value) }}}" selected>{{{ ($label) }}}</option>
+                            {% else: %}
+                            <option value="{{{ ($value) }}}">{{{ ($label) }}}</option>
+                            {% endif; %}
+                            {% endforeach; %}
+                        </select>
+                        <label class="form-label" for="valuation-client-represented-unit">Unidad representada *</label>
+                        <span class="form-group__error" data-field-error data-error-for="represented_unit"></span>
+                    </div>
+
+                    <div class="form-group" data-field="industry">
+                        <input type="text" id="valuation-client-industry" name="industry" class="form-control"
+                            value="{{{ ($industry) }}}" placeholder=" " maxlength="160" data-label="industria">
+                        <label class="form-label" for="valuation-client-industry">Industria / sector</label>
+                        <span class="form-group__error" data-field-error data-error-for="industry"></span>
+                    </div>
+
+                    <div class="form-group form-group--select" data-field="client_type">
+                        <select id="valuation-client-type" name="client_type" class="form-control" required
+                            data-label="tipo de cliente">
+                            {% foreach ($clientTypes as $value => $label): %}
+                            {% if ($value === $clientType): %}
+                            <option value="{{{ ($value) }}}" selected>{{{ ($label) }}}</option>
+                            {% else: %}
+                            <option value="{{{ ($value) }}}">{{{ ($label) }}}</option>
+                            {% endif; %}
+                            {% endforeach; %}
+                        </select>
+                        <label class="form-label" for="valuation-client-type">Tipo de cliente *</label>
+                        <span class="form-group__error" data-field-error data-error-for="client_type"></span>
+                    </div>
+
+                    <div class="form-group" data-field="url">
+                        <input type="url" id="valuation-client-url" name="url" class="form-control"
+                            value="{{{ ($url) }}}" placeholder=" " maxlength="600" data-label="sitio web">
+                        <label class="form-label" for="valuation-client-url">Sitio web</label>
+                        <span class="form-group__error" data-field-error data-error-for="url"></span>
+                    </div>
+
+                    <div class="form-group" data-field="initials">
+                        <input type="text" id="valuation-client-initials" name="initials" class="form-control"
+                            value="{{{ ($initials) }}}" placeholder=" " maxlength="10" data-label="iniciales">
+                        <label class="form-label" for="valuation-client-initials">Iniciales si no hay logo</label>
+                        <span class="form-group__error" data-field-error data-error-for="initials"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="description">
+                        <textarea id="valuation-client-description" name="description" class="form-control" placeholder=" "
+                            maxlength="1200" data-label="descripción">{{{ ($description) }}}</textarea>
+                        <label class="form-label" for="valuation-client-description">Descripción / referencia</label>
+                        <span class="form-group__error" data-field-error data-error-for="description"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Servicios de valuación</legend>
+
+                <div class="admin-form-grid">
+                    <div class="admin-form-grid__full" data-field="valuation_services">
+                        <span class="form-group__help">Selecciona los servicios realizados o aplicables para este cliente.</span>
+
+                        <div class="admin-form-grid">
+                            {% foreach ($serviceOptions as $value => $label): %}
+                            <label class="admin-check">
+                                {% if (in_array($value, $valuationServices, true)): %}
+                                <input type="checkbox" name="valuation_services[]" value="{{{ ($value) }}}" checked>
+                                {% else: %}
+                                <input type="checkbox" name="valuation_services[]" value="{{{ ($value) }}}">
+                                {% endif; %}
+                                <span>{{{ ($label) }}}</span>
+                            </label>
+                            {% endforeach; %}
+                        </div>
+
+                        <span class="form-group__error" data-field-error data-error-for="valuation_services"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="service_summary">
+                        <textarea id="valuation-client-service-summary" name="service_summary" class="form-control"
+                            placeholder=" " maxlength="1000" data-label="resumen del servicio">{{{ ($serviceSummary) }}}</textarea>
+                        <label class="form-label" for="valuation-client-service-summary">Resumen del servicio</label>
+                        <span class="form-group__help">Ejemplo: Avalúos comerciales y estudios de valor para toma de decisiones patrimoniales.</span>
+                        <span class="form-group__error" data-field-error data-error-for="service_summary"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Cobertura</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--select" data-field="state">
+                        <select id="valuation-client-state" name="state" class="form-control" data-label="estado">
+                            <option value="">Sin estado</option>
+                            {% foreach ($allowedStates as $stateOption): %}
+                            {% if ($stateOption === $state): %}
+                            <option value="{{{ ($stateOption) }}}" selected>{{{ ($stateOption) }}}</option>
+                            {% else: %}
+                            <option value="{{{ ($stateOption) }}}">{{{ ($stateOption) }}}</option>
+                            {% endif; %}
+                            {% endforeach; %}
+                        </select>
+                        <label class="form-label" for="valuation-client-state">Estado</label>
+                        <span class="form-group__help">La página solo debe contemplar Querétaro y Guanajuato.</span>
+                        <span class="form-group__error" data-field-error data-error-for="state"></span>
+                    </div>
+
+                    <div class="form-group" data-field="city">
+                        <input type="text" id="valuation-client-city" name="city" class="form-control"
+                            value="{{{ ($city) }}}" placeholder=" " maxlength="160" data-label="ciudad">
+                        <label class="form-label" for="valuation-client-city">Ciudad / municipio</label>
+                        <span class="form-group__help">En Guanajuato: San Miguel de Allende, Celaya o Apaseo el Grande.</span>
+                        <span class="form-group__error" data-field-error data-error-for="city"></span>
+                    </div>
+
+                    <div class="form-group" data-field="country">
+                        <input type="text" id="valuation-client-country" name="country" class="form-control"
+                            value="{{{ ($country) }}}" placeholder=" " maxlength="120" data-label="país">
+                        <label class="form-label" for="valuation-client-country">País</label>
+                        <span class="form-group__error" data-field-error data-error-for="country"></span>
+                    </div>
+
+                    <div class="form-group" data-field="coverage_area">
+                        <input type="text" id="valuation-client-coverage-area" name="coverage_area" class="form-control"
+                            value="{{{ ($coverageArea) }}}" placeholder=" " maxlength="255" data-label="zona de cobertura">
+                        <label class="form-label" for="valuation-client-coverage-area">Zona de cobertura</label>
+                        <span class="form-group__error" data-field-error data-error-for="coverage_area"></span>
+                    </div>
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="coverage_notes">
+                        <textarea id="valuation-client-coverage-notes" name="coverage_notes" class="form-control"
+                            placeholder=" " maxlength="1000" data-label="notas de cobertura">{{{ ($coverageNotes) }}}</textarea>
+                        <label class="form-label" for="valuation-client-coverage-notes">Notas de cobertura</label>
+                        <span class="form-group__error" data-field-error data-error-for="coverage_notes"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Logo y contenido público</legend>
+
+                <div class="admin-form-grid">
+                    <div class="form-group form-group--file admin-form-grid__full" data-field="logo_file">
+                        <label class="form-label" for="valuation-client-logo-file">Logo del cliente</label>
+
+                        <input type="file" id="valuation-client-logo-file" name="logo_file" class="form-control"
+                            accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg+xml"
+                            data-label="logo">
+
+                        {% if ($isEdit && !empty($logoUrl)): %}
+                        <a class="admin-file-current admin-file-current--link" href="{{{ ($logoUrl) }}}" target="_blank"
+                            rel="noopener noreferrer">
+                            Ver logo actual
+                        </a>
+                        {% endif; %}
+
+                        <span class="form-group__help">Formatos permitidos: PNG, JPG, WEBP o SVG. Máximo 4 MB.</span>
+                        <span class="form-group__error" data-field-error data-error-for="logo_file"></span>
+                    </div>
+
+                    <div class="form-group admin-form-grid__full" data-field="logo_alt">
+                        <input type="text" id="valuation-client-logo-alt" name="logo_alt" class="form-control"
+                            value="{{{ ($logoAlt) }}}" placeholder=" " maxlength="255"
+                            data-label="texto alternativo del logo">
+                        <label class="form-label" for="valuation-client-logo-alt">Texto alternativo del logo</label>
+                        <span class="form-group__error" data-field-error data-error-for="logo_alt"></span>
+                    </div>
+
+                    {% if ($isEdit && !empty($logoUrl)): %}
+                    <div class="admin-form-grid__full">
+                        <label class="admin-check">
+                            <input type="checkbox" name="remove_logo" value="1">
+                            <span>Quitar logo actual</span>
+                        </label>
+                    </div>
+                    {% endif; %}
+
+                    <div class="form-group form-group--textarea admin-form-grid__full" data-field="testimonial">
+                        <textarea id="valuation-client-testimonial" name="testimonial" class="form-control" placeholder=" "
+                            maxlength="1000" data-label="testimonio">{{{ ($testimonial) }}}</textarea>
+                        <label class="form-label" for="valuation-client-testimonial">Testimonio / nota interna</label>
+                        <span class="form-group__error" data-field-error data-error-for="testimonial"></span>
+                    </div>
+
+                    <div class="form-group" data-field="contact_reference">
+                        <input type="text" id="valuation-client-contact-reference" name="contact_reference"
+                            class="form-control" value="{{{ ($contactReference) }}}" placeholder=" " maxlength="180"
+                            data-label="referencia de contacto">
+                        <label class="form-label" for="valuation-client-contact-reference">Referencia de contacto</label>
+                        <span class="form-group__error" data-field-error data-error-for="contact_reference"></span>
+                    </div>
+
+                    <div class="form-group" data-field="sort_order">
+                        <input type="number" id="valuation-client-sort-order" name="sort_order" class="form-control"
+                            value="{{ ($sortOrder) }}" placeholder=" " min="0" step="1" data-label="orden">
+                        <label class="form-label" for="valuation-client-sort-order">Orden</label>
+                        <span class="form-group__error" data-field-error data-error-for="sort_order"></span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form__fieldset admin-jumbotron-form__fieldset">
+                <legend>Visibilidad</legend>
+
+                <div class="admin-form-grid">
+                    <input type="hidden" name="show_in_valuation" value="0">
+                    <label class="admin-check">
+                        {% if ($showInValuation === 1): %}
+                        <input type="checkbox" name="show_in_valuation" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="show_in_valuation" value="1">
+                        {% endif; %}
+                        <span>Mostrar en página de valuación</span>
+                    </label>
+
+                    <input type="hidden" name="show_in_carousel" value="0">
+                    <label class="admin-check">
+                        {% if ($showInCarousel === 1): %}
+                        <input type="checkbox" name="show_in_carousel" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="show_in_carousel" value="1">
+                        {% endif; %}
+                        <span>Mostrar en carrusel</span>
+                    </label>
+
+                    <input type="hidden" name="is_featured" value="0">
+                    <label class="admin-check">
+                        {% if ($isFeatured === 1): %}
+                        <input type="checkbox" name="is_featured" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_featured" value="1">
+                        {% endif; %}
+                        <span>Destacado</span>
+                    </label>
+
+                    <input type="hidden" name="is_active" value="0">
+                    <label class="admin-check">
+                        {% if ($isActive === 1): %}
+                        <input type="checkbox" name="is_active" value="1" checked>
+                        {% else: %}
+                        <input type="checkbox" name="is_active" value="1">
+                        {% endif; %}
+                        <span>Activo</span>
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="admin-form-actions">
+                <a href="@url/admin/valuacion/clientes" class="admin-button admin-button--secondary">Cancelar</a>
+                <button type="submit" class="admin-button admin-button--primary">{{{ ($submitText) }}}</button>
+            </div>
+        </form>
+    </article>
+</section>

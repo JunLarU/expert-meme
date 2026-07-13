@@ -349,7 +349,7 @@ $clients = $clients ?? [];
     <div class="overlay">
         <p>Tenemos la solución que necesitas</p>
         <h2 id="membership-title">Consulta nuestros servicios</h2>
-        <a href="https://my.isa.org/s/fs-NewUserReg" class="button__join" target="_blank" rel="noopener noreferrer"
+        <a href="@url/servicios" class="button__join" rel="noopener noreferrer"
             title="Unirte a la membresía ISA">
             Servicios
         </a>
@@ -359,9 +359,13 @@ $clients = $clients ?? [];
 
             <div class="holder">
                 <div class="item">Diseño estructural</div>
-                <div class="item">Diseño arquitectónico</div>
+                <div class="item">Fabricación de estructura metálica</div>
                 <div class="item">Construcción</div>
                 <div class="item">Valuación inmobiliaria</div>
+                <div class="item">Peritajes estructurales</div>
+                <div class="item">Ingeniería de valor</div>
+                <div class="item">Director Responsable de Obra</div>
+                <div class="item">Corresponsable estructural</div>
             </div>
         </div>
     </div>
@@ -374,7 +378,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
         <div class="latest__header">
             <div class="section-heading latest__heading">
                 <p>Proyectos recientes</p>
-                <h2 id="latest-title">Obras y proyectos destacados de L+E Ingeniería</h2>
+                <h2 id="latest-title">Obras y proyectos de L+E Ingeniería</h2>
             </div>
 
             <a href="@url/proyectos" class="latest__view-all section-more-button" aria-label="Ver todos los proyectos">
@@ -417,8 +421,8 @@ $jumbotronSlides = $jumbotronSlides ?? [];
             $featuredBrief = trim((string) ($featuredProject['brief'] ?: ($featuredProject['summary'] ?? '')));
             $featuredCreatedAt = trim((string) ($featuredProject['created_at'] ?? ''));
             $featuredDate = $featuredCreatedAt !== '' ? date('d-m-Y', strtotime($featuredCreatedAt)) : '';
+            $featuredLocation = trim((string) ($featuredProject['location_display'] ?? ''));
             %}
-
             <a class="latest__projects__item latest__projects__item--featured" href="{{{ ($featuredHref) }}}">
                 <div class="latest__projects__item__image">
                     <img class="lazy-image" data-src="{{{ ($featuredImage) }}}" alt="{{{ ($featuredImageAlt) }}}"
@@ -448,7 +452,9 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         <p class="date">{{{ ($featuredDate) }}}</p>
                         {% endif; %}
 
-                        <p class="author">por L+E Ingeniería</p>
+                        {% if ($featuredLocation !== ''): %}
+                        <p class="author">{{{ ($featuredLocation) }}}</p>
+                        {% endif; %}
                     </div>
 
                     {% if (!empty($featuredBrief)): %}
@@ -495,6 +501,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
             $projectCreatedAt = trim((string) ($project['created_at'] ?? ''));
             $projectDate = $projectCreatedAt !== '' ? date('d-m-Y', strtotime($projectCreatedAt)) : '';
             $projectNumber = str_pad((string) ($projectIndex + 2), 2, '0', STR_PAD_LEFT);
+            $projectLocation = trim((string) ($project['location_display'] ?? ''));
             %}
 
             <a class="latest__projects__item" href="{{{ ($projectHref) }}}">
@@ -529,7 +536,9 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         <p class="date">{{{ ($projectDate) }}}</p>
                         {% endif; %}
 
-                        <p class="author">por L+E Ingeniería</p>
+                        {% if ($projectLocation !== ''): %}
+                        <p class="author">{{{ ($projectLocation) }}}</p>
+                        {% endif; %}
                     </div>
 
                     {% if (!empty($projectBrief)): %}
@@ -592,7 +601,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         </span>
                     </a>
 
-                    <a href="tel:+524422014627" class="button__mail services-quote__contact-button"
+                    <a href="tel:+524423259619" class="button__mail services-quote__contact-button"
                         title="Llamar a L+E Ingeniería" aria-label="Llamar a L+E Ingeniería">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path
@@ -601,7 +610,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
 
                         <span class="button__mail__text">
                             <span class="button__mail__text-default">Teléfono</span>
-                            <span class="button__mail__text-hover">+52 442 201 4627</span>
+                            <span class="button__mail__text-hover">+52 442 325 9619</span>
                         </span>
                     </a>
                 </div>
@@ -625,7 +634,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         </a>
 
                         <a class="services-quote__social services-quote__social--whatsapp"
-                            href="https://wa.me/5214422014627" target="_blank" rel="noopener noreferrer"
+                            href="https://wa.me/5214424105194" target="_blank" rel="noopener noreferrer"
                             aria-label="WhatsApp de L+E Ingeniería">
                             WhatsApp
                         </a>

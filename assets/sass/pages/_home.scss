@@ -4674,7 +4674,7 @@ $color-splide--hover: lighten($color-logo-red, 20);
   }
 }
 
-$rotating-items: 3;
+$rotating-items: 8;
 $rotating-time-per-item: 2.5s;
 $rotating-duration: $rotating-items * $rotating-time-per-item;
 $rotating-slot: 100% / $rotating-items;
