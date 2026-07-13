@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f6d623d72037ee27b30cae94de0c796",
+    "content-hash": "9e829c40dda05565f0846342252e67e8",
     "packages": [
         {
             "name": "brick/math",
@@ -523,16 +523,16 @@
         },
         {
             "name": "junlar11/whis-core",
-            "version": "v0.2.0",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JunLar11/whis-core.git",
-                "reference": "3c2c448020ad7aa5baa5b1353127060250eb860f"
+                "reference": "e7679d01bc8755f8babad91dfaa146b2698bfd01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JunLar11/whis-core/zipball/3c2c448020ad7aa5baa5b1353127060250eb860f",
-                "reference": "3c2c448020ad7aa5baa5b1353127060250eb860f",
+                "url": "https://api.github.com/repos/JunLar11/whis-core/zipball/e7679d01bc8755f8babad91dfaa146b2698bfd01",
+                "reference": "e7679d01bc8755f8babad91dfaa146b2698bfd01",
                 "shasum": ""
             },
             "require": {
@@ -557,7 +557,9 @@
                     "src/Helpers/session.php",
                     "src/Helpers/auth.php",
                     "src/Helpers/files.php",
-                    "src/Helpers/csrf.php"
+                    "src/Helpers/csrf.php",
+                    "src/Helpers/routes.php",
+                    "src/Helpers/api_auth.php"
                 ],
                 "psr-4": {
                     "Whis\\": "src/"
@@ -576,9 +578,9 @@
             "description": "A new PHP MVC framework intended for use on any hosting. It can be shared hosting, VPS or a Server.",
             "support": {
                 "issues": "https://github.com/JunLar11/whis-core/issues",
-                "source": "https://github.com/JunLar11/whis-core/tree/v0.2.0"
+                "source": "https://github.com/JunLar11/whis-core/tree/v0.2.2"
             },
-            "time": "2026-05-29T19:14:22+00:00"
+            "time": "2026-07-04T21:36:02+00:00"
         },
         {
             "name": "paragonie/random_compat",

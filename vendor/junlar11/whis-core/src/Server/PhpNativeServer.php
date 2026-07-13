@@ -1,7 +1,6 @@
 <?php
 namespace Whis\Server;
 
-use RuntimeException;
 use Whis\Http\HttpMethod;
 use Whis\Http\Request;
 use Whis\Http\Response;
@@ -9,17 +8,20 @@ use Whis\Storage\File;
 
 class PhpNativeServer implements Server
 {
-    private bool $headRequest = false;
-
+    /**
+     * Get files from $_FILES global.
+     *
+     * Esta función NO valida.
+     * Esta función NO redirige.
+     * Esta función NO manda headers.
+     *
+     * Solo convierte $_FILES en objetos Whis\Storage\File.
+     */
     protected function uploadedFiles(): array
     {
         $files = [];
 
         foreach ($_FILES as $key => $file) {
-            if (! is_array($file)) {
-                continue;
-            }
-
             if (is_array($file['name'] ?? null)) {
                 $files[$key] = [];
 
@@ -31,7 +33,7 @@ class PhpNativeServer implements Server
                     }
                 }
 
-                if ($files[$key] === []) {
+                if (empty($files[$key])) {
                     unset($files[$key]);
                 }
 
@@ -72,20 +74,33 @@ class PhpNativeServer implements Server
             ? (int) ($file['error'][$index] ?? UPLOAD_ERR_NO_FILE)
             : (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
 
+        /*
+         * Si no se seleccionó archivo, no creamos File.
+         * Esto permite que filesquantity:,2 acepte 0 archivos.
+         */
         if ($error === UPLOAD_ERR_NO_FILE || $name === '') {
             return null;
         }
 
+        /*
+         * Si hubo error de subida, sí creamos File,
+         * pero con el error guardado.
+         *
+         * Así el Validator puede decir:
+         * - archivo demasiado grande
+         * - error parcial
+         * - etc.
+         */
         $content = '';
 
-        if ($error === UPLOAD_ERR_OK && $tmpName !== '' && is_uploaded_file($tmpName)) {
+        if ($error === UPLOAD_ERR_OK && $tmpName !== '' && is_file($tmpName)) {
             $content = file_get_contents($tmpName) ?: '';
         }
 
         return new File(
             $content,
             $type,
-            basename(str_replace('\\', '/', $name)),
+            $name,
             $size,
             $error
         );
@@ -93,129 +108,63 @@ class PhpNativeServer implements Server
 
     protected function requestData(): array
     {
-        $headers = $this->headers();
-        $contentType = (string) (
-            $_SERVER['CONTENT_TYPE']
-            ?? $_SERVER['HTTP_CONTENT_TYPE']
-            ?? $headers['Content-Type']
-            ?? ''
-        );
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
 
-        if (stripos($contentType, 'application/json') !== false) {
-            $raw = file_get_contents('php://input');
+        $contentType =
+        $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? $headers['Content-Type'] ?? $headers['content-type'] ?? '';
 
-            if ($raw === false || trim($raw) === '') {
-                return [];
-            }
+        $isJson = stripos($contentType, 'application/json') !== false;
 
-            $data = json_decode($raw, true, 512, JSON_INVALID_UTF8_SUBSTITUTE);
+        if ($isJson) {
+            $raw  = file_get_contents('php://input');
+            $data = json_decode($raw ?: '', true);
 
             return is_array($data) ? $data : [];
         }
 
-        if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET')) === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return is_array($_POST) ? $_POST : [];
         }
 
-        $raw = file_get_contents('php://input');
-        parse_str(is_string($raw) ? $raw : '', $data);
+        parse_str(file_get_contents('php://input'), $data);
 
         return is_array($data) ? $data : [];
     }
 
     public function getRequest(): Request
     {
-        $methodName = strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
-
-        if ($methodName === 'HEAD') {
-            $this->headRequest = true;
-            $methodName = 'GET';
-        }
-
-        $method = HttpMethod::tryFrom($methodName);
-
-        if ($method === null) {
-            throw new RuntimeException("Unsupported HTTP method [{$methodName}].");
-        }
+        $headers = function_exists('getallheaders') ? getallheaders() : [];
 
         return (new Request())
             ->setUri($this->currentUri())
-            ->setMethod($method)
-            ->setHeaders($this->headers())
+            ->setMethod(HttpMethod::from($_SERVER['REQUEST_METHOD']))
+            ->setHeaders($headers)
             ->setData($this->requestData())
-            ->setQuery(is_array($_GET) ? $_GET : [])
+            ->setQuery($_GET)
             ->setFiles($this->uploadedFiles());
     }
 
     public function sendResponse(Response $response): void
     {
-        $this->applySecurityHeaders($response);
+        /*
+         * No fuerces Content-Type: None.
+         * Solo deja que Response prepare sus headers.
+         */
         $response->prepare();
-
-        if (headers_sent($file, $line)) {
-            throw new RuntimeException(
-                "Cannot send response: headers already sent in {$file} on line {$line}."
-            );
-        }
 
         http_response_code($response->status());
 
         foreach ($response->headers() as $header => $value) {
-            header($header . ': ' . $value, true);
+            header("$header: $value");
         }
 
-        if (! $this->headRequest) {
-            echo $response->content() ?? '';
-        }
-    }
-
-    private function applySecurityHeaders(Response $response): void
-    {
-        $defaults = [
-            'X-Content-Type-Options' => 'nosniff',
-            'X-Frame-Options'        => 'SAMEORIGIN',
-            'Referrer-Policy'        => 'strict-origin-when-cross-origin',
-            'Permissions-Policy'     => 'camera=(), microphone=(), geolocation=(self)',
-            'Cross-Origin-Opener-Policy' => 'same-origin-allow-popups',
-        ];
-
-        foreach ($defaults as $header => $value) {
-            if ($response->headers($header) === null) {
-                $response->setHeader($header, $value);
-            }
-        }
-
-        if ($this->isProduction() && $this->isHttps() && $response->headers('Strict-Transport-Security') === null) {
-            $response->setHeader(
-                'Strict-Transport-Security',
-                'max-age=31536000'
-            );
-        }
-    }
-
-    private function headers(): array
-    {
-        $headers = function_exists('getallheaders') ? getallheaders() : [];
-
-        if (! is_array($headers)) {
-            $headers = [];
-        }
-
-        foreach ($_SERVER as $key => $value) {
-            if (! str_starts_with($key, 'HTTP_') || ! is_scalar($value)) {
-                continue;
-            }
-
-            $name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($key, 5)))));
-            $headers[$name] ??= (string) $value;
-        }
-
-        return $headers;
+        print($response->content());
     }
 
     private function currentUri(): string
     {
-        $requestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+
         $path = parse_url($requestUri, PHP_URL_PATH);
 
         if (! is_string($path) || $path === '') {
@@ -223,19 +172,5 @@ class PhpNativeServer implements Server
         }
 
         return '/' . trim($path, '/');
-    }
-
-    private function isHttps(): bool
-    {
-        $https = strtolower((string) ($_SERVER['HTTPS'] ?? ''));
-
-        return $https !== '' && $https !== 'off' && $https !== '0';
-    }
-
-    private function isProduction(): bool
-    {
-        $value = $_ENV['APP_ENV'] ?? $_SERVER['APP_ENV'] ?? getenv('APP_ENV') ?: 'production';
-
-        return in_array(strtolower((string) $value), ['prod', 'production'], true);
     }
 }

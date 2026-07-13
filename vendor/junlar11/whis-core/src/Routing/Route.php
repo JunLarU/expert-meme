@@ -2,7 +2,6 @@
 namespace Whis\Routing;
 
 use Closure;
-use InvalidArgumentException;
 use Whis\Http\Middleware;
 
 class Route
@@ -124,20 +123,8 @@ class Route
             }
 
             if (is_string($middleware) && class_exists($middleware)) {
-                $instance = new $middleware();
-
-                if (! $instance instanceof Middleware) {
-                    throw new InvalidArgumentException(
-                        "Middleware [{$middleware}] must implement " . Middleware::class . '.'
-                    );
-                }
-
-                $this->middlewares[] = $instance;
-                continue;
+                $this->middlewares[] = new $middleware();
             }
-
-            $name = is_string($middleware) ? $middleware : get_debug_type($middleware);
-            throw new InvalidArgumentException("Invalid middleware [{$name}].");
         }
 
         return $this;
