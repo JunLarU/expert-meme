@@ -7,4 +7,4 @@ use App\Controllers\Api\ProjectApiController;
 use App\Middlewares\ApiAbilityMiddleware;
 use App\Middlewares\ApiTokenMiddleware;
 
-Route::get('/user/{user}', fn (User $user) => json($user->toArray()));
+// Route::get('/user/{user}', fn (User $user) => json($user->toArray()));

@@ -71,6 +71,16 @@ class Home extends Controller
 
         return $project;
     }
+
+    public function legalAvisoPrivacidad()
+    {
+        return view('pages/main/aviso-privacidad', 'Aviso de privacidad');
+    }
+    public function legalTerminos()
+    {
+        return view('pages/main/terminos-condiciones', 'Términos y condiciones');
+    }
+
     public function valuacion()
     {
         $valuationUnits = $this->safeValuationRows(

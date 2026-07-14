@@ -72,7 +72,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
             <div class="projects-search__inner">
                 <div class="projects-search__field">
                     <input type="text" id="projects-search-input" class="projects-search__input" placeholder=" "
-                        autocomplete="off" data-projects-search-input>
+                        autocomplete="off" inputmode="search" enterkeyhint="search" aria-describedby="projects-search-hint" data-projects-search-input>
 
                     <label class="projects-search__label" for="projects-search-input">
                         Buscar proyectos por nombre, ubicación, servicio o tags
@@ -90,7 +90,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <p class="projects-search__hint">
+                <p class="projects-search__hint" id="projects-search-hint">
                     Prueba con “Querétaro”, “estructura metálica”, “montaje”, “nave industrial” o “supervisión”.
                 </p>
             </div>
@@ -131,7 +131,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
                     </span>
 
                     <img class="lazy-image" data-src="{{{ ($projectImage) }}}" alt="{{{ ($projectImageAlt) }}}"
-                        loading="lazy" decoding="async" width="1200" height="800">
+                        loading="lazy" decoding="async" fetchpriority="low" width="1200" height="800">
                 </div>
 
                 <div class="latest__projects__item__text">
@@ -153,7 +153,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
                         {% endif; %}
                     </div>
 
-                    <h4>{{{ ($projectTitle) }}}</h4>
+                    <h3>{{{ ($projectTitle) }}}</h3>
 
                     <div class="entry__data">
                         {% if ($projectLocation !== ''): %}
@@ -161,7 +161,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
                         {% endif; %}
 
                         {% if ($projectYear !== ''): %}
-                        <p class="author">{{{ ($projectYear) }}}</p>
+                        <time class="author" datetime="{{{ ($projectYear) }}}">{{{ ($projectYear) }}}</time>
                         {% endif; %}
                     </div>
 
@@ -183,7 +183,7 @@ $projectsHasMore = (bool) ($projectsHasMore ?? false);
                         </ul>
                     </div>
 
-                    <h4>Próximamente nuevos proyectos</h4>
+                    <h3>Próximamente nuevos proyectos</h3>
 
                     <p class="entry__brief">
                         En esta sección aparecerán los proyectos publicados desde el panel administrativo.

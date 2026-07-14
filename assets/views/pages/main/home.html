@@ -4,18 +4,18 @@ $associationSlides = $associationSlides ?? [];
 %}
 
 <div class="home__jumbotron">
-    <section class="splide" aria-label="Presentación principal de L+E Ingeniería">
+    <section class="splide" aria-labelledby="home-hero-title">
         <div class="splide__track">
             <ul class="splide__list">
                 <!--
                     Primer slide fijo.
                     Este siempre será el primero, sin importar los slides del admin.
                 -->
-                <li class="splide__slide splide__slide--site-hero lazy-bg" data-background-src="/images/JTRON.jpg">
+                <li class="splide__slide splide__slide--site-hero lazy-bg" data-background-src="/images/JTRON.jpg" role="group" aria-label="Presentación principal">
                     <div class="content content--site-hero">
                         <p class="overhead">L+E Ingeniería</p>
 
-                        <h1>Construye ingeniería con valor</h1>
+                        <h1 id="home-hero-title">Construye ingeniería con valor</h1>
 
                         <p>
                             Visítanos y descubre cómo integramos diseño estructural,
@@ -121,7 +121,7 @@ $associationSlides = $associationSlides ?? [];
                         {% endif; %}
 
                         {% if ($title !== ''): %}
-                        <h1>{{{ ($title) }}}</h1>
+                        <h2 class="home__jumbotron__slide-title">{{{ ($title) }}}</h2>
                         {% endif; %}
 
                         {% if ($subtitle !== ''): %}
@@ -147,7 +147,7 @@ $associationSlides = $associationSlides ?? [];
                 <li class="{{{ ($finalSlideClass) }}}">
                     <video class="lazy-video" data-src="{{{ ($videoUrl) }}}" data-mobile-src="{{{ ($videoMobileUrl) }}}"
                         poster="{{{ ($videoPosterUrl) }}}" preload="{{{ ($videoPreload) }}}" autoplay muted loop
-                        playsinline aria-label="{{{ ($videoAriaLabel) }}}"></video>
+                        playsinline disablepictureinpicture controlslist="nodownload noplaybackrate" width="1920" height="1080" title="{{{ ($videoAriaLabel) }}}" aria-label="{{{ ($videoAriaLabel) }}}"></video>
 
                     <div class="{{{ ($finalContentClass) }}}">
                         {% if ($eyebrow !== ''): %}
@@ -155,7 +155,7 @@ $associationSlides = $associationSlides ?? [];
                         {% endif; %}
 
                         {% if ($title !== ''): %}
-                        <h1>{{{ ($title) }}}</h1>
+                        <h2 class="home__jumbotron__slide-title">{{{ ($title) }}}</h2>
                         {% endif; %}
 
                         {% if ($subtitle !== ''): %}
@@ -185,7 +185,7 @@ $associationSlides = $associationSlides ?? [];
                         {% endif; %}
 
                         {% if ($title !== ''): %}
-                        <h1>{{{ ($title) }}}</h1>
+                        <h2 class="home__jumbotron__slide-title">{{{ ($title) }}}</h2>
                         {% endif; %}
 
                         {% if ($subtitle !== ''): %}
@@ -279,7 +279,7 @@ $associationSlides = $associationSlides ?? [];
         <div class="nosotros__content">
             <div class="section-heading section-heading--center nosotros__heading">
                 <p>Sobre nosotros</p>
-                <h2>Ingeniería que convierte ideas en estructura</h2>
+                <h2 id="nosotros-title">Ingeniería que convierte ideas en estructura</h2>
             </div>
 
             <p class="nosotros__copy">
@@ -291,7 +291,7 @@ $associationSlides = $associationSlides ?? [];
             </p>
 
             <div class="nosotros__actions">
-                <a href="/nosotros" class="section-more-button" aria-label="Ver más información sobre nosotros">
+                <a href="@url/nosotros" class="section-more-button" aria-label="Ver más información sobre nosotros">
                     Ver más
                     <span aria-hidden="true">→</span>
                 </a>
@@ -321,7 +321,7 @@ $clients = $clients ?? [];
 
         <li data-name="{{{ ($clientName) }}}" data-url="{{{ ($clientUrl) }}}">
             {% if ($logoUrl !== ''): %}
-            <img data-src="{{{ ($logoUrl) }}}" alt="{{{ ($logoAlt) }}}">
+            <img data-src="{{{ ($logoUrl) }}}" alt="{{{ ($logoAlt) }}}" loading="lazy" decoding="async" width="250" height="100">
             {% endif; %}
         </li>
         {% endforeach; %}
@@ -340,7 +340,7 @@ $clients = $clients ?? [];
 <section class="stats lazy-bg" data-background-src="/images/STATS.jpg" aria-labelledby="stats-title">
     <div class="section-heading section-heading--light stats__heading">
         <p>Experiencia comprobada</p>
-        <h2>Resultados que respaldan nuestro trabajo</h2>
+        <h2 id="stats-title">Resultados que respaldan nuestro trabajo</h2>
     </div>
     <div class="stats__content"></div>
 </section>
@@ -350,11 +350,11 @@ $clients = $clients ?? [];
         <p>Tenemos la solución que necesitas</p>
         <h2 id="membership-title">Consulta nuestros servicios</h2>
         <a href="@url/servicios" class="button__join" rel="noopener noreferrer"
-            title="Unirte a la membresía ISA">
+            title="Consultar los servicios de L+E Ingeniería">
             Servicios
         </a>
 
-        <div class="rotating__text" aria-label="Beneficios de la membresía ISA">
+        <div class="rotating__text" aria-label="Servicios de ingeniería disponibles">
             <div class="prevouse-word">Tenemos</div>
 
             <div class="holder">
@@ -426,7 +426,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
             <a class="latest__projects__item latest__projects__item--featured" href="{{{ ($featuredHref) }}}">
                 <div class="latest__projects__item__image">
                     <img class="lazy-image" data-src="{{{ ($featuredImage) }}}" alt="{{{ ($featuredImageAlt) }}}"
-                        loading="lazy" decoding="async">
+                        loading="lazy" decoding="async" width="1200" height="800">
 
                     <span class="entry__category entry__category--featured">Destacado</span>
                 </div>
@@ -445,7 +445,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         <span class="entry__number">01</span>
                     </div>
 
-                    <h4>{{{ ($featuredTitle) }}}</h4>
+                    <h3>{{{ ($featuredTitle) }}}</h3>
 
                     <div class="entry__data">
                         {% if (!empty($featuredDate)): %}
@@ -507,7 +507,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
             <a class="latest__projects__item" href="{{{ ($projectHref) }}}">
                 <div class="latest__projects__item__image">
                     <img class="lazy-image" data-src="{{{ ($projectImage) }}}" alt="{{{ ($projectImageAlt) }}}"
-                        loading="lazy" decoding="async">
+                        loading="lazy" decoding="async" width="1200" height="800">
 
                     {% if (!empty($projectCategory)): %}
                     <span class="entry__category">{{{ ($projectCategory) }}}</span>
@@ -529,7 +529,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         <span class="entry__number">{{{ ($projectNumber) }}}</span>
                     </div>
 
-                    <h4>{{{ ($projectTitle) }}}</h4>
+                    <h3>{{{ ($projectTitle) }}}</h3>
 
                     <div class="entry__data">
                         {% if (!empty($projectDate)): %}
@@ -561,7 +561,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         </ul>
                     </div>
 
-                    <h4>Próximamente nuevos proyectos</h4>
+                    <h3>Próximamente nuevos proyectos</h3>
 
                     <p class="entry__brief">
                         En esta sección aparecerán los proyectos publicados desde el panel administrativo.
@@ -601,7 +601,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                         </span>
                     </a>
 
-                    <a href="tel:+524423259619" class="button__mail services-quote__contact-button"
+                    <a href="tel:+524422014627" class="button__mail services-quote__contact-button"
                         title="Llamar a L+E Ingeniería" aria-label="Llamar a L+E Ingeniería">
                         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path
@@ -610,7 +610,7 @@ $jumbotronSlides = $jumbotronSlides ?? [];
 
                         <span class="button__mail__text">
                             <span class="button__mail__text-default">Teléfono</span>
-                            <span class="button__mail__text-hover">+52 442 325 9619</span>
+                            <span class="button__mail__text-hover">+52 442 201 4627</span>
                         </span>
                     </a>
                 </div>
@@ -618,23 +618,20 @@ $jumbotronSlides = $jumbotronSlides ?? [];
                     <p id="contact-social-title">También puedes seguirnos en redes</p>
 
                     <div class="services-quote__socials" aria-label="Redes sociales de L+E Ingeniería">
-                        <a class="services-quote__social services-quote__social--facebook" href="#" target="_blank"
-                            rel="noopener noreferrer" aria-label="Facebook de L+E Ingeniería">
+                        <span class="services-quote__social services-quote__social--facebook" aria-label="Facebook de L+E Ingeniería, enlace próximamente">
                             Facebook
-                        </a>
+                        </span>
 
-                        <a class="services-quote__social services-quote__social--instagram" href="#" target="_blank"
-                            rel="noopener noreferrer" aria-label="Instagram de L+E Ingeniería">
+                        <span class="services-quote__social services-quote__social--instagram" aria-label="Instagram de L+E Ingeniería, enlace próximamente">
                             Instagram
-                        </a>
+                        </span>
 
-                        <a class="services-quote__social services-quote__social--linkedin" href="#" target="_blank"
-                            rel="noopener noreferrer" aria-label="LinkedIn de L+E Ingeniería">
-                            LinkedIn
-                        </a>
+                        <span class="services-quote__social services-quote__social--linkedin" aria-label="LinkedIn de L+E Ingeniería, enlace próximamente">
+                                LinkedIn
+                            </span>
 
                         <a class="services-quote__social services-quote__social--whatsapp"
-                            href="https://wa.me/5214424105194" target="_blank" rel="noopener noreferrer"
+                            href="https://wa.me/5214422014627" target="_blank" rel="noopener noreferrer"
                             aria-label="WhatsApp de L+E Ingeniería">
                             WhatsApp
                         </a>

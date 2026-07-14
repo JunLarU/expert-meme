@@ -1,10 +1,25 @@
+# robots.txt — L+E Ingeniería
+# Sustituye https://TU-DOMINIO-PUBLICO.com por el APP_URL público definitivo con HTTPS.
+
 User-agent: *
-Allow: /
 
-Disallow: /admin/
-Disallow: /app/
-Disallow: /storage/
-Disallow: /vendor/
-Disallow: /config/
+# Recursos necesarios para renderizar las páginas públicas.
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /fonts/
 
-Sitemap: https://localhost/sitemap.xml
+# Endpoints internos y respuestas que no son páginas de resultados.
+Disallow: /site-api/
+Disallow: /contact/send
+Disallow: /valuacion/contact/send
+Disallow: /error404
+Disallow: /public/
+
+# /admin NO se bloquea aquí intencionalmente.
+# Apache debe responder en /admin con:
+# X-Robots-Tag: noindex, nofollow, noarchive, nosnippet
+# y el acceso debe permanecer protegido por AuthMiddleware.
+# Así los buscadores pueden leer la orden noindex.
+
+Sitemap: https://TU-DOMINIO-PUBLICO.com/sitemap.xml

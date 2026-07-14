@@ -2,43 +2,323 @@
 <html lang="es-MX">
 
 <head>
-    <meta charset="UTF-8">
+  {%
+  $seoRequestUri = (string) ($_SERVER['REQUEST_URI'] ?? '/');
+  $seoPath = (string) (parse_url($seoRequestUri, PHP_URL_PATH) ?: '/');
+  $seoPath = '/' . ltrim($seoPath, '/');
+  $seoPath = $seoPath !== '/' ? rtrim($seoPath, '/') : '/';
+  $seoBaseUrl = rtrim((string) '@url', '/');
+  $seoCanonicalUrl = $seoBaseUrl . ($seoPath === '/' ? '/' : $seoPath);
+
+  $seoPages = [
+    '/' => [
+      'title' => 'Ingeniería estructural y construcción en acero en Querétaro',
+      'description' => 'L+E Ingeniería integra diseño estructural, fabricación y construcción en acero, supervisión técnica y valuación inmobiliaria desde Querétaro.',
+      'keywords' => 'ingeniería estructural en Querétaro, construcción en acero, fabricación de estructura metálica, supervisión técnica, valuación inmobiliaria',
+      'type' => 'WebPage',
+      'section' => 'Inicio',
+    ],
+    '/nosotros' => [
+      'title' => 'Firma de ingeniería estructural en Querétaro',
+      'description' => 'Conoce a L+E Ingeniería, firma multidisciplinaria especializada en estructuras, construcción en acero, supervisión técnica y valuación inmobiliaria.',
+      'keywords' => 'empresa de ingeniería en Querétaro, especialistas en estructuras, construcción metálica, ingeniería civil, L+E Ingeniería',
+      'type' => 'AboutPage',
+      'section' => 'Nosotros',
+    ],
+    '/proyectos' => [
+      'title' => 'Proyectos de ingeniería y construcción en acero',
+      'description' => 'Explora proyectos de L+E Ingeniería en diseño estructural, fabricación, montaje, supervisión técnica y construcción en acero en México.',
+      'keywords' => 'proyectos de ingeniería estructural, obras de estructura metálica, proyectos de construcción en acero, proyectos industriales México',
+      'type' => 'CollectionPage',
+      'section' => 'Proyectos',
+    ],
+    '/servicios' => [
+      'title' => 'Diseño estructural y construcción en acero',
+      'description' => 'Servicios de diseño estructural, ingeniería de detalle, construcción en acero, supervisión técnica, dictámenes y análisis no lineal.',
+      'keywords' => 'diseño estructural, construcción en acero, ingeniería de detalle, supervisión técnica, dictamen estructural, análisis no lineal',
+      'type' => 'WebPage',
+      'section' => 'Servicios',
+    ],
+    '/servicio/estructura' => [
+      'title' => 'Diseño estructural y construcción en acero',
+      'description' => 'Servicios de diseño estructural, ingeniería de detalle, construcción en acero, supervisión técnica, dictámenes y análisis no lineal.',
+      'keywords' => 'diseño estructural, construcción en acero, ingeniería de detalle, supervisión técnica, dictamen estructural, análisis no lineal',
+      'type' => 'WebPage',
+      'section' => 'Servicios de estructuras',
+    ],
+    '/valuacion' => [
+      'title' => 'Avalúos inmobiliarios en Querétaro y Guanajuato',
+      'description' => 'Avalúos inmobiliarios comerciales, estudios de valor, maquinaria, equipo y proyectos en Querétaro y zonas de Guanajuato.',
+      'keywords' => 'avalúos inmobiliarios Querétaro, valuación comercial, estudios de valor, avalúo de maquinaria, valuación de proyectos',
+      'type' => 'WebPage',
+      'section' => 'Valuación',
+    ],
+    '/servicio/valuacion' => [
+      'title' => 'Avalúos inmobiliarios en Querétaro y Guanajuato',
+      'description' => 'Avalúos inmobiliarios comerciales, estudios de valor, maquinaria, equipo y proyectos en Querétaro y zonas de Guanajuato.',
+      'keywords' => 'avalúos inmobiliarios Querétaro, valuación comercial, estudios de valor, avalúo de maquinaria, valuación de proyectos',
+      'type' => 'WebPage',
+      'section' => 'Valuación',
+    ],
+    '/contacto' => [
+      'title' => 'Contacto y cotización de proyectos de ingeniería',
+      'description' => 'Contacta a L+E Ingeniería en Santiago de Querétaro para cotizar diseño estructural, construcción en acero, supervisión o valuación.',
+      'keywords' => 'contacto ingeniería Querétaro, cotización estructura metálica, empresa de ingeniería Querétaro, L+E Ingeniería contacto',
+      'type' => 'ContactPage',
+      'section' => 'Contacto',
+    ],
+  ];
+
+  $seoFallback = [
+    'title' => trim((string) ($pageName ?? 'Ingeniería estructural y construcción en acero')),
+    'description' => 'L+E Ingeniería desarrolla soluciones de diseño estructural, construcción en acero, supervisión técnica y valuación inmobiliaria.',
+    'keywords' => 'ingeniería estructural, construcción en acero, supervisión técnica, valuación inmobiliaria, Querétaro',
+    'type' => 'WebPage',
+    'section' => trim((string) ($pageName ?? 'L+E Ingeniería')),
+  ];
+
+  if (strpos($seoPath, '/proyecto/') === 0) {
+    $seoFallback['type'] = 'ItemPage';
+    $seoFallback['section'] = 'Proyectos';
+  }
+
+  $seoData = $seoPages[$seoPath] ?? $seoFallback;
+  $seoTitleBase = trim((string) ($metaTitle ?? $seoData['title'] ?? $seoFallback['title']));
+  $seoTitle = stripos($seoTitleBase, 'L+E Ingeniería') !== false
+    ? $seoTitleBase
+    : $seoTitleBase . ' | L+E Ingeniería';
+  $seoDescription = trim((string) ($metaDescription ?? $seoData['description'] ?? $seoFallback['description']));
+  $seoKeywords = trim((string) ($metaKeywords ?? $seoData['keywords'] ?? $seoFallback['keywords']));
+  $seoOgType = trim((string) ($metaOgType ?? 'website'));
+  $seoImagePath = trim((string) ($metaImage ?? '/images/og-image.jpg'));
+  $seoImageUrl = preg_match('#^https?://#i', $seoImagePath)
+    ? $seoImagePath
+    : $seoBaseUrl . '/' . ltrim($seoImagePath, '/');
+  $seoImageAlt = trim((string) ($metaImageAlt ?? 'L+E Ingeniería: diseño estructural, construcción en acero y valuación'));
+  $seoImagePathOnly = (string) (parse_url($seoImageUrl, PHP_URL_PATH) ?: '');
+  $seoImageExtension = strtolower((string) pathinfo($seoImagePathOnly, PATHINFO_EXTENSION));
+  $seoImageMime = match ($seoImageExtension) {
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    'avif' => 'image/avif',
+    'gif' => 'image/gif',
+    default => 'image/jpeg',
+  };
+  $seoImageWidth = max(1, (int) ($metaImageWidth ?? 1200));
+  $seoImageHeight = max(1, (int) ($metaImageHeight ?? 630));
+
+  $seoNoIndex = preg_match('#^/(admin|form|error)(?:/|$)#i', $seoPath) === 1
+    || isset($_GET['preview']);
+  $seoRobots = trim((string) ($metaRobots ?? ($seoNoIndex
+    ? 'noindex, nofollow, noarchive'
+    : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1')));
+
+  $seoOrganizationId = $seoBaseUrl . '/#organization';
+  $seoWebsiteId = $seoBaseUrl . '/#website';
+  $seoWebPageId = $seoCanonicalUrl . '#webpage';
+  $seoBreadcrumbId = $seoCanonicalUrl . '#breadcrumb';
+
+  $seoGraph = [
+    [
+      '@type' => 'ProfessionalService',
+      '@id' => $seoOrganizationId,
+      'name' => 'L+E Ingeniería',
+      'alternateName' => 'L+E Ingeniería Estructural',
+      'url' => $seoBaseUrl . '/',
+      'logo' => [
+        '@type' => 'ImageObject',
+        'url' => $seoBaseUrl . '/images/ICON.png',
+        'width' => 1500,
+        'height' => 1500,
+      ],
+      'image' => $seoImageUrl,
+      'slogan' => 'Construye ingeniería con valor',
+      'description' => 'Firma de ingeniería especializada en diseño estructural, construcción en acero, supervisión técnica y valuación inmobiliaria.',
+      'email' => 'construye@leingenieria.com',
+      'telephone' => '+52 442 201 4627',
+      'address' => [
+        '@type' => 'PostalAddress',
+        'streetAddress' => 'Hacienda Chichimequillas 113, Int. 4, Jardines de la Hacienda',
+        'postalCode' => '76180',
+        'addressLocality' => 'Santiago de Querétaro',
+        'addressRegion' => 'Querétaro',
+        'addressCountry' => 'MX',
+      ],
+      'geo' => [
+        '@type' => 'GeoCoordinates',
+        'latitude' => 20.5754962,
+        'longitude' => -100.4109726,
+      ],
+      'openingHoursSpecification' => [[
+        '@type' => 'OpeningHoursSpecification',
+        'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        'opens' => '09:00',
+        'closes' => '18:00',
+      ]],
+      'areaServed' => [
+        ['@type' => 'Country', 'name' => 'México'],
+        ['@type' => 'AdministrativeArea', 'name' => 'Querétaro'],
+        ['@type' => 'AdministrativeArea', 'name' => 'Guanajuato'],
+      ],
+      'contactPoint' => [[
+        '@type' => 'ContactPoint',
+        'telephone' => '+52 442 201 4627',
+        'email' => 'construye@leingenieria.com',
+        'contactType' => 'sales and project inquiries',
+        'areaServed' => 'MX',
+        'availableLanguage' => ['es-MX'],
+      ]],
+      'knowsAbout' => [
+        'Diseño estructural',
+        'Construcción en acero',
+        'Ingeniería de detalle',
+        'Supervisión técnica',
+        'Análisis no lineal',
+        'Dictámenes estructurales',
+        'Valuación inmobiliaria',
+      ],
+    ],
+    [
+      '@type' => 'WebSite',
+      '@id' => $seoWebsiteId,
+      'url' => $seoBaseUrl . '/',
+      'name' => 'L+E Ingeniería',
+      'description' => 'Diseño estructural, construcción en acero, supervisión técnica y valuación inmobiliaria.',
+      'publisher' => ['@id' => $seoOrganizationId],
+      'inLanguage' => 'es-MX',
+    ],
+    [
+      '@type' => $seoData['type'] ?? 'WebPage',
+      '@id' => $seoWebPageId,
+      'url' => $seoCanonicalUrl,
+      'name' => $seoTitle,
+      'description' => $seoDescription,
+      'isPartOf' => ['@id' => $seoWebsiteId],
+      'about' => ['@id' => $seoOrganizationId],
+      'primaryImageOfPage' => [
+        '@type' => 'ImageObject',
+        'url' => $seoImageUrl,
+      ],
+      'inLanguage' => 'es-MX',
+    ],
+  ];
+
+  if ($seoPath !== '/') {
+    $seoGraph[] = [
+      '@type' => 'BreadcrumbList',
+      '@id' => $seoBreadcrumbId,
+      'itemListElement' => [
+        [
+          '@type' => 'ListItem',
+          'position' => 1,
+          'name' => 'Inicio',
+          'item' => $seoBaseUrl . '/',
+        ],
+        [
+          '@type' => 'ListItem',
+          'position' => 2,
+          'name' => $seoData['section'] ?? $seoTitleBase,
+          'item' => $seoCanonicalUrl,
+        ],
+      ],
+    ];
+
+    $seoGraph[2]['breadcrumb'] = ['@id' => $seoBreadcrumbId];
+  }
+
+  if (in_array($seoPath, ['/servicios', '/servicio/estructura'], true)) {
+    $seoGraph[] = [
+      '@type' => 'Service',
+      '@id' => $seoCanonicalUrl . '#service',
+      'name' => 'Diseño estructural y construcción en acero',
+      'serviceType' => 'Ingeniería estructural, fabricación, montaje y supervisión técnica',
+      'provider' => ['@id' => $seoOrganizationId],
+      'areaServed' => ['@type' => 'Country', 'name' => 'México'],
+      'url' => $seoCanonicalUrl,
+    ];
+  }
+
+  if (in_array($seoPath, ['/valuacion', '/servicio/valuacion'], true)) {
+    $seoGraph[] = [
+      '@type' => 'Service',
+      '@id' => $seoCanonicalUrl . '#service',
+      'name' => 'Avalúos y estudios de valor',
+      'serviceType' => 'Valuación inmobiliaria, maquinaria, equipo y proyectos',
+      'provider' => ['@id' => $seoOrganizationId],
+      'areaServed' => [
+        ['@type' => 'AdministrativeArea', 'name' => 'Querétaro'],
+        ['@type' => 'AdministrativeArea', 'name' => 'Guanajuato'],
+      ],
+      'url' => $seoCanonicalUrl,
+    ];
+  }
+
+  $seoStructuredData = [
+    '@context' => 'https://schema.org',
+    '@graph' => $seoGraph,
+  ];
+  %}
+
+  <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <meta name="theme-color" content="#1e293b">
+  <meta name="color-scheme" content="light">
+  <meta name="application-name" content="L+E Ingeniería">
+  <meta name="apple-mobile-web-app-title" content="L+E Ingeniería">
+  <meta name="author" content="L+E Ingeniería">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
 
-  <title>@AppName | @pageName</title>
+  <title><?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?></title>
+  <meta name="description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="keywords" content="<?php echo htmlspecialchars($seoKeywords, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="robots" content="<?php echo htmlspecialchars($seoRobots, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="googlebot" content="<?php echo htmlspecialchars($seoRobots, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="bingbot" content="<?php echo htmlspecialchars($seoRobots, ENT_QUOTES, 'UTF-8'); ?>">
 
-  <!-- Meta SEO -->
-  <meta name="description" content="<?php echo htmlspecialchars((string) ($metaDescription ?? 'Ingeniería estructural, construcción en acero y valuación inmobiliaria en Querétaro.'), ENT_QUOTES, 'UTF-8'); ?>">
-  <meta name="keywords" content="<?php echo htmlspecialchars((string) ($metaKeywords ?? 'ingeniería estructural, construcción en acero, valuación inmobiliaria, Querétaro, L+E Ingeniería'), ENT_QUOTES, 'UTF-8'); ?>">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="@url<?php echo $_SERVER['REQUEST_URI'] ?? ''; ?>">
+  <link rel="canonical" href="<?php echo htmlspecialchars($seoCanonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <link rel="alternate" hreflang="es-MX" href="<?php echo htmlspecialchars($seoCanonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <link rel="alternate" hreflang="x-default" href="<?php echo htmlspecialchars($seoCanonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="@AppName | @pageName">
-  <meta property="og:description" content="<?php echo htmlspecialchars((string) ($metaDescription ?? 'Ingeniería estructural, construcción en acero y valuación inmobiliaria.'), ENT_QUOTES, 'UTF-8'); ?>">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="@url<?php echo $_SERVER['REQUEST_URI'] ?? ''; ?>">
-  <meta property="og:image" content="@url/images/og-image.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:site_name" content="@AppName">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:site_name" content="L+E Ingeniería">
+  <meta property="og:type" content="<?php echo htmlspecialchars($seoOgType, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta property="og:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta property="og:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta property="og:url" content="<?php echo htmlspecialchars($seoCanonicalUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta property="og:image" content="<?php echo htmlspecialchars($seoImageUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <?php if (stripos($seoImageUrl, 'https://') === 0): ?>
+  <meta property="og:image:secure_url" content="<?php echo htmlspecialchars($seoImageUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <?php endif; ?>
+  <meta property="og:image:type" content="<?php echo htmlspecialchars($seoImageMime, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta property="og:image:width" content="<?php echo $seoImageWidth; ?>">
+  <meta property="og:image:height" content="<?php echo $seoImageHeight; ?>">
+  <meta property="og:image:alt" content="<?php echo htmlspecialchars($seoImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
 
-  <!-- Twitter Cards -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="@AppName | @pageName">
-  <meta name="twitter:description" content="<?php echo htmlspecialchars((string) ($metaDescription ?? 'Ingeniería estructural, construcción en acero y valuación inmobiliaria.'), ENT_QUOTES, 'UTF-8'); ?>">
-  <meta name="twitter:image" content="@url/images/og-image.jpg">
+  <meta name="twitter:title" content="<?php echo htmlspecialchars($seoTitle, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="twitter:description" content="<?php echo htmlspecialchars($seoDescription, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="twitter:image" content="<?php echo htmlspecialchars($seoImageUrl, ENT_QUOTES, 'UTF-8'); ?>">
+  <meta name="twitter:image:alt" content="<?php echo htmlspecialchars($seoImageAlt, ENT_QUOTES, 'UTF-8'); ?>">
 
-  <link rel="icon" type="image/png" href="@url/images/ICON.png">
-  <link rel="apple-touch-icon" href="@url/images/ICON.png">
+  <link rel="icon" type="image/png" sizes="1500x1500" href="@url/images/ICON.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="@url/images/ICON.png">
+  <link rel="manifest" href="@url/site.webmanifest">
+  <link rel="preload" as="image" href="/images/JTRON.jpg" fetchpriority="high">
 
+  <?php if ($seoPath === '/contacto'): ?>
+  <link rel="preconnect" href="https://www.google.com">
+  <link rel="preconnect" href="https://www.google.com.mx">
+  <?php endif; ?>
+
+  <script type="application/ld+json"><?php echo json_encode($seoStructuredData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?></script>
 </head>
 
 <body>
   {% include includes/navbar.html %}
 
-  <main class="container">
+  <main class="container" id="main-content">
     @content
   </main>
 

@@ -30,7 +30,7 @@ $officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
     </div>
 </section>
 
-<main class="contact-page" id="contacto" aria-labelledby="contact-page-title">
+<section class="contact-page" id="contacto" aria-labelledby="contact-page-title">
     <div class="contact-page__gradient-bg" aria-hidden="true"></div>
 
     <div class="contact-page__inner">
@@ -57,9 +57,11 @@ $officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
 
                 <div class="contact-info-card__text">
                     <h3>Dirección</h3>
-                    <p>Hacienda Chichimequillas 113, Int. 4</p>
-                    <p>Jardines de la Hacienda, 76180</p>
-                    <p>Santiago de Querétaro, Qro.</p>
+                    <address class="contact-info-card__address" style="font-style: normal;">
+                        Hacienda Chichimequillas 113, Int. 4<br>
+                        Jardines de la Hacienda, C. P. 76180<br>
+                        Santiago de Querétaro, Querétaro, México
+                    </address>
                 </div>
             </article>
 
@@ -239,7 +241,7 @@ $officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
                         <iframe title="Mapa de ubicación de L+E Ingeniería en Santiago de Querétaro"
                             src="https://www.google.com/maps?q=LE%20Ingenieria%20Hacienda%20Chichimequillas%20113%20Int%204%20Jardines%20de%20la%20Hacienda%2076180%20Santiago%20de%20Quer%C3%A9taro%20Qro&output=embed"
                             width="100%" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                            allowfullscreen>
+                            allowfullscreen aria-label="Mapa interactivo de la oficina de L+E Ingeniería">
                         </iframe>
                     </div>
 
@@ -286,20 +288,17 @@ $officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
 
                         <div class="services-quote__socials contact-page__socials"
                             aria-label="Redes sociales de L+E Ingeniería">
-                            <a class="services-quote__social services-quote__social--facebook" href="#" target="_blank"
-                                rel="noopener noreferrer" aria-label="Facebook de L+E Ingeniería">
+                            <span class="services-quote__social services-quote__social--facebook" aria-label="Facebook de L+E Ingeniería, enlace próximamente">
                                 Facebook
-                            </a>
+                            </span>
 
-                            <a class="services-quote__social services-quote__social--instagram" href="#" target="_blank"
-                                rel="noopener noreferrer" aria-label="Instagram de L+E Ingeniería">
+                            <span class="services-quote__social services-quote__social--instagram" aria-label="Instagram de L+E Ingeniería, enlace próximamente">
                                 Instagram
-                            </a>
+                            </span>
 
-                            <a class="services-quote__social services-quote__social--linkedin" href="#" target="_blank"
-                                rel="noopener noreferrer" aria-label="LinkedIn de L+E Ingeniería">
+                            <span class="services-quote__social services-quote__social--linkedin" aria-label="LinkedIn de L+E Ingeniería, enlace próximamente">
                                 LinkedIn
-                            </a>
+                            </span>
 
                             <a class="services-quote__social services-quote__social--whatsapp"
                                 href="https://wa.me/5214422014627" target="_blank" rel="noopener noreferrer"
@@ -460,4 +459,4 @@ $officeWorkshopCount = is_array($officeWorkshops) ? count($officeWorkshops) : 0;
             {% endif; %}
         </section>
     </div>
-</main>
+</section>

@@ -1,28 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://localhost/</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://TU-DOMINIO-PUBLICO.com/</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/nosotros</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/proyectos</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/servicio/estructura</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/servicio/valuacion</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/contacto</loc>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/aviso-de-privacidad</loc>
+    <lastmod>2026-07-13</lastmod>
+  </url>
+  <url>
+    <loc>https://TU-DOMINIO-PUBLICO.com/terminos-y-condiciones</loc>
+    <lastmod>2026-07-13</lastmod>
   </url>
 
-  <url>
-    <loc>https://localhost/login</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://localhost/register</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://localhost/form</loc>
-    <lastmod>2026-05-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
+  <!--
+    Añade aquí una entrada por cada proyecto PUBLICADO y accesible con HTTP 200.
+
+    Ejemplo de formato:
+    <url>
+      <loc>https://TU-DOMINIO-PUBLICO.com/proyecto/123</loc>
+      <lastmod>AAAA-MM-DD</lastmod>
+    </url>
+
+    No agregues:
+    - borradores;
+    - proyectos ocultos o archivados;
+    - IDs inexistentes;
+    - el patrón literal /proyecto/{id};
+    - rutas del panel /admin;
+    - endpoints /site-api;
+    - acciones POST.
+  -->
 </urlset>

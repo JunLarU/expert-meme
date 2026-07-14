@@ -26,12 +26,12 @@ $valuationDisplayUnits = array_values(array_filter($valuationDisplayUnits, fn($u
     aria-labelledby="valuation-hero-title">
     <div class="about-hero__overlay">
         <div class="about-hero__content valuation-hero__content">
-            <p class="about-hero__eyebrow">Servicios</p>
+            <p class="about-hero__eyebrow">Valuación · Te damos el valor</p>
 
-            <h1 id="valuation-hero-title">TE DAMOS EL VALOR</h1>
+            <h1 id="valuation-hero-title">Avalúos inmobiliarios y estudios de valor</h1>
 
             <p class="about-hero__copy">
-                En L+E Ingeniería integramos criterios técnicos, conocimiento del mercado y análisis documental; para desarrollar avaluos y estudios de valor que sean la herramienta en la toma de decisiones patrimoniales, comerciales y de inversión.
+                En L+E Ingeniería integramos criterios técnicos, conocimiento del mercado y análisis documental para desarrollar avalúos y estudios de valor que apoyen la toma de decisiones patrimoniales, comerciales y de inversión.
             </p>
 
             <div class="valuation-hero__actions" aria-label="Acciones principales de valuación">
@@ -112,7 +112,7 @@ $valuationDisplayUnits = array_values(array_filter($valuationDisplayUnits, fn($u
                         <span class="valuation-unit-card__logo" aria-hidden="true">
                             {% if ($unitLogoUrl !== ''): %}
                             <img class="lazy-image" data-src="{{{ ($unitLogoUrl) }}}" alt="{{{ ($unitLogoAlt) }}}"
-                                loading="lazy" decoding="async" width="260" height="120">
+                                loading="lazy" decoding="async" fetchpriority="low" width="260" height="120">
                             {% else: %}
                             <span class="valuation-unit-card__placeholder">{{{ ($unitInitials) }}}</span>
                             {% endif; %}
@@ -440,7 +440,7 @@ $valuationDisplayUnits = array_values(array_filter($valuationDisplayUnits, fn($u
                             <span class="valuation-logo-slider__logo" aria-hidden="true">
                                 {% if ($logoUrl !== ''): %}
                                 <img src="{{{ ($logoUrl) }}}" alt="{{{ ($logoAlt) }}}"
-                                    loading="eager" decoding="async" width="250" height="100">
+                                    loading="lazy" decoding="async" fetchpriority="low" width="250" height="100">
                                 {% else: %}
                                 <span class="valuation-logo-slider__placeholder">{{{ (strtoupper($clientInitials)) }}}</span>
                                 {% endif; %}

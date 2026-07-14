@@ -1,19 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es-MX">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - {{{$code}}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="referrer" content="no-referrer">
+    <title>Error {{{$code}}} | L+E Ingeniería</title>
 </head>
 <body>
-    @content
-    <p>Será redirigido luego de 3 segundos</p>
+    <main id="main-content" role="main" aria-labelledby="error-title">
+        <h1 id="error-title">No fue posible mostrar esta página</h1>
+        @content
+        <p>Serás redirigido al inicio en unos segundos.</p>
+        <p><a href="@url">Volver al inicio de L+E Ingeniería</a></p>
+    </main>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                window.location.href = '/'; 
+        document.addEventListener("DOMContentLoaded", () => {
+            window.setTimeout(() => {
+                window.location.assign("@url");
             }, 3500);
-
         });
     </script>
 </body>

@@ -1,12 +1,14 @@
 {
   "name": "whis",
   "version": "0.1.5",
-  "description": "The PHP MVC Framework",
+  "private": true,
+  "description": "Frontend asset pipeline for the Whis PHP MVC application",
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development",
+    "watch": "webpack --mode development --watch",
     "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch"
+    "build:stats": "webpack --mode production --profile --json > webpack-stats.json"
   },
   "repository": {
     "type": "git",
@@ -14,7 +16,9 @@
   },
   "keywords": [
     "PHP",
-    "JS",
+    "JavaScript",
+    "Sass",
+    "Webpack",
     "MVC"
   ],
   "author": "Juan Larios",
@@ -23,40 +27,52 @@
     "url": "https://github.com/JunLar11/whis/issues"
   },
   "homepage": "https://github.com/JunLar11/whis#readme",
+  "engines": {
+    "node": ">=18.20.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": {
+    "production": [
+      "> 0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 2 Chrome versions",
+      "last 2 Firefox versions",
+      "last 2 Edge versions"
+    ]
+  },
   "devDependencies": {
-    "@babel/core": "^7.18.5",
-    "@babel/preset-env": "^7.18.2",
-    "autoprefixer": "^10.4.7",
-    "babel-loader": "^8.2.5",
-    "copy-webpack-plugin": "^11.0.0",
-    "css-loader": "^6.7.1",
-    "css-minimizer-webpack-plugin": "^8.0.0",
-    "cssnano": "^5.1.12",
-    "file-loader": "^6.2.0",
-    "html-loader": "^3.1.2",
-    "html-webpack-plugin": "^5.5.0",
-    "imagemin-pngquant": "^9.0.2",
-    "imagemin-webpack-plugin": "^2.4.2",
-    "mini-css-extract-plugin": "^2.6.1",
-    "postcss": "^8.5.8",
-    "postcss-loader": "^7.0.0",
-    "sass": "^1.52.3",
-    "sass-loader": "^13.0.0",
-    "string-replace-loader": "^3.3.0",
-    "terser-webpack-plugin": "^5.3.17",
-    "webpack": "^5.73.0",
-    "webpack-cli": "^4.10.0"
+    "@babel/core": "7.29.7",
+    "@babel/preset-env": "7.29.7",
+    "autoprefixer": "10.5.2",
+    "babel-loader": "10.1.1",
+    "copy-webpack-plugin": "13.0.1",
+    "css-loader": "7.1.4",
+    "css-minimizer-webpack-plugin": "7.0.4",
+    "glob": "13.0.6",
+    "html-loader": "5.1.0",
+    "html-webpack-plugin": "5.6.7",
+    "imagemin-webpack-plugin": "2.4.2",
+    "mini-css-extract-plugin": "2.10.2",
+    "noop-webpack-plugin": "1.0.1",
+    "postcss": "8.5.19",
+    "postcss-loader": "8.2.1",
+    "remove-files-webpack-plugin": "1.5.0",
+    "sass": "1.99.0",
+    "sass-loader": "16.0.8",
+    "string-replace-loader": "3.3.0",
+    "terser-webpack-plugin": "5.6.1",
+    "webpack": "5.108.4",
+    "webpack-cli": "6.0.1"
   },
   "dependencies": {
-    "@splidejs/splide": "^4.1.4",
-    "animate.css": "^4.1.1",
-    "axios": "^0.27.2",
-    "clean-webpack-plugin": "^4.0.0",
-    "crypto-js": "^4.1.1",
-    "glob": "^10.2.2",
-    "jquery": "^3.7.1",
-    "jvectormap-next": "^3.2.0",
-    "noop-webpack-plugin": "^1.0.1",
-    "remove-files-webpack-plugin": "^1.5.0"
+    "@splidejs/splide": "4.1.4",
+    "animate.css": "4.1.1",
+    "axios": "0.27.2",
+    "crypto-js": "4.2.0",
+    "jquery": "3.7.1",
+    "jvectormap-next": "3.2.0"
   }
 }

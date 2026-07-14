@@ -54,7 +54,7 @@ $associationSlides = $associationSlides ?? [];
 
             <figure class="nosotros-carousel__item" role="listitem" tabindex="0">
                 <img class="nosotros-carousel__img lazy-image" data-src="{{{ ($associationImage) }}}"
-                    alt="{{{ ($associationAlt) }}}" loading="lazy" decoding="async" width="900" height="600">
+                    alt="{{{ ($associationAlt) }}}" loading="lazy" decoding="async" fetchpriority="low" width="900" height="600">
 
                 <figcaption class="nosotros-carousel__overlay">
                     <strong>{{{ ($associationShortTitle) }}}</strong>
@@ -65,8 +65,8 @@ $associationSlides = $associationSlides ?? [];
 
             {% if (empty($associationSlides)): %}
             <figure class="nosotros-carousel__item" role="listitem" tabindex="0">
-                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg" alt="L+E Ingeniería"
-                    loading="lazy" decoding="async" width="900" height="600">
+                <img class="nosotros-carousel__img lazy-image" data-src="/images/JTRON.jpg" alt="Equipo y soluciones de ingeniería estructural de L+E Ingeniería"
+                    loading="lazy" decoding="async" fetchpriority="low" width="900" height="600">
 
                 <figcaption class="nosotros-carousel__overlay">
                     <strong>L+E</strong>

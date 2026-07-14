@@ -34,6 +34,8 @@ CONTROLLER(Home::class, '', [
         'site-api/map/office-workshops' => 'officeWorkshopsMapJson',
         //GET('/site-api/search/projects', [Home::class, 'searchProjectsJson']);
         'site-api/search/projects' => 'searchProjectsJson',
+        'aviso-de-privacidad' => 'legalAvisoPrivacidad',
+        'terminos-y-condiciones' => 'legalTerminos',
     ],
     'post' => [
         'contact/send'           => 'contactSend',
@@ -202,7 +204,7 @@ Route::controller(ValuationClients::class, '/admin/valuacion/clientes', function
     get('/{id:\\d+}/eliminar', 'delete');
     post('/{id:\\d+}/eliminar', 'destroy');
 }, [AuthMiddleware::class]);
-Route::get('/form', [Home::class, 'store']);
+// Route::get('/form', [Home::class, 'store']);
 //  Route::get('/{id:\d+}', function (int $id) {
 //      return json(['id' => $id]);
 //  });

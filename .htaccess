@@ -37,6 +37,24 @@
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
+\
+# =========================================================
+# NOINDEX REAL PARA ADMIN Y ENDPOINTS INTERNOS
+# Coloca este bloque en el .htaccess raíz, fuera de mod_rewrite.
+# Requiere Apache 2.4 y mod_headers.
+# =========================================================
+<IfModule mod_headers.c>
+    <If "%{REQUEST_URI} =~ m#^/(admin(?:/|$)|site-api(?:/|$)|error404/?$)#">
+        Header always set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet"
+        Header always set Cache-Control "private, no-store, no-cache, must-revalidate, max-age=0"
+        Header always set Pragma "no-cache"
+    </If>
+</IfModule>
+
+# Mantén estas reglas dentro de mod_rewrite para servir los archivos:
+#
+# RewriteRule ^(robots\.txt|sitemap\.xml)$ public/$1 [L]
+
 <IfModule mod_deflate.c>
     SetOutputFilter DEFLATE
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json

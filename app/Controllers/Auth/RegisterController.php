@@ -16,7 +16,7 @@ class RegisterController extends Controller
          * Si ya existe un Admin, el registro inicial queda bloqueado.
          */
         if ($this->firstAdminExists()) {
-            return redirect('/login');
+            //return redirect('/login');
         }
 
         /*
